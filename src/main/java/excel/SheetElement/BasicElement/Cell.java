@@ -13,7 +13,7 @@ public class Cell extends BasicElement {
     private String cellId;
     private int row;
     private String column;
-    private String status;
+    private CellStatus status;
     private String stringValue;
     private float numericValue;
     private boolean booleanValue;
@@ -109,4 +109,23 @@ public class Cell extends BasicElement {
         }
     }
 
+    public String getCellId() {
+        return cellId;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public String getColumn() {
+        return column;
+    }
+
+    public CellStatus getStatus() {
+        return status;
+    }
+
+    public Constraint getConstraint() {
+        return constraint;
+    }
 }
