@@ -3,10 +3,12 @@ package excel.Workbook;
 import excel.Worksheet.Worksheet;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Workbook {
-    private List<Macro> macro = new ArrayList<>();
+    private Map<String, String> macro = new HashMap<>();
     private List<Worksheet> worksheets = new ArrayList<>();
     private String extension;
     private String fileName;
@@ -20,12 +22,8 @@ public class Workbook {
         this.worksheets.add(worksheet);
     }
 
-    public void addMacro(String macroName, String macroDescription){
-        this.macro.add(new Macro(macroName, macroDescription));
-    }
-
-    public List<Macro> getMacro() {
-        return macro;
+    public void setMacro(Map<String, String> macro) {
+        this.macro = macro;
     }
 
     public List<Worksheet> getWorksheets() {

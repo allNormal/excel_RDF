@@ -1,16 +1,18 @@
 package excel.SheetElement.BasicElement;
 
 import excel.Constraints.Constraint;
+import excel.Worksheet.Worksheet;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Column {
+public class Column extends BasicElement {
     private String columnID;
     private List<Cell> cell = new ArrayList<>();
     private Constraint constraint;
 
-    public Column(String columnID) {
+    public Column(Worksheet worksheet, String columnID) {
+        super(worksheet);
         this.columnID = columnID;
     }
 

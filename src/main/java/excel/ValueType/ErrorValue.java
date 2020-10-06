@@ -4,8 +4,7 @@ public class ErrorValue {
     private String description;
     private String errorName;
 
-    public ErrorValue(String description, String errorName){
-        this.description = description;
+    public ErrorValue(String errorName){
         this.errorName = errorName;
     }
 

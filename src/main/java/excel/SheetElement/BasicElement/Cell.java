@@ -5,6 +5,8 @@ import excel.ValueType.ErrorValue;
 import excel.ValueType.Formula;
 import excel.ValueType.Value;
 import excel.Worksheet.Worksheet;
+import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.xssf.usermodel.XSSFComment;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -21,12 +23,13 @@ public class Cell extends BasicElement {
     private ErrorValue error;
     private Constraint constraint;
     private Value value;
+    private XSSFComment comment;
 
-    public Cell(Worksheet worksheet, String column, int row, Value value){
+    public Cell(Worksheet worksheet, String column, int row){
         super(worksheet);
         this.column = column;
         this.row = row;
-        this.value = value;
+        this.cellId = column + row;
     }
 
     public void setStringValue(String value){
@@ -69,44 +72,11 @@ public class Cell extends BasicElement {
     }
 
     public void setFormulaValue(String value){
-        String pattern1 = "[[a-zA-Z]+[\\d]*]([[a-zA-Z]+[\\d]+:]+[[a-zA-Z]+[\\d]+])";
-        String pattern2 = "[[[a-zA-Z]+[\\d]+]\\p{Punct}]+[[a-zA-Z]+[\\d]+]";
-        boolean checkWithPattern1 = Pattern.matches(pattern1, value);
-        boolean checkWithPattern2 = Pattern.matches(pattern2, value);
-        try{
-            if(this.value == Value.FORMULA){
-                if(checkWithPattern1 || checkWithPattern2){
-                    this.formulaValue = new Formula(value);
-                }
-                else{
-                    throw new IllegalArgumentException("Value is not a type of Formula");
-                }
-            }
-            else{
-                throw new IllegalArgumentException("Cell Values is not a Formula but a " + this.value);
-            }
-        } catch (IllegalArgumentException err){
-            System.out.println(err);
-        }
+        this.formulaValue = new Formula(value);
     }
 
-    public void SetErrorValue(String value, String description){
-        String[] excelError = {"#DIV/0!", "#GETTING_DATA", "#N/A", "#NAME?", "#NULL!", "#NUM!", "#REF!", "#VALUE!"};
-        try{
-            if(this.value == Value.ERROR){
-                if(Arrays.stream(excelError).anyMatch(value::equals)){
-                    this.error = new ErrorValue(value, description);
-                }
-                else{
-                    throw new IllegalArgumentException("Value is not a type of Error");
-                }
-            }
-            else{
-                throw new IllegalArgumentException("Cell Values is not an Error but a " + this.value);
-            }
-        } catch (IllegalArgumentException err){
-            System.out.println(err);
-        }
+    public void SetErrorValue(String value){
+        this.error = new ErrorValue(value);
     }
 
     public String getCellId() {
@@ -127,5 +97,41 @@ public class Cell extends BasicElement {
 
     public Constraint getConstraint() {
         return constraint;
+    }
+
+    public void setValue(Value value) {
+        this.value = value;
+    }
+
+    public void setComment(XSSFComment comment) {
+        this.comment = comment;
+    }
+
+    public String getStringValue() {
+        return stringValue;
+    }
+
+    public float getNumericValue() {
+        return numericValue;
+    }
+
+    public boolean isBooleanValue() {
+        return booleanValue;
+    }
+
+    public Formula getFormulaValue() {
+        return formulaValue;
+    }
+
+    public ErrorValue getError() {
+        return error;
+    }
+
+    public XSSFComment getComment() {
+        return comment;
+    }
+
+    public Value getValue() {
+        return value;
     }
 }

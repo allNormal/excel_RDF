@@ -4,22 +4,29 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
+import excel.SheetElement.BasicElement.Column;
+import excel.SheetElement.Charts.Chart;
+import excel.SheetElement.Illustrations.Illustrations;
+import excel.SheetElement.SheetElement;
+import excel.SheetElement.Tables.Table;
+import excel.SheetElement.Texts.Text;
+import excel.ValueType.Value;
 import excel.Workbook.Workbook;
 import excel.Worksheet.Worksheet;
+import org.apache.jena.ontology.Individual;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.macros.Module;
 import org.apache.poi.poifs.macros.VBAMacroReader;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.*;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 
 
 public class readExcel {
 
-    private List<String> saveTitle = new ArrayList<>();
     private XSSFWorkbook myWorkBook;
-    private XSSFSheet mySheet;
-    private int titleIndex = 1;
+    private Workbook workbook;
 
     public readExcel(String filepath) {
         try {
@@ -42,19 +49,21 @@ public class readExcel {
 
         // Finds the workbook instance for XLSX file
         myWorkBook = new XSSFWorkbook (fis);
-        //add to ontology
-        Workbook workbook = new Workbook(filePath.substring(filePath.length()-4,filePath.length()),filePath);
+        this.workbook = new Workbook(filePath.substring(filePath.length()-5,filePath.length()),filePath);
+
 
         for(Sheet sheet : myWorkBook){
-            //add to ontology
             Worksheet worksheet = new Worksheet(sheet.getSheetName(), workbook);
-            readTable(myWorkBook, sheet.getSheetName());
-            readChart(myWorkBook, sheet.getSheetName());
-            readIllustration(myWorkBook, sheet.getSheetName());
-            readText(myWorkBook, sheet.getSheetName());
-            readBasicElement(sheet);
+            readTable(myWorkBook, sheet.getSheetName(), worksheet);
+            readChart(myWorkBook, sheet.getSheetName(), worksheet);
+            readIllustration(myWorkBook, sheet.getSheetName(), worksheet);
+            readText(myWorkBook, sheet.getSheetName(), worksheet);
+            readBasicElement(sheet, worksheet);
+            this.workbook.addWorksheet(worksheet);
         }
-        readMacro(myFile);
+        if(this.workbook.getExtension() == ".xlsm") {
+            readMacro(myFile);
+        }
 
     }
 
@@ -64,9 +73,7 @@ public class readExcel {
             if(macroReader != null) {
                 Map<String, String> macro = macroReader.readMacros();
                 macroReader.close();
-                for(Map.Entry<String, String> m : macro.entrySet()){
-                    System.out.println(m.getValue());
-                }
+                this.workbook.setMacro(macro);
             }
         } catch (IOException err) {
             System.out.println(err);
@@ -74,8 +81,8 @@ public class readExcel {
 
     }
 
-    private void readText(XSSFWorkbook workbook, String sheetName) {
-        int count = 0;
+    private void readText(XSSFWorkbook workbook, String sheetName, Worksheet worksheet) {
+        List<SheetElement> texts = new ArrayList<>();
         try {
             XSSFSheet sheet = workbook.getSheet(sheetName);
             if(sheet == null) throw new FileNotFoundException("there is not sheet with name " + sheetName);
@@ -87,18 +94,20 @@ public class readExcel {
 
                 for(int i = 0;i<shapes.size();i++){
                     if(shapes.get(i) instanceof  XSSFSimpleShape){
-                        count++;
+                        XSSFSimpleShape temp = (XSSFSimpleShape)shapes.get(i);
+                        Text text = new Text(worksheet, temp.getShapeName(), temp.getText());
+                        texts.add(text);
                     }
                 }
-                System.out.println("there are " + count + " of texts");
+                worksheet.addElement("Texts", texts);
             }
         } catch (FileNotFoundException err) {
             System.out.println(err);
         }
     }
 
-    private void readIllustration(XSSFWorkbook workbook, String sheetName){
-        int count = 0;
+    private void readIllustration(XSSFWorkbook workbook, String sheetName, Worksheet worksheet){
+        List<SheetElement> sheetElements = new ArrayList<>();
         try {
             XSSFSheet sheet = workbook.getSheet(sheetName);
             if(sheet == null) throw new FileNotFoundException("there is not sheet with name " + sheetName);
@@ -109,17 +118,20 @@ public class readExcel {
                 List<XSSFShape> charts = chart.getShapes();
                 for(int i = 0;i<charts.size();i++){
                     if(charts.get(i) instanceof Picture){
-                        count++;
+                        Picture picture = (Picture)charts.get(i);
+                        Illustrations illustrations = new Illustrations(worksheet);
+                        sheetElements.add(illustrations);
                     }
                 }
+                worksheet.addElement("Illustrations", sheetElements);
             }
         } catch (FileNotFoundException err) {
             System.out.println(err);
         }
-        System.out.println("there are " + count + " of pictures");
     }
 
-    private void readChart(XSSFWorkbook workbook, String sheetName){
+    private void readChart(XSSFWorkbook workbook, String sheetName, Worksheet worksheet){
+        List<SheetElement> sheetElements = new ArrayList<>();
         try {
             XSSFSheet sheet = workbook.getSheet(sheetName);
             if(sheet == null) throw new FileNotFoundException("there is not sheet with name " + sheetName);
@@ -128,55 +140,108 @@ public class readExcel {
             if(chart != null) {
                 //add to ontology
                 List<XSSFChart> charts = chart.getCharts();
-                System.out.println("there are " + charts.size() + " of charts");
+
+                for(int i = 0; i<charts.size(); i++){
+                    Chart chart1 = new Chart(worksheet, charts.get(i).getOrAddLegend().getEntries(),
+                            charts.get(i).getTitleText());
+                    sheetElements.add(chart1);
+                }
+                worksheet.addElement("Charts", sheetElements);
             }
         } catch (FileNotFoundException err) {
             System.out.println(err);
         }
     }
 
-    private void readBasicElement(Sheet sheet) {
+    private void readBasicElement(Sheet sheet, Worksheet worksheet) {
+        List<SheetElement> cellTemp = new ArrayList<>();
+        Map<String, Column> columnTemp = new HashMap<>();
+        List<SheetElement> rowTemp = new ArrayList<>();
+
         for(Row row : sheet){
-            //add to ontology
-            excel.SheetElement.BasicElement.Row row1 = new excel.SheetElement.BasicElement.Row(
-                    String.valueOf(row.getRowNum()));
+            excel.SheetElement.BasicElement.Row row1 = new excel.SheetElement.BasicElement.Row(worksheet,
+                    Integer.toString(row.getRowNum()));
             for(Cell cell : row) {
-                //add to ontology
+                excel.SheetElement.BasicElement.Cell cell1 = new excel.SheetElement.BasicElement.Cell(worksheet,
+                        Integer.toString(cell.getColumnIndex()),cell.getRowIndex());
+
                 switch (cell.getCellType()){
-                    case STRING: break;
-                    case _NONE: break;
-                    case BLANK: break;
-                    case ERROR: break;
-                    case BOOLEAN: break;
-                    case FORMULA: break;
-                    case NUMERIC: break;
+                    case STRING:
+                        cell1.setValue(Value.STRING);
+                        cell1.setStringValue(cell.getRichStringCellValue().getString());
+                        break;
+                    case BLANK:
+                        cell1.setValue(Value.STRING);
+                        cell1.setStringValue("");
+                        break;
+                    case ERROR:
+                        cell1.setValue(Value.ERROR);
+                        cell1.SetErrorValue(String.valueOf(cell.getErrorCellValue()));
+                        break;
+                    case BOOLEAN:
+                        cell1.setValue(Value.BOOLEAN);
+                        cell1.setBooleanValue(cell.getBooleanCellValue());
+                        break;
+                    case FORMULA:
+                        cell1.setValue(Value.FORMULA);
+                        cell1.setFormulaValue(cell.getCellFormula());
+                        break;
+                    case NUMERIC:
+                        cell1.setValue(Value.NUMERIC);
+                        cell1.setNumericValue((float)cell.getNumericCellValue());
+                        break;
                 }
-                //add to ontology
+
                 XSSFComment comment = (XSSFComment)cell.getCellComment();
+                if(comment!= null) cell1.setComment(comment);
+
+                if(!columnTemp.containsKey(Integer.toString(cell.getColumnIndex()))){
+                    Column column = new Column(worksheet, Integer.toString(cell.getColumnIndex()));
+                    column.addCell(cell1);
+                    columnTemp.put(Integer.toString(cell.getColumnIndex()), column);
+                }
+                else{
+                    Column column = columnTemp.get(Integer.toString(cell.getColumnIndex()));
+                    column.addCell(cell1);
+                }
+                cellTemp.add(cell1);
+                row1.addCell(cell1);
             }
+            rowTemp.add(row1);
         }
+
+        worksheet.addElement("Row", rowTemp);
+        worksheet.addElement("Cell", cellTemp);
+        List<SheetElement> colTemp = new ArrayList<>();
+        for(Map.Entry<String, Column> temp : columnTemp.entrySet()) {
+            colTemp.add(temp.getValue());
+        }
+        worksheet.addElement("Column", colTemp);
     }
 
-    private void readTable(XSSFWorkbook workbook, String sheetName) {
+    private void readTable(XSSFWorkbook workbook, String sheetName, Worksheet worksheet) {
+        List<SheetElement> sheetElements = new ArrayList<>();
         try{
             XSSFSheet sheet = workbook.getSheet(sheetName);
             if(sheet == null) throw new FileNotFoundException("there is not sheet with name " + sheetName);
             List<XSSFTable> tables = sheet.getTables();
             List<XSSFPivotTable> pivotTables = sheet.getPivotTables();
-            System.out.println("there are " + tables.size() + " of tables");
-            while(tables.size() != 0 && pivotTables.size()!= 0){
 
-                tables.get(0).getEndColIndex();
-                tables.get(0).getEndRowIndex();
-                tables.get(0).getStartColIndex();
-                tables.get(0).getStartRowIndex();
-                //add tables to ontology
+            for(int i = 0; i<tables.size(); i++) {
+                XSSFTable t = tables.get(i);
+                Table table = new Table(worksheet, Integer.toString(t.getEndColIndex()), Integer.toString(t.getStartColIndex()),
+                        Integer.toString(t.getStartRowIndex()), Integer.toString(t.getEndRowIndex()), t.getName());
+                sheetElements.add(table);
             }
-
+            worksheet.addElement("Tables", sheetElements);
 
         } catch (FileNotFoundException err) {
             System.out.println(err);
         }
 
+    }
+
+    public Workbook getWorkbook() {
+        return workbook;
     }
 }

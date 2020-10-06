@@ -3,11 +3,12 @@ package excel.Worksheet;
 import excel.SheetElement.SheetElement;
 import excel.Workbook.Workbook;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Worksheet {
-    private List<SheetElement> sheets = new ArrayList<>();
+    private Map<String, List<SheetElement>> sheets = new HashMap<>();
     private String sheetName;
     private Workbook workbook;
 
@@ -16,8 +17,8 @@ public class Worksheet {
         this.workbook = workbook;
     }
 
-    public void addElement(SheetElement sheetElement){
-        this.sheets.add(sheetElement);
+    public void addElement(String type, List<SheetElement> sheetElement){
+        this.sheets.put(type, sheetElement);
     }
 
     public Workbook getWorkbook() {
@@ -28,7 +29,7 @@ public class Worksheet {
         this.workbook = workbook;
     }
 
-    public List<SheetElement> getSheets() {
+    public Map<String, List<SheetElement>> getSheets() {
         return sheets;
     }
 
