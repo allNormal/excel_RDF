@@ -79,6 +79,7 @@ public class OntologyConverter {
 
     public OntologyConverter() {
         this.dataset = TDBFactory.createDataset(DATASET_LOCATION);
+        this.dataset.removeNamedModel(MODEL_NAME);
         initializeTemplateModel();
 
     }
@@ -157,7 +158,7 @@ public class OntologyConverter {
         this.dataset.begin(ReadWrite.READ);
         Model temp = this.dataset.getNamedModel(MODEL_NAME);
         this.model = ModelFactory.createOntologyModel(OWL_MEM,temp);
-        this.directInferredModel = ModelFactory.createOntologyModel(OWL_MEM_RULE_INF);
+        //this.directInferredModel = ModelFactory.createOntologyModel(OWL_MEM_RULE_INF);
         this.dataset.commit();
         this.dataset.end();
     }

@@ -13,7 +13,7 @@ public class Row extends BasicElement{
 
     public Row(Worksheet worksheet, String rowId) {
         super(worksheet);
-        this.rowId = rowId;
+        this.rowId = rowId + 1;
     }
 
     public void addCell(Cell cell){

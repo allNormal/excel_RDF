@@ -27,9 +27,32 @@ public class Cell extends BasicElement {
 
     public Cell(Worksheet worksheet, String column, int row){
         super(worksheet);
-        this.column = column;
-        this.row = row;
-        this.cellId = column + row;
+        this.column = convertColumn(column);
+        this.row = row + 1;
+        this.cellId = this.column + this.row;
+    }
+
+    private String convertColumn(String column) {
+        String result = "";
+        int min = 65;
+        int temp = Integer.parseInt(column);
+        boolean check = false;
+
+        while(temp >= 0) {
+            if(temp <= 25){
+                check = true;
+            }
+            int calc = temp % 25;
+            temp = temp/25;
+
+            char character = (char) (min + calc);
+            result = result + character;
+            if(check){
+                break;
+            }
+        }
+        if(column == "0") System.out.println(result);
+        return result;
     }
 
     public void setStringValue(String value){
