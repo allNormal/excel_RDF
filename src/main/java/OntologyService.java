@@ -15,8 +15,7 @@ import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +34,20 @@ public class OntologyService {
         this.model = converter.getModel();
         this.modeldirectInf = converter.getDirectInferredModel();
         convertExcelToOntology();
+        //saveToFile();
+    }
+
+    private void saveToFile() {
+        this.converter.getDataset().begin(ReadWrite.READ);
+        OntModel model = this.converter.getModel();
+        FileWriter out = null;
+        try {
+            out = new FileWriter("excel.xml");
+            model.write(out, "RDF/XML-ABBREV");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.converter.getDataset().close();
     }
 
     public void convertExcelToOntology(){
@@ -92,12 +105,18 @@ public class OntologyService {
                 addTable(table);
                 addText(text);
                 addIllustration(illustration);
-                addBasicElement(cell);
+                //addBasicElement(cell);
             }
             System.out.println("----------------------------------------------------");
         }
 
-        //RDFDataMgr.write(System.out, this.converter.getDataSet(), Lang.NQUADS);
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream("excel_xml.owl");
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+        RDFDataMgr.write(out, this.converter.getDataset(), Lang.TRIG);
         this.converter.closeDataset();
     }
 
