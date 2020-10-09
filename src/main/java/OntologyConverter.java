@@ -15,10 +15,8 @@ import static org.apache.jena.ontology.OntModelSpec.*;
 //inspired + with help from https://github.com/jjnp/dss-ue2/blob/master/src/main/java/at/ac/tuwien/student/e01526624/backend/service/ModelManager.java
 public class OntologyConverter {
     private OntModel model;
-    private Dataset dataset;
 
     private final String NS = "http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#";
-    private final String DATASET_LOCATION = "target/ds";
     private String MODEL_NAME;
 
     private OntClass workbook;
@@ -78,29 +76,9 @@ public class OntologyConverter {
     private ObjectProperty isInWorkbook;
 
     public OntologyConverter(String modelName) {
-        this.dataset = TDBFactory.createDataset(DATASET_LOCATION);
         this.MODEL_NAME = modelName;
-        if(this.dataset.containsNamedModel(MODEL_NAME)) {
-            this.dataset.removeNamedModel(MODEL_NAME);
-        }
         initializeTemplateModel();
 
-    }
-
-    /**
-     * begin transaction.
-     */
-    public void writeDataset(){
-        if(!this.dataset.isInTransaction()) this.dataset.begin(ReadWrite.WRITE);
-    }
-
-
-    /**
-     * end transaction, + commit;
-     */
-    public void closeDataset(){
-        this.dataset.commit();
-        this.dataset.end();
     }
 
 
@@ -108,7 +86,6 @@ public class OntologyConverter {
      * initialize model + link model if there is no such model in dataset.
      */
     private void initializeTemplateModel(){
-        if(!this.dataset.containsNamedModel(MODEL_NAME)) initializeDataSet();
         loadModels();
         initializeModels();
     }
@@ -118,7 +95,6 @@ public class OntologyConverter {
      * Link every Class, Object property, Data Property, with the one in dataset.
      */
     private void initializeModels() {
-        this.dataset.begin(ReadWrite.READ);
         this.cell = this.model.getOntClass(NS + "cell");
         this.row = this.model.getOntClass(NS + "row");
         this.column = this.model.getOntClass(NS + "column");
@@ -169,31 +145,17 @@ public class OntologyConverter {
         this.colEnd = this.model.getDatatypeProperty(NS + "X-End");
         this.rowStart = this.model.getDatatypeProperty(NS + "Y-Start");
         this.rowEnd = this.model.getDatatypeProperty(NS + "Y-End");
-        this.dataset.end();
     }
 
     /**
      * get model from dataset and load it.
      */
     private void loadModels(){
-        this.dataset.begin(ReadWrite.READ);
-        Model temp = this.dataset.getNamedModel(MODEL_NAME);
-        this.model = ModelFactory.createOntologyModel(OWL_MEM,temp);
-        this.dataset.commit();
-        this.dataset.end();
+        this.model = ModelFactory.createOntologyModel(OWL_MEM);
+        this.model.read("C:\\Users\\43676\\Desktop\\uni\\sepm-individual-assignment-java-template\\template\\rdfTest\\src\\main\\resources\\excel_owl\\excel_xml1.owl");
+
     }
 
-    /**
-     * create new model in dataset from a template owl file
-     */
-    private void initializeDataSet(){
-        this.dataset.begin(ReadWrite.WRITE);
-        OntModel temp = ModelFactory.createOntologyModel(OWL_MEM);
-        temp.read("C:\\Users\\43676\\Desktop\\uni\\sepm-individual-assignment-java-template\\template\\rdfTest\\src\\main\\resources\\excel_owl\\excel_xml1.owl");
-        this.dataset.addNamedModel(MODEL_NAME,temp);
-        this.dataset.commit();
-        this.dataset.end();
-    }
 
     public OntModel getModel() {
         return model;
@@ -412,7 +374,4 @@ public class OntologyConverter {
         return isInWorkbook;
     }
 
-    public Dataset getDataset() {
-        return dataset;
-    }
 }

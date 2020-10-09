@@ -6,6 +6,7 @@ import java.util.*;
 
 import excel.SheetElement.BasicElement.Column;
 import excel.SheetElement.Charts.Chart;
+import excel.SheetElement.ElementType;
 import excel.SheetElement.Illustrations.Illustrations;
 import excel.SheetElement.SheetElement;
 import excel.SheetElement.Tables.Table;
@@ -22,6 +23,8 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.*;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
+
+import static excel.SheetElement.ElementType.*;
 
 
 public class readExcel {
@@ -110,7 +113,7 @@ public class readExcel {
                         texts.add(text);
                     }
                 }
-                worksheet.addElement("Texts", texts);
+                worksheet.addElement(TEXT, texts);
             }
         } catch (FileNotFoundException err) {
             System.out.println(err);
@@ -140,7 +143,7 @@ public class readExcel {
                         sheetElements.add(illustrations);
                     }
                 }
-                worksheet.addElement("Illustrations", sheetElements);
+                worksheet.addElement(ILLUSTRATION, sheetElements);
             }
         } catch (FileNotFoundException err) {
             System.out.println(err);
@@ -169,7 +172,7 @@ public class readExcel {
                             charts.get(i).getTitleText());
                     sheetElements.add(chart1);
                 }
-                worksheet.addElement("Charts", sheetElements);
+                worksheet.addElement(CHART, sheetElements);
             }
         } catch (FileNotFoundException err) {
             System.out.println(err);
@@ -238,13 +241,13 @@ public class readExcel {
             rowTemp.add(row1);
         }
 
-        worksheet.addElement("Row", rowTemp);
-        worksheet.addElement("Cell", cellTemp);
+        worksheet.addElement(ROW, rowTemp);
+        worksheet.addElement(CELL, cellTemp);
         List<SheetElement> colTemp = new ArrayList<>();
         for(Map.Entry<String, Column> temp : columnTemp.entrySet()) {
             colTemp.add(temp.getValue());
         }
-        worksheet.addElement("Column", colTemp);
+        worksheet.addElement(COLUMN, colTemp);
     }
 
     /**
@@ -267,7 +270,7 @@ public class readExcel {
                         Integer.toString(t.getStartRowIndex()), Integer.toString(t.getEndRowIndex()), t.getName());
                 sheetElements.add(table);
             }
-            worksheet.addElement("Tables", sheetElements);
+            worksheet.addElement(TABLE, sheetElements);
 
         } catch (FileNotFoundException err) {
             System.out.println(err);

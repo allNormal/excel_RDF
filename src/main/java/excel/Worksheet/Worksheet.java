@@ -1,5 +1,6 @@
 package excel.Worksheet;
 
+import excel.SheetElement.ElementType;
 import excel.SheetElement.SheetElement;
 import excel.Workbook.Workbook;
 
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Worksheet {
-    private Map<String, List<SheetElement>> sheets = new HashMap<>();
+    private Map<ElementType, List<SheetElement>> sheets = new HashMap<>();
     private String sheetName;
     private Workbook workbook;
 
@@ -17,7 +18,7 @@ public class Worksheet {
         this.workbook = workbook;
     }
 
-    public void addElement(String type, List<SheetElement> sheetElement){
+    public void addElement(ElementType type, List<SheetElement> sheetElement){
         this.sheets.put(type, sheetElement);
     }
 
@@ -29,7 +30,7 @@ public class Worksheet {
         this.workbook = workbook;
     }
 
-    public Map<String, List<SheetElement>> getSheets() {
+    public Map<ElementType, List<SheetElement>> getSheets() {
         return sheets;
     }
 

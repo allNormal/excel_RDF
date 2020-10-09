@@ -2,6 +2,7 @@ import excel.SheetElement.BasicElement.Cell;
 import excel.SheetElement.BasicElement.Column;
 import excel.SheetElement.BasicElement.Row;
 import excel.SheetElement.Charts.Chart;
+import excel.SheetElement.ElementType;
 import excel.SheetElement.Illustrations.Illustrations;
 import excel.SheetElement.SheetElement;
 import excel.SheetElement.Tables.Table;
@@ -47,7 +48,6 @@ public class OntologyService {
      */
     private void convertExcelToOntology(){
         System.out.println("converting 1 workbook");
-        converter.writeDataset();
         Individual workbook = addWorkbook();
         System.out.println("converting " + this.workbook.getWorksheets().size() + " worksheet");
         for(int i = 0;i<this.workbook.getWorksheets().size();i++){
@@ -65,27 +65,27 @@ public class OntologyService {
             List<SheetElement> column = new ArrayList<>();
 
             //initialize list with the saved data in map.
-            for(Map.Entry<String, List<SheetElement>> m : this.workbook.getWorksheets().get(i).getSheets().entrySet()) {
+            for(Map.Entry<ElementType, List<SheetElement>> m : this.workbook.getWorksheets().get(i).getSheets().entrySet()) {
                 switch (m.getKey()){
-                    case "Tables" :
+                    case TABLE:
                         table = m.getValue();
                         break;
-                    case "Column" :
+                    case COLUMN:
                         column = m.getValue();
                         break;
-                    case "Cell" :
+                    case CELL:
                         cell = m.getValue();
                         break;
-                    case "Row" :
+                    case ROW:
                         row = m.getValue();
                         break;
-                    case "Charts" :
+                    case CHART:
                         chart = m.getValue();
                         break;
-                    case "Illustrations" :
+                    case ILLUSTRATION:
                         illustration = m.getValue();
                         break;
-                    case "Texts" :
+                    case TEXT:
                         text = m.getValue();
                         break;
                     default: break;
@@ -108,7 +108,6 @@ public class OntologyService {
             System.out.println("----------------------------------------------------");
         }
 
-        this.converter.closeDataset();
     }
 
     /**
@@ -116,22 +115,16 @@ public class OntologyService {
      * @param filePath file model that want to be converted into file
      */
     public void saveModel(String filePath) {
-        this.converter.writeDataset();
         FileOutputStream out = null;
         File myFile = new File(filePath);
-        if(!this.converter.getDataset().containsNamedModel(myFile.getName())) {
-            System.out.println("no model from " + myFile.getName() + " have been created yet");
-            return;
-        }
         try {
             out = new FileOutputStream(myFile.getName()+".owl");
         } catch (IOException e) {
             System.out.println(e);
         }
         //RDFDataMgr.write(out, this.converter.getDataset(), Lang.TRIG);
-        this.converter.getDataset().getNamedModel(myFile.getName()).write(out,"TTL");
+        this.converter.getModel().write(out, "TTL");
         //this.converter.getModel().write(out, "TTL");
-        this.converter.closeDataset();
     }
 
     /**
