@@ -124,7 +124,7 @@ public class OntologyService {
             return;
         }
         try {
-            out = new FileOutputStream(myFile.getName());
+            out = new FileOutputStream(myFile.getName()+".owl");
         } catch (IOException e) {
             System.out.println(e);
         }
