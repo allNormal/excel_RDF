@@ -6,6 +6,7 @@ import org.apache.jena.query.Dataset;
 import org.apache.jena.query.ReadWrite;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.tdb.StoreConnection;
 import org.apache.jena.tdb.TDBFactory;
 
 import static org.apache.jena.ontology.OntModelSpec.*;
@@ -14,12 +15,11 @@ import static org.apache.jena.ontology.OntModelSpec.*;
 //inspired + with help from https://github.com/jjnp/dss-ue2/blob/master/src/main/java/at/ac/tuwien/student/e01526624/backend/service/ModelManager.java
 public class OntologyConverter {
     private OntModel model;
-    private OntModel directInferredModel;
     private Dataset dataset;
 
     private final String NS = "http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#";
     private final String DATASET_LOCATION = "target/ds";
-    private final String MODEL_NAME = "ExcelRDF1";
+    private String MODEL_NAME;
 
     private OntClass workbook;
     private OntClass worksheet;
@@ -77,28 +77,46 @@ public class OntologyConverter {
     private ObjectProperty hasConstraint;
     private ObjectProperty isInWorkbook;
 
-    public OntologyConverter() {
+    public OntologyConverter(String modelName) {
         this.dataset = TDBFactory.createDataset(DATASET_LOCATION);
-        this.dataset.removeNamedModel(MODEL_NAME);
+        this.MODEL_NAME = modelName;
+        if(this.dataset.containsNamedModel(MODEL_NAME)) {
+            this.dataset.removeNamedModel(MODEL_NAME);
+        }
         initializeTemplateModel();
 
     }
 
+    /**
+     * begin transaction.
+     */
     public void writeDataset(){
         if(!this.dataset.isInTransaction()) this.dataset.begin(ReadWrite.WRITE);
     }
 
+
+    /**
+     * end transaction, + commit;
+     */
     public void closeDataset(){
         this.dataset.commit();
         this.dataset.end();
     }
 
+
+    /**
+     * initialize model + link model if there is no such model in dataset.
+     */
     private void initializeTemplateModel(){
         if(!this.dataset.containsNamedModel(MODEL_NAME)) initializeDataSet();
         loadModels();
         initializeModels();
     }
 
+
+    /**
+     * Link every Class, Object property, Data Property, with the one in dataset.
+     */
     private void initializeModels() {
         this.dataset.begin(ReadWrite.READ);
         this.cell = this.model.getOntClass(NS + "cell");
@@ -154,15 +172,20 @@ public class OntologyConverter {
         this.dataset.end();
     }
 
+    /**
+     * get model from dataset and load it.
+     */
     private void loadModels(){
         this.dataset.begin(ReadWrite.READ);
         Model temp = this.dataset.getNamedModel(MODEL_NAME);
         this.model = ModelFactory.createOntologyModel(OWL_MEM,temp);
-        //this.directInferredModel = ModelFactory.createOntologyModel(OWL_MEM_RULE_INF);
         this.dataset.commit();
         this.dataset.end();
     }
 
+    /**
+     * create new model in dataset from a template owl file
+     */
     private void initializeDataSet(){
         this.dataset.begin(ReadWrite.WRITE);
         OntModel temp = ModelFactory.createOntologyModel(OWL_MEM);
@@ -176,9 +199,6 @@ public class OntologyConverter {
         return model;
     }
 
-    public OntModel getDirectInferredModel() {
-        return directInferredModel;
-    }
 
     public OntClass getWorkbook() {
         return workbook;

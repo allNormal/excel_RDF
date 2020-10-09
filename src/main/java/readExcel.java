@@ -14,6 +14,7 @@ import excel.ValueType.Value;
 import excel.Workbook.Workbook;
 import excel.Worksheet.Worksheet;
 import org.apache.jena.ontology.Individual;
+import org.apache.logging.log4j.core.util.FileUtils;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.macros.Module;
 import org.apache.poi.poifs.macros.VBAMacroReader;
@@ -28,30 +29,30 @@ public class readExcel {
     private XSSFWorkbook myWorkBook;
     private Workbook workbook;
 
-    public readExcel(String filepath) {
-        try {
-            readExcel(filepath);
-        }
-        catch (IOException e) {
-            System.out.println(e.getMessage());;
-        }
+
+    public readExcel(File file) throws IOException {
+        readExcelConverter(file);
     }
 
-    private void readExcel(String filePath) throws IOException {
+    /**
+     * convert excel into Workbook Object.
+     * @param file excel file
+     * @throws IOException if file not found.
+     */
+    private void readExcelConverter(File file) throws IOException {
 
-        File myFile = new File(filePath);
         FileInputStream fis = null;
         try {
-            fis = new FileInputStream(myFile);
+            fis = new FileInputStream(file);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
         // Finds the workbook instance for XLSX file
         myWorkBook = new XSSFWorkbook (fis);
-        this.workbook = new Workbook(filePath.substring(filePath.length()-5,filePath.length()),filePath);
+        this.workbook = new Workbook((FileUtils.getFileExtension(file)),file.getName());
 
-
+        //iterate through sheet in workbook
         for(Sheet sheet : myWorkBook){
             Worksheet worksheet = new Worksheet(sheet.getSheetName(), workbook);
             readTable(myWorkBook, sheet.getSheetName(), worksheet);
@@ -61,12 +62,17 @@ public class readExcel {
             readBasicElement(sheet, worksheet);
             this.workbook.addWorksheet(worksheet);
         }
-        if(this.workbook.getExtension() == ".xlsm") {
-            readMacro(myFile);
+        //check if extension = macro or not
+        if(this.workbook.getExtension() == "xlsm") {
+            readMacro(file);
         }
 
     }
 
+    /**
+     * read Macro and save it in workbook
+     * @param file excel file with macro extension
+     */
     private void readMacro(File file) {
         try {
             VBAMacroReader macroReader = new VBAMacroReader(file);
@@ -81,6 +87,12 @@ public class readExcel {
 
     }
 
+    /**
+     * read text sheet element from excel, convert it into text object and add it into worksheet object
+     * @param workbook workbook target(poi)
+     * @param sheetName worksheet target (poi)
+     * @param worksheet add text element into worksheet object(self-made)
+     */
     private void readText(XSSFWorkbook workbook, String sheetName, Worksheet worksheet) {
         List<SheetElement> texts = new ArrayList<>();
         try {
@@ -89,7 +101,6 @@ public class readExcel {
             XSSFDrawing shape = sheet.getDrawingPatriarch();
 
             if(shape != null) {
-                //add to ontology
                 List<XSSFShape> shapes = shape.getShapes();
 
                 for(int i = 0;i<shapes.size();i++){
@@ -106,6 +117,12 @@ public class readExcel {
         }
     }
 
+    /**
+     * read illustration sheet element from excel, convert it into illustration object and add it into worksheet object
+     * @param workbook workbook target(poi)
+     * @param sheetName worksheet target (poi)
+     * @param worksheet add illustration element into worksheet object(self-made)
+     */
     private void readIllustration(XSSFWorkbook workbook, String sheetName, Worksheet worksheet){
         List<SheetElement> sheetElements = new ArrayList<>();
         try {
@@ -130,6 +147,12 @@ public class readExcel {
         }
     }
 
+    /**
+     * read chart sheet element from excel, convert it into chart object and add it into worksheet object
+     * @param workbook workbook target(poi)
+     * @param sheetName worksheet target (poi)
+     * @param worksheet add chart element into worksheet object(self-made)
+     */
     private void readChart(XSSFWorkbook workbook, String sheetName, Worksheet worksheet){
         List<SheetElement> sheetElements = new ArrayList<>();
         try {
@@ -153,6 +176,11 @@ public class readExcel {
         }
     }
 
+    /**
+     * read basic element from worksheet(excel), convert it into basicElement object, and add it into worksheet object
+     * @param sheet worksheet(excel + poi)
+     * @param worksheet worksheet object (self-created)
+     */
     private void readBasicElement(Sheet sheet, Worksheet worksheet) {
         List<SheetElement> cellTemp = new ArrayList<>();
         Map<String, Column> columnTemp = new HashMap<>();
@@ -219,6 +247,12 @@ public class readExcel {
         worksheet.addElement("Column", colTemp);
     }
 
+    /**
+     * read table sheet element from excel, convert it into table object and add it into worksheet object
+     * @param workbook workbook target(poi)
+     * @param sheetName worksheet target (poi)
+     * @param worksheet add table element into worksheet object(self-created)
+     */
     private void readTable(XSSFWorkbook workbook, String sheetName, Worksheet worksheet) {
         List<SheetElement> sheetElements = new ArrayList<>();
         try{
