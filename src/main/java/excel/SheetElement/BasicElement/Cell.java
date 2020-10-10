@@ -26,33 +26,10 @@ public class Cell extends BasicElement {
     private XSSFComment comment;
 
     public Cell(Worksheet worksheet, String column, int row){
-        super(worksheet);
-        this.column = convertColumn(column);
+        super(worksheet, column+(row+1));
+        this.column = column;
         this.row = row + 1;
-        this.cellId = this.column + this.row;
-    }
-
-    private String convertColumn(String column) {
-        String result = "";
-        int min = 65;
-        int temp = Integer.parseInt(column);
-        boolean check = false;
-
-        while(temp >= 0) {
-            if(temp <= 25){
-                check = true;
-            }
-            int calc = temp % 25;
-            temp = temp/25;
-
-            char character = (char) (min + calc);
-            result = result + character;
-            if(check){
-                break;
-            }
-        }
-        if(column == "0") System.out.println(result);
-        return result;
+        this.cellId = column + (row+1);
     }
 
     public void setStringValue(String value){

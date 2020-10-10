@@ -13,7 +13,7 @@ public class Text extends SheetElement {
         this.value = value;
     }
 
-    public String getName() {
+    public String title() {
         return name;
     }
 

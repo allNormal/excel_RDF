@@ -194,7 +194,7 @@ public class readExcel {
                     Integer.toString(row.getRowNum()));
             for(Cell cell : row) {
                 excel.SheetElement.BasicElement.Cell cell1 = new excel.SheetElement.BasicElement.Cell(worksheet,
-                        Integer.toString(cell.getColumnIndex()),cell.getRowIndex());
+                        convertColumn(Integer.toString(cell.getColumnIndex())),cell.getRowIndex());
 
                 switch (cell.getCellType()){
                     case STRING:
@@ -227,12 +227,12 @@ public class readExcel {
                 if(comment!= null) cell1.setComment(comment);
 
                 if(!columnTemp.containsKey(Integer.toString(cell.getColumnIndex()))){
-                    Column column = new Column(worksheet, Integer.toString(cell.getColumnIndex()));
+                    Column column = new Column(worksheet, convertColumn(Integer.toString(cell.getColumnIndex())));
                     column.addCell(cell1);
-                    columnTemp.put(Integer.toString(cell.getColumnIndex()), column);
+                    columnTemp.put(convertColumn(Integer.toString(cell.getColumnIndex())), column);
                 }
                 else{
-                    Column column = columnTemp.get(Integer.toString(cell.getColumnIndex()));
+                    Column column = columnTemp.get(convertColumn(Integer.toString(cell.getColumnIndex())));
                     column.addCell(cell1);
                 }
                 cellTemp.add(cell1);
@@ -251,6 +251,34 @@ public class readExcel {
     }
 
     /**
+     * convert column index from poi into actual index in excel
+     * @param column colum index from poi
+     * @return actual excel index
+     */
+    private String convertColumn(String column) {
+        String result = "";
+        int min = 65;
+        int temp = Integer.parseInt(column);
+        boolean check = false;
+
+        while(temp >= 0) {
+            if(temp <= 25){
+                check = true;
+            }
+            int calc = temp % 25;
+            temp = temp/25;
+
+            char character = (char) (min + calc);
+            result = result + character;
+            if(check){
+                break;
+            }
+        }
+        if(column == "0") System.out.println(result);
+        return result;
+    }
+
+    /**
      * read table sheet element from excel, convert it into table object and add it into worksheet object
      * @param workbook workbook target(poi)
      * @param sheetName worksheet target (poi)
@@ -266,8 +294,9 @@ public class readExcel {
 
             for(int i = 0; i<tables.size(); i++) {
                 XSSFTable t = tables.get(i);
-                Table table = new Table(worksheet, Integer.toString(t.getEndColIndex()), Integer.toString(t.getStartColIndex()),
-                        Integer.toString(t.getStartRowIndex()), Integer.toString(t.getEndRowIndex()), t.getName());
+                Table table = new Table(worksheet, convertColumn(Integer.toString(t.getEndColIndex())),
+                        convertColumn(Integer.toString(t.getStartColIndex())),
+                        Integer.toString(t.getStartRowIndex()+1), Integer.toString(t.getEndRowIndex()+1), t.getName());
                 sheetElements.add(table);
             }
             worksheet.addElement(TABLE, sheetElements);

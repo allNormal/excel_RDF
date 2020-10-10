@@ -2,7 +2,7 @@ package excel.SheetElement;
 
 import excel.Worksheet.Worksheet;
 
-public class SheetElement {
+public abstract class SheetElement {
     private Worksheet worksheet;
 
     public SheetElement(Worksheet worksheet){
@@ -14,4 +14,6 @@ public class SheetElement {
     public Worksheet getWorksheet() {
         return worksheet;
     }
+
+    public abstract String title();
 }

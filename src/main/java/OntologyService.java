@@ -272,8 +272,8 @@ public class OntologyService {
             if(table.get(j) instanceof Table) {
                 Individual i = this.converter.getTable().createIndividual(this.converter.getTable().getURI() +
                         "_Worksheet" + ws.getSheetName() +
-                        "_"+((Table) table.get(j)).getElementName());
-                i.addLiteral(this.converter.getElementName(), ((Table) table.get(j)).getElementName());
+                        "_"+(table.get(j)).title());
+                i.addLiteral(this.converter.getElementName(), (table.get(j)).title());
                 i.addLiteral(this.converter.getColStart(), ((Table) table.get(j)).getColumnStart());
                 i.addLiteral(this.converter.getColEnd(), ((Table) table.get(j)).getColumnEnd());
                 i.addLiteral(this.converter.getRowEnd(), ((Table) table.get(j)).getRowEnd());

@@ -5,8 +5,15 @@ import excel.Worksheet.Worksheet;
 
 
 public class BasicElement extends SheetElement {
-    public BasicElement(Worksheet worksheet){
+
+    private String title;
+
+    public BasicElement(Worksheet worksheet, String title){
         super(worksheet);
+    }
+
+    public String title() {
+        return this.title;
     }
 
 }

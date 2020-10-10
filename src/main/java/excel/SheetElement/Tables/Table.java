@@ -64,7 +64,7 @@ public class Table extends SheetElement {
         return header;
     }
 
-    public String getElementName() {
+    public String title() {
         return elementName;
     }
 

@@ -12,7 +12,7 @@ public class Row extends BasicElement{
     private Constraint constraint;
 
     public Row(Worksheet worksheet, String rowId) {
-        super(worksheet);
+        super(worksheet, rowId);
         this.rowId = rowId + 1;
     }
 

@@ -23,6 +23,10 @@ public class Chart extends SheetElement {
     }
 
 
+    public String title(){
+        return this.title.getString();
+    }
+
     public XSSFRichTextString getTitle() {
         return title;
     }
