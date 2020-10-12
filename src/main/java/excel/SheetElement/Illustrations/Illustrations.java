@@ -7,8 +7,9 @@ public class Illustrations extends SheetElement {
 
     private String title;
 
-    public Illustrations(Worksheet worksheet){
+    public Illustrations(Worksheet worksheet, String title){
         super(worksheet);
+        this.title = title;
     }
 
     public String title() {

@@ -12,6 +12,7 @@ import excel.SheetElement.SheetElement;
 import excel.SheetElement.Tables.Table;
 import excel.SheetElement.Texts.Text;
 import excel.ValueType.Value;
+import excel.Workbook.Macro;
 import excel.Workbook.Workbook;
 import excel.Worksheet.Worksheet;
 import org.apache.jena.ontology.Individual;
@@ -58,15 +59,15 @@ public class readExcel {
         //iterate through sheet in workbook
         for(Sheet sheet : myWorkBook){
             Worksheet worksheet = new Worksheet(sheet.getSheetName(), workbook);
+            readBasicElement(sheet, worksheet);
             readTable(myWorkBook, sheet.getSheetName(), worksheet);
             readChart(myWorkBook, sheet.getSheetName(), worksheet);
             readIllustration(myWorkBook, sheet.getSheetName(), worksheet);
             readText(myWorkBook, sheet.getSheetName(), worksheet);
-            readBasicElement(sheet, worksheet);
             this.workbook.addWorksheet(worksheet);
         }
         //check if extension = macro or not
-        if(this.workbook.getExtension() == "xlsm") {
+        if(this.workbook.getExtension().equals("xlsm")) {
             readMacro(file);
         }
 
@@ -80,9 +81,10 @@ public class readExcel {
         try {
             VBAMacroReader macroReader = new VBAMacroReader(file);
             if(macroReader != null) {
-                Map<String, String> macro = macroReader.readMacros();
+                System.out.println("im in macro");
+                Macro m = new Macro(macroReader.toString());
                 macroReader.close();
-                this.workbook.setMacro(macro);
+                this.workbook.setMacro(m);
             }
         } catch (IOException err) {
             System.out.println(err);
@@ -109,7 +111,7 @@ public class readExcel {
                 for(int i = 0;i<shapes.size();i++){
                     if(shapes.get(i) instanceof  XSSFSimpleShape){
                         XSSFSimpleShape temp = (XSSFSimpleShape)shapes.get(i);
-                        Text text = new Text(worksheet, temp.getShapeName(), temp.getText());
+                        Text text = new Text(worksheet, "Text", temp.getText());
                         texts.add(text);
                     }
                 }
@@ -139,7 +141,7 @@ public class readExcel {
                 for(int i = 0;i<charts.size();i++){
                     if(charts.get(i) instanceof Picture){
                         Picture picture = (Picture)charts.get(i);
-                        Illustrations illustrations = new Illustrations(worksheet);
+                        Illustrations illustrations = new Illustrations(worksheet, "Illustration");
                         sheetElements.add(illustrations);
                     }
                 }
@@ -195,7 +197,6 @@ public class readExcel {
             for(Cell cell : row) {
                 excel.SheetElement.BasicElement.Cell cell1 = new excel.SheetElement.BasicElement.Cell(worksheet,
                         convertColumn(Integer.toString(cell.getColumnIndex())),cell.getRowIndex());
-
                 switch (cell.getCellType()){
                     case STRING:
                         cell1.setValue(Value.STRING);
@@ -297,6 +298,21 @@ public class readExcel {
                 Table table = new Table(worksheet, convertColumn(Integer.toString(t.getEndColIndex())),
                         convertColumn(Integer.toString(t.getStartColIndex())),
                         Integer.toString(t.getStartRowIndex()+1), Integer.toString(t.getEndRowIndex()+1), t.getName());
+                List<SheetElement> cell = worksheet.getSheets().get(CELL);
+                for(int j = 0;j<cell.size();j++) {
+                    if(cell.get(j) instanceof excel.SheetElement.BasicElement.Cell) {
+                        if((((excel.SheetElement.BasicElement.Cell) cell.get(j)).getColumn().charAt(0) >= convertColumn(Integer.toString(t.getStartColIndex())).charAt(0)
+                        && ((excel.SheetElement.BasicElement.Cell) cell.get(j)).getColumn().charAt(0) <= convertColumn(Integer.toString(t.getEndColIndex())).charAt(0))
+                        && (((excel.SheetElement.BasicElement.Cell) cell.get(j)).getRow() >= t.getStartRowIndex()+1
+                        && ((excel.SheetElement.BasicElement.Cell) cell.get(j)).getRow() <= t.getEndRowIndex()+1)) {
+                            table.addCell((excel.SheetElement.BasicElement.Cell)cell.get(j));
+                        }
+                        else if(((excel.SheetElement.BasicElement.Cell) cell.get(j)).getColumn().charAt(0) >
+                        convertColumn(Integer.toString(t.getEndColIndex())).charAt(0)){
+                            break;
+                        }
+                    }
+                }
                 sheetElements.add(table);
             }
             worksheet.addElement(TABLE, sheetElements);

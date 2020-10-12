@@ -1,6 +1,7 @@
 package excel.Workbook;
 
 import excel.Worksheet.Worksheet;
+import org.apache.poi.ss.usermodel.Cell;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Workbook {
-    private Map<String, String> macro = new HashMap<>();
+    private Macro macro;
     private List<Worksheet> worksheets = new ArrayList<>();
     private String extension;
     private String fileName;
@@ -22,8 +23,12 @@ public class Workbook {
         this.worksheets.add(worksheet);
     }
 
-    public void setMacro(Map<String, String> macro) {
+    public void setMacro(Macro macro) {
         this.macro = macro;
+    }
+
+    public Macro getMacro() {
+        return macro;
     }
 
     public List<Worksheet> getWorksheets() {

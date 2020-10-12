@@ -54,6 +54,7 @@ public class OntologyConverter {
     private DatatypeProperty filePath;
     private DatatypeProperty functionName;
     private DatatypeProperty macroTitle;
+    private DatatypeProperty macroInput;
     private DatatypeProperty rowID;
     private DatatypeProperty sheetName;
     private DatatypeProperty colStart;
@@ -95,6 +96,9 @@ public class OntologyConverter {
      * Link every Class, Object property, Data Property, with the one in dataset.
      */
     private void initializeModels() {
+        this.hasMacro = this.model.getObjectProperty(NS + "hasMacro");
+        this.macro = this.model.getOntClass(NS + "ExcelMacro");
+        this.macroInput = this.model.getDatatypeProperty(NS + "Macro");
         this.cell = this.model.getOntClass(NS + "cell");
         this.row = this.model.getOntClass(NS + "row");
         this.column = this.model.getOntClass(NS + "column");
@@ -152,10 +156,14 @@ public class OntologyConverter {
      */
     private void loadModels(){
         this.model = ModelFactory.createOntologyModel(OWL_MEM);
-        this.model.read("C:\\Users\\43676\\Desktop\\uni\\sepm-individual-assignment-java-template\\template\\rdfTest\\src\\main\\resources\\excel_owl\\excel_xml1.owl");
+        this.model.read("C:\\Users\\43676\\Desktop\\uni\\sepm-individual-assignment-java-template\\template\\rdfTest\\src\\main\\resources\\excel_owl\\excel_ontology.ttl");
 
     }
 
+
+    public DatatypeProperty getMacroInput() {
+        return macroInput;
+    }
 
     public OntModel getModel() {
         return model;

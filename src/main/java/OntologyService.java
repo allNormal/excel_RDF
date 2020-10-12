@@ -99,11 +99,11 @@ public class OntologyService {
                 Individual sheetElement = this.converter.getSheetElement().createIndividual();
                 worksheet.addProperty(this.converter.getHasSheetElement(), sheetElement);
                 sheetElement.addProperty(this.converter.getIsPartOfWorksheet(), worksheet);
+                addBasicElement(cell, worksheet, this.workbook.getWorksheets().get(i));
                 addChart(chart, worksheet, this.workbook.getWorksheets().get(i));
                 addTable(table, worksheet, this.workbook.getWorksheets().get(i));
                 addText(text, worksheet, this.workbook.getWorksheets().get(i));
                 addIllustration(illustration, worksheet, this.workbook.getWorksheets().get(i));
-                addBasicElement(cell, worksheet, this.workbook.getWorksheets().get(i));
             }
             System.out.println("----------------------------------------------------");
         }
@@ -118,13 +118,11 @@ public class OntologyService {
         FileOutputStream out = null;
         File myFile = new File(filePath);
         try {
-            out = new FileOutputStream(myFile.getName()+".owl");
+            out = new FileOutputStream(myFile.getName()+".ttl");
         } catch (IOException e) {
             System.out.println(e);
         }
-        //RDFDataMgr.write(out, this.converter.getDataset(), Lang.TRIG);
         this.converter.getModel().write(out, "TTL");
-        //this.converter.getModel().write(out, "TTL");
     }
 
     /**
@@ -132,11 +130,17 @@ public class OntologyService {
      * @return workbook instance.
      */
     private Individual addWorkbook() {
-        Individual i = this.converter.getWorkbook().createIndividual(this.converter.getWorkbook().getURI() + "_" +
+        Individual workbook = this.converter.getWorkbook().createIndividual(this.converter.getWorkbook().getURI() + "_" +
                 1);
-        i.addLiteral(this.converter.getExtension(), this.workbook.getExtension());
-        i.addLiteral(this.converter.getFileName(), this.workbook.getFileName());
-        return i;
+        workbook.addLiteral(this.converter.getExtension(), this.workbook.getExtension());
+        workbook.addLiteral(this.converter.getFileName(), this.workbook.getFileName());
+        if(this.workbook.getMacro()!=null) {
+                Individual macro = this.converter.getMacro().createIndividual(this.converter.getMacro().getURI() + "_" +
+                        "Macro");
+                macro.addLiteral(this.converter.getMacroInput(), this.workbook.getMacro().getMacro());
+                workbook.addProperty(this.converter.getHasMacro(), macro);
+        }
+        return workbook;
     }
 
     /**
@@ -270,20 +274,35 @@ public class OntologyService {
     private void addTable(List<SheetElement> table, Individual worksheet, Worksheet ws) {
         for(int j = 0;j<table.size();j++){
             if(table.get(j) instanceof Table) {
-                Individual i = this.converter.getTable().createIndividual(this.converter.getTable().getURI() +
-                        "_Worksheet" + ws.getSheetName() +
-                        "_"+(table.get(j)).title());
-                i.addLiteral(this.converter.getElementName(), (table.get(j)).title());
-                i.addLiteral(this.converter.getColStart(), ((Table) table.get(j)).getColumnStart());
-                i.addLiteral(this.converter.getColEnd(), ((Table) table.get(j)).getColumnEnd());
-                i.addLiteral(this.converter.getRowEnd(), ((Table) table.get(j)).getRowEnd());
-                i.addLiteral(this.converter.getRowStart(), ((Table) table.get(j)).getRowStart());
-                i.addProperty(this.converter.getIsPartOfWorksheet(), worksheet);
+                if(table.get(j).title() != null) {
+                    addTableRelation((Table)table.get(j), ws, table.get(j).title(), worksheet);
+                }
+                else{
+                    addTableRelation((Table)table.get(j), ws, "Table" + (j+1), worksheet);
+                }
             }
         }
 
         System.out.println("converting " + table.size() + " table");
 
+    }
+
+    private void addTableRelation (Table table, Worksheet ws, String title, Individual worksheet){
+        Individual Table = this.converter.getTable().createIndividual(this.converter.getTable().getURI() +
+                "_Worksheet" + ws.getSheetName() +
+                "_" + title);
+        Table.addLiteral(this.converter.getElementName(), title);
+        Table.addLiteral(this.converter.getColStart(),  table.getColumnStart());
+        Table.addLiteral(this.converter.getColEnd(),  table.getColumnEnd());
+        Table.addLiteral(this.converter.getRowEnd(),  table.getRowEnd());
+        Table.addLiteral(this.converter.getRowStart(), table.getRowStart());
+        Table.addProperty(this.converter.getIsPartOfWorksheet(), worksheet);
+        for(int i = 0;i<table.getCell().size();i++) {
+            Individual cell = this.converter.getModel().getIndividual(this.converter.getCell().getURI() +
+                    "_Worksheet" + ws.getSheetName() +
+                    "_" + table.getCell().get(i).getCellId());
+            Table.addProperty(this.converter.getHasCell(), cell);
+        }
     }
 
     /**
@@ -297,7 +316,7 @@ public class OntologyService {
             if(text.get(j) instanceof Text) {
                 Individual i = this.converter.getText().createIndividual(this.converter.getText().getURI() +
                         "_Worksheet" + ws.getSheetName() +
-                        "_Text" + (j+1));
+                        "_" + text.get(j).title() + (j+1));
                 i.addLiteral(this.converter.getHasValue(), ((Text) text.get(j)).getValue());
                 i.addProperty(this.converter.getIsPartOfWorksheet(), worksheet);
             }
@@ -315,7 +334,7 @@ public class OntologyService {
         for(int j = 0;j<illustrations.size();j++) {
             Individual i = this.converter.getIllustration().createIndividual(this.converter.getIllustration() +
                     "_Worksheet" + ws.getSheetName() +
-                    "_Illustration" + (j+1));
+                    "_" + illustrations.get(j).title() + (j+1));
             i.addProperty(this.converter.getIsPartOfWorksheet(), worksheet);
         }
         System.out.println("converting " + illustrations.size() +  " illustrations");

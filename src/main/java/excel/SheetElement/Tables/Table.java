@@ -1,5 +1,6 @@
 package excel.SheetElement.Tables;
 
+import excel.SheetElement.BasicElement.Cell;
 import excel.SheetElement.SheetElement;
 import excel.Worksheet.Worksheet;
 
@@ -11,8 +12,10 @@ public class Table extends SheetElement {
     private String rowEnd;
     private String columnStart;
     private String columnEnd;
-    private List<String> header = new ArrayList<>();
+    private List<Cell> cell = new ArrayList<>();
     private String elementName;
+
+
 
     public Table(Worksheet worksheet, String columnEnd, String columnStart, String rowStart, String rowEnd
             , String elementName) {
@@ -24,8 +27,8 @@ public class Table extends SheetElement {
         this.elementName = elementName;
     }
 
-    public void addHeader(String header){
-        this.header.add(header);
+    public void addCell(Cell cell){
+        this.cell.add(cell);
     }
 
     public String getRowStart() {
@@ -60,8 +63,8 @@ public class Table extends SheetElement {
         this.columnEnd = columnEnd;
     }
 
-    public List<String> getHeader() {
-        return header;
+    public List<Cell> getCell() {
+        return cell;
     }
 
     public String title() {

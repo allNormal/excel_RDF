@@ -1,27 +1,21 @@
 package excel.Workbook;
 
+import java.util.List;
+import java.util.Map;
+
 public class Macro {
-    private String macroName;
-    private String macroDescription;
+    private String module;
+    private String  macro;
 
-    public Macro(String macroName, String macroDescription) {
-        this.macroName = macroName;
-        this.macroDescription = macroDescription;
+    public Macro(String macro) {
+        this.macro = macro;
     }
 
-    public String getMacroName() {
-        return macroName;
+    public String getModule() {
+        return module;
     }
 
-    public void setMacroName(String macroName) {
-        this.macroName = macroName;
-    }
-
-    public String getMacroDescription() {
-        return macroDescription;
-    }
-
-    public void setMacroDescription(String macroDescription) {
-        this.macroDescription = macroDescription;
+    public String getMacro() {
+        return macro;
     }
 }
