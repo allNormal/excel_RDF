@@ -1,0 +1,926 @@
+@prefix : <http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18> .
+
+<http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18> rdf:type owl:Ontology .
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#CompatibleTo
+:CompatibleTo rdf:type owl:ObjectProperty ,
+                       owl:SymmetricProperty ;
+              rdfs:range :Excel .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#hasCell
+:hasCell rdf:type owl:ObjectProperty ;
+         rdfs:subPropertyOf owl:topObjectProperty ;
+         owl:inverseOf :hasColumn ,
+                       :hasRow ;
+         rdfs:domain :Table ,
+                     :column ,
+                     :row ;
+         rdfs:range :cell .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#hasColumn
+:hasColumn rdf:type owl:ObjectProperty ;
+           rdfs:subPropertyOf owl:topObjectProperty ;
+           rdfs:domain :cell ;
+           rdfs:range :column .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#hasComment
+:hasComment rdf:type owl:ObjectProperty ;
+            rdfs:domain :cell ;
+            rdfs:range :Comments .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#hasConstraint
+:hasConstraint rdf:type owl:ObjectProperty ;
+               rdfs:domain :SheetElement ;
+               rdfs:range :Constraint .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#hasInput
+:hasInput rdf:type owl:ObjectProperty ;
+          owl:inverseOf :isUsedIn ;
+          rdfs:domain :FormulaValue ;
+          rdfs:range :cell .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#hasMacro
+:hasMacro rdf:type owl:ObjectProperty ;
+          rdfs:domain :Workbook ;
+          rdfs:range :ExcelMacro .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#hasRow
+:hasRow rdf:type owl:ObjectProperty ;
+        rdfs:subPropertyOf owl:topObjectProperty ;
+        rdfs:domain :cell ;
+        rdfs:range :row .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#hasSheetElement
+:hasSheetElement rdf:type owl:ObjectProperty ;
+                 rdfs:subPropertyOf owl:topObjectProperty ;
+                 owl:inverseOf :isPartOfWorksheet ;
+                 rdfs:domain :Worksheet ;
+                 rdfs:range :SheetElement .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#hasValue
+:hasValue rdf:type owl:ObjectProperty ;
+          rdfs:domain :cell ;
+          rdfs:range :Value .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#hasWorkSheet
+:hasWorkSheet rdf:type owl:ObjectProperty ;
+              owl:inverseOf :isInWorkbook ;
+              rdfs:domain :Workbook ;
+              rdfs:range :Worksheet .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#isInWorkbook
+:isInWorkbook rdf:type owl:ObjectProperty ;
+              rdfs:domain :Worksheet ;
+              rdfs:range :Workbook .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#isPartOfWorksheet
+:isPartOfWorksheet rdf:type owl:ObjectProperty ;
+                   rdfs:domain :SheetElement ;
+                   rdfs:range :Worksheet .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#isUsedIn
+:isUsedIn rdf:type owl:ObjectProperty ;
+          rdfs:domain :cell ;
+          rdfs:range :FormulaValue .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#CellID
+:CellID rdf:type owl:DatatypeProperty ;
+        rdfs:domain :FormulaValue ;
+        rdfs:range [ rdf:type rdfs:Datatype ;
+                     owl:onDatatype xsd:string ;
+                     owl:withRestrictions ( [ xsd:minLength 2
+                                            ]
+                                          )
+                   ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#CellStatus
+:CellStatus rdf:type owl:DatatypeProperty ;
+            rdfs:range [ rdf:type rdfs:Datatype ;
+                         owl:oneOf [ rdf:type rdf:List ;
+                                     rdf:first "Green" ;
+                                     rdf:rest [ rdf:type rdf:List ;
+                                                rdf:first "Red" ;
+                                                rdf:rest [ rdf:type rdf:List ;
+                                                           rdf:first "Yellow" ;
+                                                           rdf:rest rdf:nil
+                                                         ]
+                                              ]
+                                   ]
+                       ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#CellValue
+:CellValue rdf:type owl:DatatypeProperty ;
+           rdfs:domain :BooleanValue ,
+                       :NumericValue ,
+                       :StringValue ;
+           rdfs:range [ rdf:type rdfs:Datatype ;
+                        owl:unionOf ( [ rdf:type rdfs:Datatype ;
+                                        owl:unionOf ( xsd:dateTime
+                                                      xsd:integer
+                                                    )
+                                      ]
+                                      xsd:boolean
+                                      xsd:string
+                                    )
+                      ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#ChartLegend
+:ChartLegend rdf:type owl:DatatypeProperty ;
+             rdfs:domain :Chart ;
+             rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#ChartTitle
+:ChartTitle rdf:type owl:DatatypeProperty ;
+            rdfs:subPropertyOf owl:topDataProperty ;
+            rdfs:domain :Chart ;
+            rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#ColumnID
+:ColumnID rdf:type owl:DatatypeProperty ;
+          rdfs:range [ rdf:type rdfs:Datatype ;
+                       owl:onDatatype xsd:string ;
+                       owl:withRestrictions ( [ xsd:minLength 1
+                                              ]
+                                            )
+                     ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#CommentsValue
+:CommentsValue rdf:type owl:DatatypeProperty ;
+               rdfs:domain :Comments ;
+               rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#DataLabels
+:DataLabels rdf:type owl:DatatypeProperty ;
+            rdfs:domain :Chart ;
+            rdfs:range [ rdf:type rdfs:Datatype ;
+                         owl:unionOf ( xsd:boolean
+                                       xsd:integer
+                                       xsd:string
+                                     )
+                       ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#Description
+:Description rdf:type owl:DatatypeProperty ;
+             rdfs:domain :ErrorValue ;
+             rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#ElementName
+:ElementName rdf:type owl:DatatypeProperty ;
+             rdfs:domain :SheetElement ;
+             rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#ErrorName
+:ErrorName rdf:type owl:DatatypeProperty ;
+           rdfs:domain :ErrorValue ;
+           rdfs:range [ rdf:type rdfs:Datatype ;
+                        owl:oneOf [ rdf:type rdf:List ;
+                                    rdf:first "#DIV/0!" ;
+                                    rdf:rest [ rdf:type rdf:List ;
+                                               rdf:first "#GETTING_DATA" ;
+                                               rdf:rest [ rdf:type rdf:List ;
+                                                          rdf:first "#N/A" ;
+                                                          rdf:rest [ rdf:type rdf:List ;
+                                                                     rdf:first "#NAME?" ;
+                                                                     rdf:rest [ rdf:type rdf:List ;
+                                                                                rdf:first "#NULL!" ;
+                                                                                rdf:rest [ rdf:type rdf:List ;
+                                                                                           rdf:first "#NUM!" ;
+                                                                                           rdf:rest [ rdf:type rdf:List ;
+                                                                                                      rdf:first "#REF!" ;
+                                                                                                      rdf:rest [ rdf:type rdf:List ;
+                                                                                                                 rdf:first "#VALUE!" ;
+                                                                                                                 rdf:rest rdf:nil
+                                                                                                               ]
+                                                                                                    ]
+                                                                                         ]
+                                                                              ]
+                                                                   ]
+                                                        ]
+                                             ]
+                                  ]
+                      ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#Extension
+:Extension rdf:type owl:DatatypeProperty ;
+           rdfs:range [ rdf:type rdfs:Datatype ;
+                        owl:oneOf [ rdf:type rdf:List ;
+                                    rdf:first ".xla" ;
+                                    rdf:rest [ rdf:type rdf:List ;
+                                               rdf:first ".xlam" ;
+                                               rdf:rest [ rdf:type rdf:List ;
+                                                          rdf:first ".xlr" ;
+                                                          rdf:rest [ rdf:type rdf:List ;
+                                                                     rdf:first ".xls" ;
+                                                                     rdf:rest [ rdf:type rdf:List ;
+                                                                                rdf:first ".xlsb" ;
+                                                                                rdf:rest [ rdf:type rdf:List ;
+                                                                                           rdf:first ".xlsm" ;
+                                                                                           rdf:rest [ rdf:type rdf:List ;
+                                                                                                      rdf:first ".xlsx" ;
+                                                                                                      rdf:rest [ rdf:type rdf:List ;
+                                                                                                                 rdf:first ".xlt" ;
+                                                                                                                 rdf:rest [ rdf:type rdf:List ;
+                                                                                                                            rdf:first ".xltm" ;
+                                                                                                                            rdf:rest [ rdf:type rdf:List ;
+                                                                                                                                       rdf:first ".xltx" ;
+                                                                                                                                       rdf:rest [ rdf:type rdf:List ;
+                                                                                                                                                  rdf:first ".xlw" ;
+                                                                                                                                                  rdf:rest [ rdf:type rdf:List ;
+                                                                                                                                                             rdf:first ".xml" ;
+                                                                                                                                                             rdf:rest rdf:nil
+                                                                                                                                                           ]
+                                                                                                                                                ]
+                                                                                                                                     ]
+                                                                                                                          ]
+                                                                                                               ]
+                                                                                                    ]
+                                                                                         ]
+                                                                              ]
+                                                                   ]
+                                                        ]
+                                             ]
+                                  ]
+                      ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#FileName
+:FileName rdf:type owl:DatatypeProperty ;
+          rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#FilePath
+:FilePath rdf:type owl:DatatypeProperty ;
+          rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#FunctionName
+:FunctionName rdf:type owl:DatatypeProperty ;
+              rdfs:domain :Constraint ,
+                          :FormulaValue ;
+              rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#HeaderName
+:HeaderName rdf:type owl:DatatypeProperty ;
+            rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#Macro
+:Macro rdf:type owl:DatatypeProperty ;
+       rdfs:domain :Workbook ;
+       rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#MacroTitle
+:MacroTitle rdf:type owl:DatatypeProperty ;
+            rdfs:domain :Workbook ;
+            rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#Position
+:Position rdf:type owl:DatatypeProperty ;
+          rdfs:domain :Table ;
+          rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#RowID
+:RowID rdf:type owl:DatatypeProperty ;
+       rdfs:range xsd:positiveInteger .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#SheetName
+:SheetName rdf:type owl:DatatypeProperty ;
+           rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#ValueConstraint
+:ValueConstraint rdf:type owl:DatatypeProperty ;
+                 rdfs:domain :Constraint ;
+                 rdfs:range [ rdf:type rdfs:Datatype ;
+                              owl:unionOf ( xsd:integer
+                                            xsd:string
+                                          )
+                            ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#X-End
+:X-End rdf:type owl:DatatypeProperty ;
+       rdfs:domain :Table ;
+       rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#X-Start
+:X-Start rdf:type owl:DatatypeProperty ;
+         rdfs:domain :Table ;
+         rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#Y-End
+:Y-End rdf:type owl:DatatypeProperty ;
+       rdfs:domain :Table ;
+       rdfs:range [ rdf:type rdfs:Datatype ;
+                    owl:onDatatype xsd:integer ;
+                    owl:withRestrictions ( [ xsd:minExclusive 0
+                                           ]
+                                         )
+                  ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#Y-Start
+:Y-Start rdf:type owl:DatatypeProperty ;
+         rdfs:domain :Table ;
+         rdfs:range [ rdf:type rdfs:Datatype ;
+                      owl:onDatatype xsd:integer ;
+                      owl:withRestrictions ( [ xsd:minExclusive 0
+                                             ]
+                                           )
+                    ] .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#AreaChart
+:AreaChart rdf:type owl:Class ;
+           rdfs:subClassOf :Chart .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#BarChart
+:BarChart rdf:type owl:Class ;
+          rdfs:subClassOf :Chart .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#BasicElement
+:BasicElement rdf:type owl:Class ;
+              rdfs:subClassOf :SheetElement .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#BooleanValue
+:BooleanValue rdf:type owl:Class ;
+              rdfs:subClassOf :Value ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :CellValue ;
+                                owl:allValuesFrom xsd:boolean
+                              ] ;
+              owl:disjointWith :NumericValue .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#BoxAndWhiskerChart
+:BoxAndWhiskerChart rdf:type owl:Class ;
+                    rdfs:subClassOf :Chart .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#BubbleChart
+:BubbleChart rdf:type owl:Class ;
+             rdfs:subClassOf :Chart .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#Chart
+:Chart rdf:type owl:Class ;
+       rdfs:subClassOf :SheetElement ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :ChartLegend ;
+                         owl:allValuesFrom xsd:string
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :ChartTitle ;
+                         owl:allValuesFrom xsd:string
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :DataLabels ;
+                         owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                         owl:onDataRange [ rdf:type rdfs:Datatype ;
+                                           owl:intersectionOf ( [ rdf:type rdfs:Datatype ;
+                                                                  owl:unionOf ( xsd:boolean
+                                                                                xsd:integer
+                                                                                xsd:string
+                                                                              )
+                                                                ]
+                                                                [ rdf:type rdfs:Datatype ;
+                                                                  owl:unionOf ( [ rdf:type rdfs:Datatype ;
+                                                                                  owl:datatypeComplementOf [ rdf:type rdfs:Datatype ;
+                                                                                                             owl:unionOf ( xsd:boolean
+                                                                                                                           xsd:integer
+                                                                                                                         )
+                                                                                                           ]
+                                                                                ]
+                                                                                [ rdf:type rdfs:Datatype ;
+                                                                                  owl:datatypeComplementOf [ rdf:type rdfs:Datatype ;
+                                                                                                             owl:unionOf ( xsd:boolean
+                                                                                                                           xsd:string
+                                                                                                                         )
+                                                                                                           ]
+                                                                                ]
+                                                                                [ rdf:type rdfs:Datatype ;
+                                                                                  owl:datatypeComplementOf [ rdf:type rdfs:Datatype ;
+                                                                                                             owl:unionOf ( xsd:integer
+                                                                                                                           xsd:string
+                                                                                                                         )
+                                                                                                           ]
+                                                                                ]
+                                                                              )
+                                                                ]
+                                                              )
+                                         ]
+                       ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#ColumnChart
+:ColumnChart rdf:type owl:Class ;
+             rdfs:subClassOf :Chart .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#ComboChart
+:ComboChart rdf:type owl:Class ;
+            rdfs:subClassOf :Chart .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#Comments
+:Comments rdf:type owl:Class ;
+          rdfs:subClassOf :SheetElement ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :CommentsValue ;
+                            owl:allValuesFrom xsd:string
+                          ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#Constraint
+:Constraint rdf:type owl:Class ;
+            rdfs:subClassOf [ rdf:type owl:Restriction ;
+                              owl:onProperty :FunctionName ;
+                              owl:allValuesFrom xsd:string
+                            ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#DefaultTable
+:DefaultTable rdf:type owl:Class ;
+              rdfs:subClassOf :Table .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#DoughnutChart
+:DoughnutChart rdf:type owl:Class ;
+               rdfs:subClassOf :Chart .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#ErrorValue
+:ErrorValue rdf:type owl:Class ;
+            rdfs:subClassOf :Value ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :Description ;
+                              owl:allValuesFrom xsd:string
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :ErrorName ;
+                              owl:allValuesFrom xsd:string
+                            ] ;
+            owl:disjointWith :NumericValue .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#Excel
+:Excel rdf:type owl:Class ;
+       rdfs:subClassOf [ rdf:type owl:Restriction ;
+                         owl:onProperty :CompatibleTo ;
+                         owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                         owl:onClass :Workbook
+                       ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#ExcelMacro
+:ExcelMacro rdf:type owl:Class ;
+            rdfs:subClassOf [ rdf:type owl:Restriction ;
+                              owl:onProperty :Macro ;
+                              owl:allValuesFrom xsd:string
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :MacroTitle ;
+                              owl:allValuesFrom xsd:string
+                            ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#FormulaValue
+:FormulaValue rdf:type owl:Class ;
+              rdfs:subClassOf :Value ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :hasInput ;
+                                owl:allValuesFrom :cell
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :CellID ;
+                                owl:allValuesFrom xsd:string
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :FunctionName ;
+                                owl:allValuesFrom xsd:string
+                              ] ;
+              owl:disjointWith :NumericValue .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#FunnelChart
+:FunnelChart rdf:type owl:Class ;
+             rdfs:subClassOf :Chart .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#HistogrammChart
+:HistogrammChart rdf:type owl:Class ;
+                 rdfs:subClassOf :Chart .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#Icons
+:Icons rdf:type owl:Class ;
+       rdfs:subClassOf :Illustration .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#Illustration
+:Illustration rdf:type owl:Class ;
+              rdfs:subClassOf :SheetElement ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :ElementName ;
+                                owl:someValuesFrom xsd:string
+                              ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#LineChart
+:LineChart rdf:type owl:Class ;
+           rdfs:subClassOf :Chart .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#NumericFunction
+:NumericFunction rdf:type owl:Class ;
+                 rdfs:subClassOf :Constraint ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :ValueConstraint ;
+                                   owl:allValuesFrom xsd:integer
+                                 ] ;
+                 owl:disjointWith :StringFunction .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#NumericValue
+:NumericValue rdf:type owl:Class ;
+              rdfs:subClassOf :Value ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :CellValue ;
+                                owl:allValuesFrom [ rdf:type rdfs:Datatype ;
+                                                    owl:unionOf ( xsd:dateTime
+                                                                  xsd:integer
+                                                                )
+                                                  ]
+                              ] ;
+              owl:disjointWith :SparklineValue ,
+                               :StringValue .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#Pictures
+:Pictures rdf:type owl:Class ;
+          rdfs:subClassOf :Illustration .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#PieChart
+:PieChart rdf:type owl:Class ;
+          rdfs:subClassOf :Chart .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#PivotTable
+:PivotTable rdf:type owl:Class ;
+            rdfs:subClassOf :Table .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#RadarChart
+:RadarChart rdf:type owl:Class ;
+            rdfs:subClassOf :Chart .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#ScatterChart
+:ScatterChart rdf:type owl:Class ;
+              rdfs:subClassOf :Chart .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#Shapes
+:Shapes rdf:type owl:Class ;
+        rdfs:subClassOf :Illustration .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#SheetElement
+:SheetElement rdf:type owl:Class ;
+              rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                owl:onProperty :hasConstraint ;
+                                owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ;
+                                owl:onClass :Constraint
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :isPartOfWorksheet ;
+                                owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ;
+                                owl:onClass :Worksheet
+                              ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#SignatureLine
+:SignatureLine rdf:type owl:Class ;
+               rdfs:subClassOf :Text .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#SmartArt
+:SmartArt rdf:type owl:Class ;
+          rdfs:subClassOf :Illustration .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#SparklineValue
+:SparklineValue rdf:type owl:Class ;
+                rdfs:subClassOf :Value .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#StockChart
+:StockChart rdf:type owl:Class ;
+            rdfs:subClassOf :Chart .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#StringFunction
+:StringFunction rdf:type owl:Class ;
+                rdfs:subClassOf :Constraint ,
+                                [ rdf:type owl:Restriction ;
+                                  owl:onProperty :ValueConstraint ;
+                                  owl:allValuesFrom xsd:string
+                                ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#StringValue
+:StringValue rdf:type owl:Class ;
+             rdfs:subClassOf :Value ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :CellValue ;
+                               owl:allValuesFrom xsd:string
+                             ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#SunburstChart
+:SunburstChart rdf:type owl:Class ;
+               rdfs:subClassOf :Chart .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#SurfaceChart
+:SurfaceChart rdf:type owl:Class ;
+              rdfs:subClassOf :Chart .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#Table
+:Table rdf:type owl:Class ;
+       rdfs:subClassOf :SheetElement ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :hasCell ;
+                         owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                         owl:onClass :cell
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :ElementName ;
+                         owl:allValuesFrom xsd:string
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :Position ;
+                         owl:allValuesFrom xsd:string
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :X-End ;
+                         owl:allValuesFrom xsd:string
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :X-Start ;
+                         owl:allValuesFrom xsd:string
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :Y-End ;
+                         owl:allValuesFrom xsd:positiveInteger
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :Y-Start ;
+                         owl:allValuesFrom xsd:positiveInteger
+                       ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#Text
+:Text rdf:type owl:Class ;
+      rdfs:subClassOf :SheetElement ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :hasValue ;
+                        owl:allValuesFrom :StringValue
+                      ] ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :ElementName ;
+                        owl:someValuesFrom xsd:string
+                      ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#TextBox
+:TextBox rdf:type owl:Class ;
+         rdfs:subClassOf :Text .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#TreeMapChart
+:TreeMapChart rdf:type owl:Class ;
+              rdfs:subClassOf :Chart .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#Value
+:Value rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#WaterfallChart
+:WaterfallChart rdf:type owl:Class ;
+                rdfs:subClassOf :Chart .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#WordLine
+:WordLine rdf:type owl:Class ;
+          rdfs:subClassOf :Text .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#Workbook
+:Workbook rdf:type owl:Class ;
+          rdfs:subClassOf [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasWorkSheet ;
+                            owl:allValuesFrom :Worksheet
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :CompatibleTo ;
+                            owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                            owl:onClass :Excel
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasMacro ;
+                            owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ;
+                            owl:onClass :ExcelMacro
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :Extension ;
+                            owl:allValuesFrom xsd:string
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :FileName ;
+                            owl:allValuesFrom xsd:string
+                          ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#Worksheet
+:Worksheet rdf:type owl:Class ;
+           rdfs:subClassOf [ rdf:type owl:Restriction ;
+                             owl:onProperty :hasSheetElement ;
+                             owl:allValuesFrom :SheetElement
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty :isInWorkbook ;
+                             owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onClass :Workbook
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty :SheetName ;
+                             owl:allValuesFrom xsd:string
+                           ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#cell
+:cell rdf:type owl:Class ;
+      rdfs:subClassOf :BasicElement ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :hasValue ;
+                        owl:allValuesFrom [ rdf:type owl:Class ;
+                                            owl:unionOf ( :BooleanValue
+                                                          :ErrorValue
+                                                          :FormulaValue
+                                                          :NumericValue
+                                                          :SparklineValue
+                                                          :StringValue
+                                                        )
+                                          ]
+                      ] ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :hasComment ;
+                        owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ;
+                        owl:onClass :Comments
+                      ] ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :isUsedIn ;
+                        owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ;
+                        owl:onClass :FormulaValue
+                      ] ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :hasColumn ;
+                        owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                        owl:onClass :column
+                      ] ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :hasRow ;
+                        owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                        owl:onClass :row
+                      ] ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :CellID ;
+                        owl:allValuesFrom xsd:string
+                      ] ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :CellStatus ;
+                        owl:allValuesFrom xsd:string
+                      ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#column
+:column rdf:type owl:Class ;
+        rdfs:subClassOf :BasicElement ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :hasCell ;
+                          owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onClass :cell
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :ColumnID ;
+                          owl:allValuesFrom xsd:string
+                        ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#row
+:row rdf:type owl:Class ;
+     rdfs:subClassOf :BasicElement ,
+                     [ rdf:type owl:Restriction ;
+                       owl:onProperty :hasCell ;
+                       owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                       owl:onClass :cell
+                     ] ,
+                     [ rdf:type owl:Restriction ;
+                       owl:onProperty :RowID ;
+                       owl:allValuesFrom xsd:positiveInteger
+                     ] .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#3D-Models
+<http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#3D-Models> rdf:type owl:Class ;
+                                                                                    rdfs:subClassOf :Illustration .
+
+
+###  http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#Header&Footer
+<http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#Header&Footer> rdf:type owl:Class ;
+                                                                                        rdfs:subClassOf :Text .
+
+
+#################################################################
+#    General axioms
+#################################################################
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( :BasicElement
+                :Chart
+                :Comments
+                :Illustration
+                :Table
+                :Text
+              )
+] .
+
+
+[ rdf:type owl:AllDisjointClasses ;
+  owl:members ( :BooleanValue
+                :ErrorValue
+                :FormulaValue
+                :SparklineValue
+                :StringValue
+              )
+] .
+
+
+###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi
