@@ -16,6 +16,7 @@ import org.apache.jena.query.ReadWrite;
 import org.apache.jena.riot.Lang;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
+import org.apache.jena.vocabulary.RDFS;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -131,7 +132,8 @@ public class OntologyService {
      */
     private Individual addWorkbook() {
         Individual workbook = this.converter.getWorkbook().createIndividual(this.converter.getWorkbook().getURI() + "_" +
-                1);
+                this.workbook.getFileName());
+        workbook.addLiteral(RDFS.label, this.workbook.getFileName());
         workbook.addLiteral(this.converter.getExtension(), this.workbook.getExtension());
         workbook.addLiteral(this.converter.getFileName(), this.workbook.getFileName());
         if(this.workbook.getMacro()!=null) {
@@ -187,34 +189,34 @@ public class OntologyService {
         Individual val;
         switch (cell.getValue()){
             case STRING:
-                val = this.converter.getStringValue().createIndividual();
+                val = this.converter.getStringValue().createIndividual(i.getURI() + "_value" );
                 val.addLiteral(this.converter.getCellValue(), cell.getStringValue());
                 i.addProperty(this.converter.getHasValue(),val);
                 break;
             case NUMERIC:
-                val = this.converter.getNumericValue().createIndividual();
+                val = this.converter.getNumericValue().createIndividual(i.getURI() + "value");
                 val.addLiteral(this.converter.getCellValue(), cell.getNumericValue());
                 i.addProperty(this.converter.getHasValue(),val);
                 break;
             case FORMULA:
-                val = this.converter.getFormulaValue().createIndividual();
+                val = this.converter.getFormulaValue().createIndividual(i.getURI() + "value");
                 val.addLiteral(this.converter.getFunctionName(), cell.getFormulaValue().getFormulaFunction());
                 i.addProperty(this.converter.getHasValue(),val);
                 break;
             case BOOLEAN:
-                val = this.converter.getBooleanValue().createIndividual();
+                val = this.converter.getBooleanValue().createIndividual(i.getURI() + "value");
                 val.addLiteral(this.converter.getCellValue(), cell.isBooleanValue());
                 i.addProperty(this.converter.getHasValue(),val);
                 break;
             case ERROR:
-                val = this.converter.getErrorValue().createIndividual();
+                val = this.converter.getErrorValue().createIndividual(i.getURI() + "value");
                 val.addLiteral(this.converter.getErrorName(), cell.getError().getErrorName());
                 i.addProperty(this.converter.getHasValue(),val);
                 break;
         }
 
         if(cell.getComment() != null) {
-            Individual comment = this.converter.getComment().createIndividual();
+            Individual comment = this.converter.getComment().createIndividual(i.getURI() + "commment");
             comment.addLiteral(this.converter.getCommentsValue(), cell.getComment().getString().toString());
             i.addProperty(this.converter.getHasComment(), comment);
         }
@@ -236,6 +238,9 @@ public class OntologyService {
         column.addProperty(this.converter.getIsPartOfWorksheet(), worksheet);
         i.addProperty(this.converter.getHasColumn(),column);
         row.addProperty(this.converter.getHasColumn(), column);
+        worksheet.addProperty(this.converter.getHasSheetElement(), i);
+        worksheet.addProperty(this.converter.getHasSheetElement(), column);
+        worksheet.addProperty(this.converter.getHasSheetElement(), row);
     }
 
     /**
