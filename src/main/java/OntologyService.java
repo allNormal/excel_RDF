@@ -154,6 +154,7 @@ public class OntologyService {
         Individual i = this.converter.getWorksheet().createIndividual(this.converter.getWorksheet().getURI() + "_" +
                 worksheet.getSheetName());
         i.addLiteral(this.converter.getSheetName(), worksheet.getSheetName());
+        i.addLiteral(RDFS.label, worksheet.getSheetName());
         return i;
     }
 
