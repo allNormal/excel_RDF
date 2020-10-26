@@ -5,12 +5,6 @@ public class Formula {
     private String formulaInput;
 
     public Formula(String formula) {
-        /* bug
-        String[] splitFormula = formula.split("\\(",2);
-        formulaFunction = splitFormula[0];
-        formulaInput = splitFormula[1].substring(0, splitFormula[1].length()-1);
-        */
-
         this.formulaFunction = formula;
     }
 

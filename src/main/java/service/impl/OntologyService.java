@@ -19,4 +19,10 @@ public class OntologyService implements service.OntologyService {
         LOGGER.trace("Created a new Ontology for entity.excel file in ({})", filepath);
         dao.create(filepath);
     }
+
+    @Override
+    public void openGraphDb(String filepath) {
+        LOGGER.trace("Opening ontology({}) to graphDB", filepath);
+        dao.openGraphDb(filepath);
+    }
 }

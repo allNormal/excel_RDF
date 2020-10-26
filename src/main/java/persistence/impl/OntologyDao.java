@@ -49,15 +49,20 @@ public class OntologyDao implements persistence.OntologyDao {
         }
     }
 
+    @Override
+    public void openGraphDb(String filepath) {
+
+    }
+
     /**
      * add entity.excel data into the rdf-graph
      */
     private void convertExcelToOntology(){
-        System.out.println("converting 1 workbook");
+        //System.out.println("converting 1 workbook");
         Individual workbook = addWorkbook();
-        System.out.println("converting " + this.workbook.getWorksheets().size() + " worksheet");
+        //System.out.println("converting " + this.workbook.getWorksheets().size() + " worksheet");
         for(int i = 0;i<this.workbook.getWorksheets().size();i++){
-            System.out.println("worksheet " + (i+1));
+          //  System.out.println("worksheet " + (i+1));
             Individual worksheet = addWorksheet(this.workbook.getWorksheets().get(i));
             workbook.addProperty(this.converter.getHasWorksheet(), worksheet);
             worksheet.addProperty(this.converter.getIsInWorkbook(), workbook);
@@ -111,9 +116,9 @@ public class OntologyDao implements persistence.OntologyDao {
                 addText(text, worksheet, this.workbook.getWorksheets().get(i));
                 addIllustration(illustration, worksheet, this.workbook.getWorksheets().get(i));
             }
-            System.out.println("----------------------------------------------------");
         }
 
+        System.out.println("----------------------------------------------------");
     }
 
     /**
@@ -170,13 +175,14 @@ public class OntologyDao implements persistence.OntologyDao {
      * @param ws for naming purposes(not really important can be removed i think)
      */
     private void addBasicElement(List<SheetElement> cell, Individual worksheet, Worksheet ws) {
+        //System.out.println(cell.size());
         for(int i = 0;i<cell.size();i++) {
             if(cell.get(i) instanceof  Cell) {
                 addCell((Cell)cell.get(i), worksheet, ws);
             }
         }
 
-        System.out.println("converting " + cell.size() + " cells");
+        //System.out.println("converting " + cell.size() + " cells");
     }
 
     /**
@@ -201,22 +207,22 @@ public class OntologyDao implements persistence.OntologyDao {
                 i.addProperty(this.converter.getHasValue(),val);
                 break;
             case NUMERIC:
-                val = this.converter.getNumericValue().createIndividual(i.getURI() + "value");
+                val = this.converter.getNumericValue().createIndividual(i.getURI() + "_value");
                 val.addLiteral(this.converter.getCellValue(), cell.getNumericValue());
                 i.addProperty(this.converter.getHasValue(),val);
                 break;
             case FORMULA:
-                val = this.converter.getFormulaValue().createIndividual(i.getURI() + "value");
+                val = this.converter.getFormulaValue().createIndividual(i.getURI() + "_value");
                 val.addLiteral(this.converter.getFunctionName(), cell.getFormulaValue().getFormulaFunction());
                 i.addProperty(this.converter.getHasValue(),val);
                 break;
             case BOOLEAN:
-                val = this.converter.getBooleanValue().createIndividual(i.getURI() + "value");
+                val = this.converter.getBooleanValue().createIndividual(i.getURI() + "_value");
                 val.addLiteral(this.converter.getCellValue(), cell.isBooleanValue());
                 i.addProperty(this.converter.getHasValue(),val);
                 break;
             case ERROR:
-                val = this.converter.getErrorValue().createIndividual(i.getURI() + "value");
+                val = this.converter.getErrorValue().createIndividual(i.getURI() + "_value");
                 val.addLiteral(this.converter.getErrorName(), cell.getError().getErrorName());
                 i.addProperty(this.converter.getHasValue(),val);
                 break;
@@ -262,7 +268,7 @@ public class OntologyDao implements persistence.OntologyDao {
     private void addChart(List<SheetElement> chart, Individual worksheet, Worksheet ws) {
         for(int i = 0;i<chart.size(); i++) {
             if(chart.get(i) instanceof Chart) {
-                if(((Chart) chart.get(i)).getTitle() != null) {
+                if(((Chart) chart.get(i)).getTitle().toString() != null && !((Chart) chart.get(i)).getTitle().toString().isEmpty()) {
                     Individual j = this.converter.getChart().createIndividual(this.converter.getChart().getURI() +
                             "_Worksheet" + ws.getSheetName() +
                             "_" + ((Chart) chart.get(i)).getTitle().toString());
@@ -273,13 +279,13 @@ public class OntologyDao implements persistence.OntologyDao {
                 else {
                     Individual j = this.converter.getChart().createIndividual(this.converter.getChart().getURI() +
                             "_Worksheet" + ws.getSheetName() +
-                            "_" + "Chart" + i+1);
+                            "_" + "Chart" + (i+1));
                     j.addProperty(this.converter.getIsPartOfWorksheet(), worksheet);
                     j.addLiteral(RDFS.label, "Chart" + i+1);
                 }
             }
         }
-        System.out.println("converting " + chart.size() + " chart");
+        //System.out.println("converting " + chart.size() + " chart");
     }
 
     /**
@@ -300,7 +306,7 @@ public class OntologyDao implements persistence.OntologyDao {
             }
         }
 
-        System.out.println("converting " + table.size() + " table");
+        //System.out.println("converting " + table.size() + " table");
 
     }
 
@@ -340,7 +346,7 @@ public class OntologyDao implements persistence.OntologyDao {
                 i.addProperty(this.converter.getIsPartOfWorksheet(), worksheet);
             }
         }
-        System.out.println("converting " + text.size() + " text");
+        //System.out.println("converting " + text.size() + " text");
     }
 
     /**
@@ -357,7 +363,7 @@ public class OntologyDao implements persistence.OntologyDao {
             i.addLiteral(RDFS.label, illustrations.get(j).title() + (j+1));
             i.addProperty(this.converter.getIsPartOfWorksheet(), worksheet);
         }
-        System.out.println("converting " + illustrations.size() +  " illustrations");
+        //System.out.println("converting " + illustrations.size() +  " illustrations");
     }
 
 }

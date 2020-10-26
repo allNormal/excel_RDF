@@ -77,7 +77,6 @@ public class readExcel {
         try {
             VBAMacroReader macroReader = new VBAMacroReader(file);
             if(macroReader != null) {
-                System.out.println("im in macro");
                 Macro m = new Macro(macroReader.toString());
                 macroReader.close();
                 this.workbook.setMacro(m);
@@ -262,8 +261,8 @@ public class readExcel {
             if(temp <= 25){
                 check = true;
             }
-            int calc = temp % 25;
-            temp = temp/25;
+            int calc = temp % 26;
+            temp = temp/26;
 
             char character = (char) (min + calc);
             result = result + character;

@@ -4,12 +4,8 @@ import org.apache.jena.ontology.DatatypeProperty;
 import org.apache.jena.ontology.ObjectProperty;
 import org.apache.jena.ontology.OntClass;
 import org.apache.jena.ontology.OntModel;
-import org.apache.jena.query.Dataset;
-import org.apache.jena.query.ReadWrite;
-import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.tdb.StoreConnection;
-import org.apache.jena.tdb.TDBFactory;
+import org.apache.jena.vocabulary.RDFS;
 
 import static org.apache.jena.ontology.OntModelSpec.*;
 
