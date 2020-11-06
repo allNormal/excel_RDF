@@ -14,7 +14,7 @@ import static org.apache.jena.ontology.OntModelSpec.*;
 public class OntologyConverter {
     private OntModel model;
 
-    private final String NS = "http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#";
+    private final String NS = "http://www.semanticweb.org/GregorKaefer/ontologies/2020/8/excelOntology#";
     private String MODEL_NAME;
 
     private OntClass workbook;
@@ -76,6 +76,7 @@ public class OntologyConverter {
 
     public OntologyConverter(String modelName) {
         this.MODEL_NAME = modelName;
+        System.out.println("initializing");
         initializeTemplateModel();
 
     }

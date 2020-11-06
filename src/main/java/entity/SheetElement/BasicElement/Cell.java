@@ -67,8 +67,8 @@ public class Cell extends BasicElement {
         }
     }
 
-    public void setFormulaValue(String value){
-        this.formulaValue = new Formula(value);
+    public void setFormulaValue(Formula formula){
+        this.formulaValue = formula;
     }
 
     public void SetErrorValue(String value){

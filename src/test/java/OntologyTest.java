@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class OntologyTest {
 
-    private final String NS = "http://www.semanticweb.org/43676/ontologies/2020/8/untitled-ontology-18#";
+    private final String NS = "http://www.semanticweb.org/GregorKaefer/ontologies/2020/8/excelOntology#";
     private OntModel[] ontModels = new OntModel[4];
 
     @BeforeAll

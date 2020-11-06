@@ -141,6 +141,8 @@ public class OntologyDao implements persistence.OntologyDao {
      * @return workbook instance.
      */
     private Individual addWorkbook() {
+        System.out.println("im here");
+        System.out.println(this.converter.getWorkbook().getURI());
         Individual workbook = this.converter.getWorkbook().createIndividual(this.converter.getWorkbook().getURI() + "_" +
                 this.workbook.getFileName());
         workbook.addLiteral(RDFS.label, this.workbook.getFileName());
@@ -196,33 +198,55 @@ public class OntologyDao implements persistence.OntologyDao {
         Individual i = this.converter.getCell().createIndividual(this.converter.getCell().getURI() +
                 "_Worksheet" + ws.getSheetName() +
                 "_" + cell.getCellId());
-        i.addLiteral(RDFS.label, cell.getCellId());
+        i.addLiteral(RDFS.label, "Cell_"+cell.getCellId());
         i.addLiteral(this.converter.getCellID(), cell.getCellId());
         i.addProperty(this.converter.getIsPartOfWorksheet(), worksheet);
         Individual val;
         switch (cell.getValue()){
             case STRING:
                 val = this.converter.getStringValue().createIndividual(i.getURI() + "_value" );
+                val.addLiteral(RDFS.label, "StringValue");
                 val.addLiteral(this.converter.getCellValue(), cell.getStringValue());
                 i.addProperty(this.converter.getHasValue(),val);
                 break;
             case NUMERIC:
                 val = this.converter.getNumericValue().createIndividual(i.getURI() + "_value");
+                val.addLiteral(RDFS.label, "NumericValue");
                 val.addLiteral(this.converter.getCellValue(), cell.getNumericValue());
                 i.addProperty(this.converter.getHasValue(),val);
                 break;
             case FORMULA:
                 val = this.converter.getFormulaValue().createIndividual(i.getURI() + "_value");
+                val.addLiteral(RDFS.label, "FormulaValue");
                 val.addLiteral(this.converter.getFunctionName(), cell.getFormulaValue().getFormulaFunction());
+                /**
+                 * add value into formula
+                 */
+                switch(cell.getFormulaValue().getValue()) {
+                    case BOOLEAN:
+                        val.addLiteral(this.converter.getCellValue(), cell.getFormulaValue().getBooleanValue());
+                        break;
+                    case STRING:
+                        val.addLiteral(this.converter.getCellValue(), cell.getFormulaValue().getStringValue());
+                        break;
+                    case NUMERIC:
+                        val.addLiteral(this.converter.getCellValue(), cell.getFormulaValue().getNumericValue());
+                        break;
+                    case ERROR:
+                        val.addLiteral(this.converter.getCellValue(), "ERROR");
+                        break;
+                }
                 i.addProperty(this.converter.getHasValue(),val);
                 break;
             case BOOLEAN:
                 val = this.converter.getBooleanValue().createIndividual(i.getURI() + "_value");
+                val.addLiteral(RDFS.label, "BooleanValue");
                 val.addLiteral(this.converter.getCellValue(), cell.isBooleanValue());
                 i.addProperty(this.converter.getHasValue(),val);
                 break;
             case ERROR:
                 val = this.converter.getErrorValue().createIndividual(i.getURI() + "_value");
+                val.addLiteral(RDFS.label, "ErrorValue");
                 val.addLiteral(this.converter.getErrorName(), cell.getError().getErrorName());
                 i.addProperty(this.converter.getHasValue(),val);
                 break;
@@ -231,14 +255,14 @@ public class OntologyDao implements persistence.OntologyDao {
         if(cell.getComment() != null) {
             Individual comment = this.converter.getComment().createIndividual(i.getURI() + "comment");
             comment.addLiteral(this.converter.getCommentsValue(), cell.getComment().getString().toString());
+            comment.addLiteral(RDFS.label, cell.getCellId() + "-Comment");
             i.addProperty(this.converter.getHasComment(), comment);
-            i.addLiteral(RDFS.label, cell.getCellId() + "-Comment");
         }
 
         Individual row = this.converter.getRow().createIndividual( this.converter.getRow().getURI() +
                 "_Worksheet" + ws.getSheetName() +
-                "_" + Integer.toString(cell.getRow()));
-        row.addLiteral(RDFS.label, cell.getRow());
+                "_" + cell.getRow());
+        row.addLiteral(RDFS.label, "Row_"+cell.getRow());
         row.addLiteral(this.converter.getRowID(), cell.getRow());
         row.addProperty(this.converter.getHasCell(), i);
         row.addProperty(this.converter.getIsPartOfWorksheet(), worksheet);
@@ -247,7 +271,7 @@ public class OntologyDao implements persistence.OntologyDao {
         Individual column = this.converter.getColumn().createIndividual(this.converter.getColumn().getURI() +
                 "_Worksheet" + ws.getSheetName() +
                 "_" + cell.getColumn());
-        column.addLiteral(RDFS.label, cell.getColumn());
+        column.addLiteral(RDFS.label, "Column_"+cell.getColumn());
         column.addLiteral(this.converter.getColumnID(),cell.getColumn());
         column.addProperty(this.converter.getHasCell(),i);
         column.addProperty(this.converter.getHasRow(), row);
@@ -326,6 +350,8 @@ public class OntologyDao implements persistence.OntologyDao {
                     "_Worksheet" + ws.getSheetName() +
                     "_" + table.getCell().get(i).getCellId());
             Table.addProperty(this.converter.getHasCell(), cell);
+            worksheet.removeProperty(this.converter.getHasSheetElement(),cell);
+            cell.removeProperty(this.converter.getIsPartOfWorksheet(), worksheet);
         }
     }
 

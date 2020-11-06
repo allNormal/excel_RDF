@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import entity.SheetElement.BasicElement.Column;
 import entity.SheetElement.Charts.Chart;
@@ -12,6 +13,7 @@ import entity.SheetElement.Illustrations.Illustrations;
 import entity.SheetElement.SheetElement;
 import entity.SheetElement.Tables.Table;
 import entity.SheetElement.Texts.Text;
+import entity.ValueType.Formula;
 import entity.ValueType.Value;
 import entity.Workbook.Macro;
 import entity.Workbook.Workbook;
@@ -211,7 +213,26 @@ public class readExcel {
                         break;
                     case FORMULA:
                         cell1.setValue(Value.FORMULA);
-                        cell1.setFormulaValue(cell.getCellFormula());
+                        //splitFormula(cell.getCellFormula());
+                        Formula formula = new Formula(cell.getCellFormula());
+                        switch (cell.getCachedFormulaResultType()){
+                            case BOOLEAN:
+                                formula.setBooleanValue(cell.getBooleanCellValue());
+                                formula.setValue(Value.BOOLEAN);
+                                break;
+                            case STRING:
+                                formula.setStringValue(cell.getStringCellValue());
+                                formula.setValue(Value.STRING);
+                                break;
+                            case NUMERIC:
+                                formula.setNumericValue((float)cell.getNumericCellValue());
+                                formula.setValue(Value.NUMERIC);
+                                break;
+                            case ERROR:
+                                formula.setErrorValue(cell.getErrorCellValue());
+                                formula.setValue(Value.ERROR);
+                        }
+                        cell1.setFormulaValue(formula);
                         break;
                     case NUMERIC:
                         cell1.setValue(Value.NUMERIC);
@@ -244,6 +265,24 @@ public class readExcel {
             colTemp.add(temp.getValue());
         }
         worksheet.addElement(COLUMN, colTemp);
+    }
+
+    private String[] splitFormula(String formula) {
+        String patternFormula1 = "\\w*\\(\\w*\\W\\w*\\)";
+        String patternFormula2 = "\\w*\\(\\w*\\)";
+        String patternFormula3 = "\\b\\w*\\[+-*/]";
+
+
+        if(Pattern.matches(patternFormula1, formula)) {
+            System.out.println(formula);
+        }
+        else if(Pattern.matches(patternFormula2, formula)) {
+            System.out.println(formula);
+        }
+        else if(Pattern.matches(patternFormula3, formula)) {
+            System.out.println(formula);
+        }
+        return null;
     }
 
     /**

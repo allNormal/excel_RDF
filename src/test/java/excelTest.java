@@ -18,7 +18,6 @@ import static entity.SheetElement.ElementType.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-
 public class excelTest {
 
     private final readExcel[] readExcel = new readExcel[4];
