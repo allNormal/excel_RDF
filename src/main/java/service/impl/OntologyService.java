@@ -20,9 +20,4 @@ public class OntologyService implements service.OntologyService {
         dao.create(filepath);
     }
 
-    @Override
-    public void openGraphDb(String filepath) {
-        LOGGER.trace("Opening ontology({}) to graphDB", filepath);
-        dao.openGraphDb(filepath);
-    }
 }

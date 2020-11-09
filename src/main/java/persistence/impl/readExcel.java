@@ -625,22 +625,21 @@ public class readExcel {
 
             for(int i = 0; i<tables.size(); i++) {
                 XSSFTable t = tables.get(i);
-                Table table = new Table(worksheet, convertColumn(Integer.toString(t.getEndColIndex())),
-                        convertColumn(Integer.toString(t.getStartColIndex())),
-                        Integer.toString(t.getStartRowIndex()+1), Integer.toString(t.getEndRowIndex()+1), t.getName());
+                String colStart = convertColumn(Integer.toString(t.getStartColIndex()));
+                String colEnd = convertColumn(Integer.toString(t.getEndColIndex()));
+                String rowStart = Integer.toString(t.getStartRowIndex()+1);
+                String rowEnd = Integer.toString(t.getEndRowIndex()+1);
+                Table table = new Table(worksheet, colEnd, colStart, rowStart, rowEnd, t.getName());
                 List<SheetElement> cell = worksheet.getSheets().get(CELL);
-                for(int j = 0;j<cell.size();j++) {
-                    if(cell.get(j) instanceof entity.SheetElement.BasicElement.Cell) {
-                        if((((entity.SheetElement.BasicElement.Cell) cell.get(j)).getColumn().charAt(0) >= convertColumn(Integer.toString(t.getStartColIndex())).charAt(0)
-                        && ((entity.SheetElement.BasicElement.Cell) cell.get(j)).getColumn().charAt(0) <= convertColumn(Integer.toString(t.getEndColIndex())).charAt(0))
-                        && (((entity.SheetElement.BasicElement.Cell) cell.get(j)).getRow() >= t.getStartRowIndex()+1
-                        && ((entity.SheetElement.BasicElement.Cell) cell.get(j)).getRow() <= t.getEndRowIndex()+1)) {
-                            table.addCell((entity.SheetElement.BasicElement.Cell)cell.get(j));
-                        }
-                        else if(((entity.SheetElement.BasicElement.Cell) cell.get(j)).getColumn().charAt(0) >
-                        convertColumn(Integer.toString(t.getEndColIndex())).charAt(0)){
-                            break;
-                        }
+                List<String> temp= cellToCell(colStart + rowStart + ":" + colEnd + rowEnd);
+                for(int l = 0; l<temp.size(); l++) {
+                    String str = temp.get(l);
+                    entity.SheetElement.BasicElement.Cell cell1 = (entity.SheetElement.BasicElement.Cell)cell.stream()
+                            .filter(x -> str.equals(x.title()))
+                            .findAny()
+                            .orElse(null);
+                    if(cell1 != null) {
+                        table.addCell(cell1);
                     }
                 }
                 sheetElements.add(table);

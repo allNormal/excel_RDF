@@ -49,9 +49,14 @@ public class OntologyDao implements persistence.OntologyDao {
         }
     }
 
-    @Override
-    public void openGraphDb(String filepath) {
-
+    private void createRepoGraphDB(String filePath) {
+        FileOutputStream out = null;
+        File myFile = new File(filePath);
+        try {
+            out = new FileOutputStream("./OntologyOut/" + myFile.getName()+".ttl");
+        } catch (IOException e) {
+            System.out.println(e);
+        }
     }
 
     /**
@@ -117,8 +122,6 @@ public class OntologyDao implements persistence.OntologyDao {
                 addIllustration(illustration, worksheet, this.workbook.getWorksheets().get(i));
             }
         }
-
-        System.out.println("----------------------------------------------------");
     }
 
 
@@ -142,8 +145,6 @@ public class OntologyDao implements persistence.OntologyDao {
      * @return workbook instance.
      */
     private Individual addWorkbook() {
-        System.out.println("im here");
-        System.out.println(this.converter.getWorkbook().getURI());
         Individual workbook = this.converter.getWorkbook().createIndividual(this.converter.getWorkbook().getURI() + "_" +
                 this.workbook.getFileName());
         workbook.addLiteral(RDFS.label, this.workbook.getFileName());

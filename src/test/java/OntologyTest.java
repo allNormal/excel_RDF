@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.runner.RunWith;
 import persistence.impl.OntologyDao;
 import service.impl.OntologyService;
 
@@ -52,7 +53,7 @@ public class OntologyTest {
         OntClass cell;
         OntClass worksheet;
         DatatypeProperty isPartOfWorksheet;
-        int[] expected = {74, 8762, 416, 0};
+        int[] expected = {74, 8426, 416, 0};
         int[] actual = new int[expected.length];
         int count = 0;
 
