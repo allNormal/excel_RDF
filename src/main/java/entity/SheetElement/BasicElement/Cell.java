@@ -54,6 +54,8 @@ public class Cell extends BasicElement {
         }
     }
 
+
+
     public void setBooleanValue(boolean value){
         try{
             if(this.value == Value.BOOLEAN){

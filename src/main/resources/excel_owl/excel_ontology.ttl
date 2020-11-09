@@ -22,8 +22,10 @@
 :hasCell rdf:type owl:ObjectProperty ;
          rdfs:subPropertyOf owl:topObjectProperty ;
          owl:inverseOf :hasColumn ,
-                       :hasRow ;
-         rdfs:domain :Table ,
+                       :hasRow ,
+                       :isUsedIn ;
+         rdfs:domain :FormulaValue ,
+                     :Table ,
                      :column ,
                      :row ;
          rdfs:range :cell .
@@ -543,6 +545,11 @@
                               [ rdf:type owl:Restriction ;
                                 owl:onProperty :hasInput ;
                                 owl:allValuesFrom :cell
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :hasCell ;
+                                owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ;
+                                owl:onClass :cell
                               ] ,
                               [ rdf:type owl:Restriction ;
                                 owl:onProperty :CellID ;

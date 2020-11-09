@@ -1,16 +1,30 @@
 package entity.ValueType;
 
 
+import entity.SheetElement.BasicElement.Cell;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Formula {
     private String formulaFunction;
     private String stringValue;
     private Boolean booleanValue;
+    private List<Cell> cellDependency = new ArrayList<>();
     private Byte errorValue;
     private float numericValue;
     private Value value;
 
     public Formula(String formula) {
         this.formulaFunction = formula;
+    }
+
+    public void add(Cell cell) {
+        cellDependency.add(cell);
+    }
+
+    public List<Cell> getCellDependency() {
+        return cellDependency;
     }
 
     public String getFormulaFunction() {

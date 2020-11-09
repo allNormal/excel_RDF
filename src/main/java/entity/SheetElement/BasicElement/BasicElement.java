@@ -10,6 +10,7 @@ public class BasicElement extends SheetElement {
 
     public BasicElement(Worksheet worksheet, String title){
         super(worksheet);
+        this.title = title;
     }
 
     public String title() {

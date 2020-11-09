@@ -121,11 +121,12 @@ public class OntologyDao implements persistence.OntologyDao {
         System.out.println("----------------------------------------------------");
     }
 
+
     /**
      * save model into file with turtle format
      * @param filePath file model that want to be converted into file
      */
-    public void saveModel(String filePath) {
+    private void saveModel(String filePath) {
         FileOutputStream out = null;
         File myFile = new File(filePath);
         try {
@@ -236,6 +237,13 @@ public class OntologyDao implements persistence.OntologyDao {
                         val.addLiteral(this.converter.getCellValue(), "ERROR");
                         break;
                 }
+                for(int k = 0; k<cell.getFormulaValue().getCellDependency().size(); k++) {
+                    Individual temp = this.converter.getCell().createIndividual(this.converter.getCell().getURI() +
+                            "_Worksheet" + cell.getFormulaValue().getCellDependency().get(k).getWorksheet().getSheetName() +
+                            "_" + cell.getFormulaValue().getCellDependency().get(k).getCellId());
+                    val.addProperty(this.converter.getHasCell(), temp);
+                    temp.addProperty(this.converter.getIsUsedIn(), val);
+                }
                 i.addProperty(this.converter.getHasValue(),val);
                 break;
             case BOOLEAN:
@@ -292,20 +300,27 @@ public class OntologyDao implements persistence.OntologyDao {
     private void addChart(List<SheetElement> chart, Individual worksheet, Worksheet ws) {
         for(int i = 0;i<chart.size(); i++) {
             if(chart.get(i) instanceof Chart) {
-                if(((Chart) chart.get(i)).getTitle().toString() != null && !((Chart) chart.get(i)).getTitle().toString().isEmpty()) {
+                if(((Chart) chart.get(i)).getTitle() == null) {
+                    Individual j = this.converter.getChart().createIndividual(this.converter.getChart().getURI() +
+                            "_Worksheet" + ws.getSheetName() +
+                            "_" + "Chart" + (i+1));
+                    j.addProperty(this.converter.getIsPartOfWorksheet(), worksheet);
+                    j.addLiteral(RDFS.label, "Chart" + i+1);
+                }
+                else if(((Chart) chart.get(i)).getTitle().toString().isEmpty()) {
+                    Individual j = this.converter.getChart().createIndividual(this.converter.getChart().getURI() +
+                            "_Worksheet" + ws.getSheetName() +
+                            "_" + "Chart" + (i+1));
+                    j.addProperty(this.converter.getIsPartOfWorksheet(), worksheet);
+                    j.addLiteral(RDFS.label, "Chart" + i+1);
+                }
+                else {
                     Individual j = this.converter.getChart().createIndividual(this.converter.getChart().getURI() +
                             "_Worksheet" + ws.getSheetName() +
                             "_" + ((Chart) chart.get(i)).getTitle().toString());
                     j.addLiteral(this.converter.getChartTitle(), ((Chart) chart.get(i)).getTitle().toString());
                     j.addProperty(this.converter.getIsPartOfWorksheet(), worksheet);
                     j.addLiteral(RDFS.label, ((Chart) chart.get(i)).getTitle().toString());
-                }
-                else {
-                    Individual j = this.converter.getChart().createIndividual(this.converter.getChart().getURI() +
-                            "_Worksheet" + ws.getSheetName() +
-                            "_" + "Chart" + (i+1));
-                    j.addProperty(this.converter.getIsPartOfWorksheet(), worksheet);
-                    j.addLiteral(RDFS.label, "Chart" + i+1);
                 }
             }
         }

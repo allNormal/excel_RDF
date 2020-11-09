@@ -37,8 +37,8 @@ public class readExcel {
     }
 
     /**
-     * convert entity.excel into Workbook Object.
-     * @param file entity.excel file
+     * convert excel file into Workbook Object.
+     * @param file excel file
      * @throws IOException if file not found.
      */
     private void readExcelConverter(File file) throws IOException {
@@ -213,7 +213,6 @@ public class readExcel {
                         break;
                     case FORMULA:
                         cell1.setValue(Value.FORMULA);
-                        //splitFormula(cell.getCellFormula());
                         Formula formula = new Formula(cell.getCellFormula());
                         switch (cell.getCachedFormulaResultType()){
                             case BOOLEAN:
@@ -260,6 +259,7 @@ public class readExcel {
 
         worksheet.addElement(ROW, rowTemp);
         worksheet.addElement(CELL, cellTemp);
+        formulaCellDependencyCheck(cellTemp);
         List<SheetElement> colTemp = new ArrayList<>();
         for(Map.Entry<String, Column> temp : columnTemp.entrySet()) {
             colTemp.add(temp.getValue());
@@ -267,22 +267,318 @@ public class readExcel {
         worksheet.addElement(COLUMN, colTemp);
     }
 
-    private String[] splitFormula(String formula) {
-        String patternFormula1 = "\\w*\\(\\w*\\W\\w*\\)";
-        String patternFormula2 = "\\w*\\(\\w*\\)";
-        String patternFormula3 = "\\b\\w*\\[+-*/]";
+    /**
+     * add cell dependency to cell that have Formula value.
+     * @param cell list of cell.
+     */
+    private void formulaCellDependencyCheck(List<SheetElement> cell){
+        for(int i = 0; i<cell.size(); i++){
+            entity.SheetElement.BasicElement.Cell cell1 = (entity.SheetElement.BasicElement.Cell)cell.get(i);
+            if(cell1.getValue() == Value.FORMULA) {
+                addFormulaCellDependency(cell1.getFormulaValue().getFormulaFunction(), cell, cell1);
+            }
+        }
+    }
 
+    /**
+     * save all the cellid in form of Cell:Cell in a string of list
+     * example = C1 : C4 = C1,C2,C3,C4
+     * @param text cell to cell that wanted to be converted
+     * @return list of cell id
+     */
+    public List<String> cellToCell(String text) {
+        List<String> result = new ArrayList<>();
+        String[] temp = text.split(":");
+        String fromColumn = temp[0].replaceAll("\\d","");
+        String toColumn = temp[1].replaceAll("\\d", "");
+        int fromRow = Integer.parseInt(temp[0].replaceAll("[a-zA-Z]*", ""));
+        int tempRow = fromRow;
+        int toRow = Integer.parseInt(temp[1].replaceAll("[a-zA-Z]*", ""));
+        int Aascii = 65;
+        result.add(fromColumn+fromRow);
+        while(fromRow < toRow || !fromColumn.equals(toColumn)) {
+            if(fromRow == toRow) {
+                if(fromColumn.equals(toColumn)) {
+                    break;
+                }
+                else {
+                    fromRow = tempRow;
+                    if(fromColumn.length() == 1) {
+                        if(fromColumn.charAt(0) != 'Z') {
+                            fromColumn = ""+(char)(fromColumn.charAt(0)+1);
+                        }
+                        else {
+                            fromColumn = ""+(char)(Aascii) + (char)(Aascii);
+                        }
+                    }
+                    else {
+                        if(fromColumn.charAt(1) != 'Z') {
+                            fromColumn = ""+ fromColumn.charAt(0)+(char)(fromColumn.charAt(1)+1);
+                        }
+                        else {
+                            if(fromColumn.charAt(0) == 'Z') {
+                                throw new IndexOutOfBoundsException("too many columns");
+                            }
+                            fromColumn = "" + (char)(fromColumn.charAt(0)+1) + (char)(Aascii);
+                        }
+                    }
+                }
+            }
+            else {
+                fromRow++;
+            }
+            result.add(fromColumn+fromRow);
+        }
+        return result;
+    }
 
-        if(Pattern.matches(patternFormula1, formula)) {
-            System.out.println(formula);
+    /**
+     * get if formula dependency, so it can be more specific.
+     * @param formula formula function
+     * @param cellList list of cells
+     * @param cell cell to add formula dependency
+     */
+    public void ifFormulaDependency(String formula, List<SheetElement> cellList, entity.SheetElement.BasicElement.Cell cell) {
+        formula = formula.replaceAll("\\s*","");
+        String regex = "\\(|\\)|\\+|,|-|\\*|/|;";
+        String patternCell = "[a-zA-Z]+\\d+";
+        String patternCellToCell = patternCell + ":" + patternCell;
+        String patternCellFromOtherSheet = "'*[a-zA-Z]+\\d*'*![a-zA-Z]+\\d+\\s*";
+        String patternCellToCellFromOtherSheet = patternCellFromOtherSheet + ":" + patternCellFromOtherSheet;
+        String pattern1 = patternCell + "[>|<|>=|<=|==]{1}" +  patternCell;
+        String pattern2 = patternCellFromOtherSheet + "[>|<|>=|<=|==]{1}" +  patternCell;
+        String pattern3 = patternCellFromOtherSheet + "[>|<|>=|<=|==]{1}" + patternCellFromOtherSheet;
+        String pattern4 = patternCell + "[>|<|>=|<=|==]{1}" + patternCellFromOtherSheet;
+        String[] temp = formula.split(regex);
+        boolean isTrue = false;
+        int switcher = 0;
+        for(int i = 0; i<temp.length; i++) {
+            if(switcher == 0 && (temp[i].matches(patternCell) || temp[i].matches(patternCellFromOtherSheet) ||
+                    temp[i].matches(patternCellToCellFromOtherSheet) || temp[i].matches(patternCellToCell))) {
+                addFormulaCellDependency(temp[i], cellList, cell);
+            }
+            else if(switcher == 1 && (temp[i].matches(patternCell) || temp[i].matches(patternCellFromOtherSheet) ||
+                    temp[i].matches(patternCellToCellFromOtherSheet) || temp[i].matches(patternCellToCell))) {
+                if(isTrue == true) {
+                    addFormulaCellDependency(temp[i], cellList, cell);
+                    break;
+                } else {
+                    isTrue = true;
+                }
+            }
+            if(temp[i].matches(pattern1) || temp[i].matches(pattern2) || temp[i].matches(pattern3) || temp[i].matches(pattern4)){
+                String[] splitCell = temp[i].split("[>|<|>=|<=|==]{1}");
+                entity.SheetElement.BasicElement.Cell cell1 = (entity.SheetElement.BasicElement.Cell)cellList.stream()
+                        .filter(x -> splitCell[0].equals(x.title()))
+                        .findAny()
+                        .orElse(null);
+                entity.SheetElement.BasicElement.Cell cell2 = (entity.SheetElement.BasicElement.Cell)cellList.stream()
+                        .filter(x -> splitCell[1].equals(x.title()))
+                        .findAny()
+                        .orElse(null);
+                if(cell1 != null && cell2 != null) {
+                    if(cell1.getValue() != cell2.getValue()) {
+                        return;
+                    }
+                    else {
+                        if(temp[i].contains(">=")) {
+                            isTrue = compare2Cell(cell1, cell2, ">=");
+                        } else if(temp[i].contains(">")) {
+                            isTrue = compare2Cell(cell1, cell2, ">");
+                        } else if(temp[i].contains("<=")) {
+                            isTrue = compare2Cell(cell1, cell2, "<=");
+                        } else if(temp[i].contains("<")) {
+                            isTrue = compare2Cell(cell1, cell2, "<");
+                        } else if(temp[i].contains("==")) {
+                            isTrue = compare2Cell(cell1, cell2, "==");
+                        } else {
+                            isTrue = compare2Cell(cell1, cell2, "<>");
+                        }
+                        switcher = 1;
+                    }
+
+                }
+            }
         }
-        else if(Pattern.matches(patternFormula2, formula)) {
-            System.out.println(formula);
+    }
+
+    private boolean compare2Cell(entity.SheetElement.BasicElement.Cell cell1, entity.SheetElement.BasicElement.Cell cell2, String operator) {
+        switch (cell1.getValue()) {
+            case BOOLEAN:
+                if(operator.equals("==")) {
+                    if(cell1.isBooleanValue() == cell2.isBooleanValue()) return true;
+                    else return false;
+                }
+                else {
+                    if(cell1.isBooleanValue() != cell2.isBooleanValue()) return true;
+                    else return false;
+                }
+            case NUMERIC :
+                if(operator.equals("==")) {
+                    if(cell1.getNumericValue() == cell2.getNumericValue()) return true;
+                    else return false;
+                } else if(operator.equals("<>")) {
+                    if(cell1.getNumericValue() != cell2.getNumericValue()) return true;
+                    else return false;
+                } else if(operator.equals(">=")) {
+                    if(cell1.getNumericValue() >= cell2.getNumericValue()) return true;
+                    else return false;
+                } else if(operator.equals(">")) {
+                    System.out.println(cell1.getNumericValue() + " " + cell2.getNumericValue());
+                    if(cell1.getNumericValue() > cell2.getNumericValue()) return true;
+                    else return false;
+                } else if(operator.equals("<=")) {
+                if(cell1.getNumericValue() <= cell2.getNumericValue()) return true;
+                else return false;
+                } else if(operator.equals("<")) {
+                    if(cell1.getNumericValue() < cell2.getNumericValue()) return true;
+                    else return false;
+                }
+            case STRING:
+                if(operator.equals("==")) {
+                    if(cell1.getStringValue() == cell2.getStringValue()) return true;
+                    else return false;
+                } else if(operator.equals("<>")) {
+                    if(cell1.getStringValue() != cell2.getStringValue()) return true;
+                    else return false;
+                }
+            case FORMULA:
+                switch (cell1.getFormulaValue().getValue()){
+                    case BOOLEAN:
+                        if(operator.equals("==")) {
+                            if(cell1.getFormulaValue().getBooleanValue() == cell2.getFormulaValue().getBooleanValue()) return true;
+                            else return false;
+                        }
+                        else {
+                            if(cell1.getFormulaValue().getBooleanValue() != cell2.getFormulaValue().getBooleanValue()) return true;
+                            else return false;
+                        }
+                    case NUMERIC :
+                        if(operator.equals("==")) {
+                            if(cell1.getFormulaValue().getNumericValue() == cell2.getFormulaValue().getNumericValue()) return true;
+                            else return false;
+                        } else if(operator.equals("<>")) {
+                            if(cell1.getFormulaValue().getNumericValue() != cell2.getFormulaValue().getNumericValue()) return true;
+                            else return false;
+                        } else if(operator.equals(">=")) {
+                            if(cell1.getFormulaValue().getNumericValue() >= cell2.getFormulaValue().getNumericValue()) return true;
+                            else return false;
+                        } else if(operator.equals(">")) {
+                            if(cell1.getFormulaValue().getNumericValue() > cell2.getFormulaValue().getNumericValue()) return true;
+                            else return false;
+                        } else if(operator.equals("<=")) {
+                            if(cell1.getFormulaValue().getNumericValue() <= cell2.getFormulaValue().getNumericValue()) return true;
+                            else return false;
+                        } else if(operator.equals("<")) {
+                            if(cell1.getFormulaValue().getNumericValue() < cell2.getFormulaValue().getNumericValue()) return true;
+                            else return false;
+                        }
+                    case STRING:
+                        if(operator.equals("==")) {
+                            if(cell1.getFormulaValue().getStringValue() == cell2.getFormulaValue().getStringValue()) return true;
+                            else return false;
+                        } else if(operator.equals("<>")) {
+                            if(cell1.getFormulaValue().getStringValue() != cell2.getFormulaValue().getStringValue()) return true;
+                            else return false;
+                        }
+                }
         }
-        else if(Pattern.matches(patternFormula3, formula)) {
-            System.out.println(formula);
+        return false;
+    }
+
+    /**
+     * use regex to detect Cell and Worksheet in a formula
+     * @param formula formula function of a cell
+     * @param cellList list of cell
+     * @param cell cell that have a Formula value.
+     */
+    private void addFormulaCellDependency(String formula, List<SheetElement> cellList, entity.SheetElement.BasicElement.Cell cell) {
+        String patternCell = "[a-zA-Z]+\\d+";
+        String patternCellToCell = patternCell + ":" + patternCell;
+        String patternCellFromOtherSheet = "'*[a-zA-Z]+\\d*'*![a-zA-Z]+\\d+\\s*";
+        String patternCellToCellFromOtherSheet = patternCellFromOtherSheet + ":" + patternCellFromOtherSheet;
+        String regex = "\\(|\\)|,|\\+|-|\\*|/|;";
+        String[] temp = formula.split(regex);
+        if(formula.contains("IF") || formula.contains("if")) {
+            ifFormulaDependency(formula.replaceFirst("IF|if", ""), cellList, cell);
+            return;
         }
-        return null;
+        for(int i = 0;i<temp.length; i++) {
+            if(temp[i].matches(patternCell)){
+                String check = temp[i];
+                entity.SheetElement.BasicElement.Cell cell1 = (entity.SheetElement.BasicElement.Cell)cellList.stream()
+                        .filter(cellCheck -> check.equals(cellCheck.title()))
+                        .findAny()
+                        .orElse(null);
+                if(cell1 == null) continue;
+                else{
+                    Formula formula1 = cell.getFormulaValue();
+                    formula1.add(cell1);
+                }
+            }
+            else if(temp[i].matches(patternCellFromOtherSheet)) {
+                String[] worksheetCellSplit = temp[i].split("!");
+                List<Worksheet> worksheets = this.workbook.getWorksheets();
+                Worksheet worksheet = worksheets.stream()
+                        .filter(worksheet1 -> worksheetCellSplit[0].equals(worksheet1.getSheetName()))
+                        .findAny()
+                        .orElse(null);
+
+                if(worksheet!= null){
+                    List<SheetElement> cells = worksheet.getSheets().getOrDefault(CELL, null);
+                    if(cells != null) {
+                        entity.SheetElement.BasicElement.Cell cell1 = (entity.SheetElement.BasicElement.Cell)cells.stream()
+                                .filter(cellTemp -> worksheetCellSplit[1].equals(cellTemp.title()))
+                                .findAny()
+                                .orElse(null);
+                        if(cell1 != null) {
+                            cell.getFormulaValue().add(cell1);
+                        }
+                    }
+                }
+            }
+            else if(temp[i].matches(patternCellToCell)) {
+                List<String> cellToCells = cellToCell(temp[i]);
+                for(int l = 0; l<cellToCells.size(); l++) {
+                    String check1 = cellToCells.get(l);
+                    entity.SheetElement.BasicElement.Cell cell2 = (entity.SheetElement.BasicElement.Cell)cellList.stream()
+                            .filter(cellCheck -> check1.equals(cellCheck.title()))
+                            .findAny()
+                            .orElse(null);
+                    if(cell2 == null) continue;
+                    else{
+                        Formula formula1 = cell.getFormulaValue();
+                        formula1.add(cell2);
+                    }
+                }
+            }
+            else if(temp[i].matches(patternCellToCellFromOtherSheet)) {
+                String[] worksheetCellSplit = temp[i].split(":");
+                String tempSplit = worksheetCellSplit[0].split("!")[1] + ":" + worksheetCellSplit[1].split("!")[1];
+                List<Worksheet> worksheets = this.workbook.getWorksheets();
+                Worksheet worksheet = worksheets.stream()
+                        .filter(worksheet1 -> worksheetCellSplit[0].split("!")[0].equals(worksheet1.getSheetName()))
+                        .findAny()
+                        .orElse(null);
+
+                if(worksheet!= null){
+                    List<String> cell2 = cellToCell(tempSplit);
+                    List<SheetElement> cells = worksheet.getSheets().getOrDefault(CELL, null);
+                    if(cells != null) {
+                        for(int l = 0; l<cell2.size(); l++) {
+                            String workSheetTemp = cell2.get(l);
+                            entity.SheetElement.BasicElement.Cell cell1 = (entity.SheetElement.BasicElement.Cell) cells.stream()
+                                    .filter(cellTemp -> workSheetTemp.equals(cellTemp.title()))
+                                    .findAny()
+                                    .orElse(null);
+                            if (cell1 != null) {
+                                cell.getFormulaValue().add(cell1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**

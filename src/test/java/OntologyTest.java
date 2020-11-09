@@ -52,7 +52,7 @@ public class OntologyTest {
         OntClass cell;
         OntClass worksheet;
         DatatypeProperty isPartOfWorksheet;
-        int[] expected = {109, 8849, 416, 0};
+        int[] expected = {74, 8762, 416, 0};
         int[] actual = new int[expected.length];
         int count = 0;
 
