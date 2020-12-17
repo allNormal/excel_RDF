@@ -168,18 +168,22 @@
                                             )
                     ] .
 
+[ a            owl:AllDisjointClasses ;
+  owl:members  ( :BooleanValue :ErrorValue :FormulaValue :SparklineValue :StringValue )
+] .
+
 :X-Start  a          owl:DatatypeProperty ;
         rdfs:domain  :Table ;
         rdfs:range   xsd:string .
+
+:Icons  a                owl:Class ;
+        rdfs:subClassOf  :Illustration .
 
 :DataLabels  a       owl:DatatypeProperty ;
         rdfs:domain  :Chart ;
         rdfs:range   [ a            rdfs:Datatype ;
                        owl:unionOf  ( xsd:boolean xsd:integer xsd:string )
                      ] .
-
-:Icons  a                owl:Class ;
-        rdfs:subClassOf  :Illustration .
 
 :ScatterChart  a         owl:Class ;
         rdfs:subClassOf  :Chart .
@@ -459,12 +463,12 @@
 :BoxAndWhiskerChart  a   owl:Class ;
         rdfs:subClassOf  :Chart .
 
+:       a       owl:Ontology .
+
 :ChartTitle  a              owl:DatatypeProperty ;
         rdfs:domain         :Chart ;
         rdfs:range          xsd:string ;
         rdfs:subPropertyOf  owl:topDataProperty .
-
-:       a       owl:Ontology .
 
 :Worksheet  a            owl:Class ;
         rdfs:subClassOf  [ a                  owl:Restriction ;
@@ -542,10 +546,6 @@
                        owl:unionOf  ( xsd:integer xsd:string )
                      ] .
 
-[ a            owl:AllDisjointClasses ;
-  owl:members  ( :BasicElement :Chart :Comments :Illustration :Table :Text )
-] .
-
 :CommentsValue  a    owl:DatatypeProperty ;
         rdfs:domain  :Comments ;
         rdfs:range   xsd:string .
@@ -569,6 +569,10 @@
 :hasComment  a       owl:ObjectProperty ;
         rdfs:domain  :cell ;
         rdfs:range   :Comments .
+
+[ a            owl:AllDisjointClasses ;
+  owl:members  ( :BasicElement :Chart :Comments :Illustration :Table :Text )
+] .
 
 :Illustration  a         owl:Class ;
         rdfs:subClassOf  :SheetElement ;
@@ -681,10 +685,6 @@
 
 :WordLine  a             owl:Class ;
         rdfs:subClassOf  :Text .
-
-[ a            owl:AllDisjointClasses ;
-  owl:members  ( :BooleanValue :ErrorValue :FormulaValue :SparklineValue :StringValue )
-] .
 
 :isInWorkbook  a     owl:ObjectProperty ;
         rdfs:domain  :Worksheet ;

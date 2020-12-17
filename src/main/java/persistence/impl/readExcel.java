@@ -293,6 +293,7 @@ public class readExcel {
     private void formulaDependencyCheck(List<Formula> formulas, List<SheetElement> cell, entity.SheetElement.BasicElement.Cell cell1) {
         for(int i = 0; i<formulas.size(); i++){
             if(formulas.get(i).getFunctionType() == FunctionType.BASIC) {
+                System.out.println("check " + i + " " + formulas.get(i).getFormulaFunction());
                 addFormulaCellDependency(formulas.get(i).getFormulaFunction(), cell, cell1);
             } else if(formulas.get(i).getFunctionType() == FunctionType.NESTED) {
                 NestedFormula nestedFormula = (NestedFormula) formulas.get(i);

@@ -247,11 +247,6 @@
         rdfs:label  "StringValue" ;
         :CellValue  "Bornean Elephant" .
 
-:cell_WorksheetSheet1_A35_value
-        a           :StringValue ;
-        rdfs:label  "StringValue" ;
-        :CellValue  "Dugong" .
-
 :cell_WorksheetSheet1_F34
         a                   :cell ;
         rdfs:label          "Cell_F34" ;
@@ -260,6 +255,11 @@
         :hasRow             :row_WorksheetSheet1_34 ;
         :hasValue           :cell_WorksheetSheet1_F34_value ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
+
+:cell_WorksheetSheet1_A35_value
+        a           :StringValue ;
+        rdfs:label  "StringValue" ;
+        :CellValue  "Dugong" .
 
 :cell_WorksheetSheet1_A36
         a                   :cell ;
@@ -287,6 +287,14 @@
         :hasColumn          :column_WorksheetSheet1_F , :column_WorksheetSheet1_B , :column_WorksheetSheet1_A , :column_WorksheetSheet1_G , :column_WorksheetSheet1_C , :column_WorksheetSheet1_E , :column_WorksheetSheet1_H , :column_WorksheetSheet1_D ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
 
+:row_WorksheetSheet1_7
+        a                   :row ;
+        rdfs:label          "Row_7" ;
+        :RowID              "7"^^xsd:long ;
+        :hasCell            :cell_WorksheetSheet1_G7 , :cell_WorksheetSheet1_C7 , :cell_WorksheetSheet1_F7 , :cell_WorksheetSheet1_B7 , :cell_WorksheetSheet1_E7 , :cell_WorksheetSheet1_H7 , :cell_WorksheetSheet1_A7 , :cell_WorksheetSheet1_D7 ;
+        :hasColumn          :column_WorksheetSheet1_D , :column_WorksheetSheet1_H , :column_WorksheetSheet1_C , :column_WorksheetSheet1_G , :column_WorksheetSheet1_B , :column_WorksheetSheet1_F , :column_WorksheetSheet1_A , :column_WorksheetSheet1_E ;
+        :isPartOfWorksheet  :Worksheet_Sheet1 .
+
 :cell_WorksheetSheet1_H23
         a                   :cell ;
         rdfs:label          "Cell_H23" ;
@@ -294,14 +302,6 @@
         :hasColumn          :column_WorksheetSheet1_H ;
         :hasRow             :row_WorksheetSheet1_23 ;
         :hasValue           :cell_WorksheetSheet1_H23_value ;
-        :isPartOfWorksheet  :Worksheet_Sheet1 .
-
-:row_WorksheetSheet1_7
-        a                   :row ;
-        rdfs:label          "Row_7" ;
-        :RowID              "7"^^xsd:long ;
-        :hasCell            :cell_WorksheetSheet1_G7 , :cell_WorksheetSheet1_C7 , :cell_WorksheetSheet1_F7 , :cell_WorksheetSheet1_B7 , :cell_WorksheetSheet1_E7 , :cell_WorksheetSheet1_H7 , :cell_WorksheetSheet1_A7 , :cell_WorksheetSheet1_D7 ;
-        :hasColumn          :column_WorksheetSheet1_D , :column_WorksheetSheet1_H , :column_WorksheetSheet1_C , :column_WorksheetSheet1_G , :column_WorksheetSheet1_B , :column_WorksheetSheet1_F , :column_WorksheetSheet1_A , :column_WorksheetSheet1_E ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
 
 :cell_WorksheetSheet1_A50
@@ -628,11 +628,6 @@
         :hasValue           :cell_WorksheetSheet1_A31_value ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
 
-:cell_WorksheetSheet1_B19_value
-        a           :StringValue ;
-        rdfs:label  "StringValue" ;
-        :CellValue  "Mammalia" .
-
 :cell_WorksheetSheet1_H50
         a                   :cell ;
         rdfs:label          "Cell_H50" ;
@@ -641,6 +636,11 @@
         :hasRow             :row_WorksheetSheet1_50 ;
         :hasValue           :cell_WorksheetSheet1_H50_value ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
+
+:cell_WorksheetSheet1_B19_value
+        a           :StringValue ;
+        rdfs:label  "StringValue" ;
+        :CellValue  "Mammalia" .
 
 :ScatterChart  a         owl:Class ;
         rdfs:subClassOf  :Chart .
@@ -667,10 +667,6 @@
         :hasColumn          :column_WorksheetSheet1_D , :column_WorksheetSheet1_H , :column_WorksheetSheet1_C , :column_WorksheetSheet1_G , :column_WorksheetSheet1_B , :column_WorksheetSheet1_F , :column_WorksheetSheet1_E , :column_WorksheetSheet1_A ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
 
-:CommentsValue  a    owl:DatatypeProperty ;
-        rdfs:domain  :Comments ;
-        rdfs:range   xsd:string .
-
 :cell_WorksheetSheet1_E27
         a                   :cell ;
         rdfs:label          "Cell_E27" ;
@@ -679,6 +675,10 @@
         :hasRow             :row_WorksheetSheet1_27 ;
         :hasValue           :cell_WorksheetSheet1_E27_value ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
+
+:CommentsValue  a    owl:DatatypeProperty ;
+        rdfs:domain  :Comments ;
+        rdfs:range   xsd:string .
 
 :row_WorksheetSheet1_2
         a                   :row ;
@@ -1582,6 +1582,15 @@
 :AreaChart  a            owl:Class ;
         rdfs:subClassOf  :Chart .
 
+:cell_WorksheetSheet1_E48
+        a                   :cell ;
+        rdfs:label          "Cell_E48" ;
+        :CellID             "E48" ;
+        :hasColumn          :column_WorksheetSheet1_E ;
+        :hasRow             :row_WorksheetSheet1_48 ;
+        :hasValue           :cell_WorksheetSheet1_E48_value ;
+        :isPartOfWorksheet  :Worksheet_Sheet1 .
+
 :row_WorksheetSheet1_43
         a                   :row ;
         rdfs:label          "Row_43" ;
@@ -1602,15 +1611,6 @@
         :hasColumn          :column_WorksheetSheet1_A ;
         :hasRow             :row_WorksheetSheet1_20 ;
         :hasValue           :cell_WorksheetSheet1_A20_value ;
-        :isPartOfWorksheet  :Worksheet_Sheet1 .
-
-:cell_WorksheetSheet1_E48
-        a                   :cell ;
-        rdfs:label          "Cell_E48" ;
-        :CellID             "E48" ;
-        :hasColumn          :column_WorksheetSheet1_E ;
-        :hasRow             :row_WorksheetSheet1_48 ;
-        :hasValue           :cell_WorksheetSheet1_E48_value ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
 
 :cell_WorksheetSheet1_F42_value
@@ -2369,6 +2369,10 @@
         rdfs:label  "StringValue" ;
         :CellValue  "Bluefin Tuna" .
 
+[ a            owl:AllDisjointClasses ;
+  owl:members  ( :BooleanValue :ErrorValue :FormulaValue :SparklineValue :StringValue )
+] .
+
 :cell_WorksheetSheet1_E52_value
         a           :StringValue ;
         rdfs:label  "StringValue" ;
@@ -2593,6 +2597,9 @@
         :hasValue           :cell_WorksheetSheet1_C30_value ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
 
+:SunburstChart  a        owl:Class ;
+        rdfs:subClassOf  :Chart .
+
 :cell_WorksheetSheet1_B6
         a                   :cell ;
         rdfs:label          "Cell_B6" ;
@@ -2601,9 +2608,6 @@
         :hasRow             :row_WorksheetSheet1_6 ;
         :hasValue           :cell_WorksheetSheet1_B6_value ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
-
-:SunburstChart  a        owl:Class ;
-        rdfs:subClassOf  :Chart .
 
 :cell_WorksheetSheet1_E33_value
         a           :StringValue ;
@@ -3359,11 +3363,6 @@
         rdfs:label  "StringValue" ;
         :CellValue  "Mountains, Forest" .
 
-:cell_WorksheetSheet1_H47_value
-        a           :StringValue ;
-        rdfs:label  "StringValue" ;
-        :CellValue  "Oceans" .
-
 :cell_WorksheetSheet1_F14
         a                   :cell ;
         rdfs:label          "Cell_F14" ;
@@ -3372,6 +3371,11 @@
         :hasRow             :row_WorksheetSheet1_14 ;
         :hasValue           :cell_WorksheetSheet1_F14_value ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
+
+:cell_WorksheetSheet1_H47_value
+        a           :StringValue ;
+        rdfs:label  "StringValue" ;
+        :CellValue  "Oceans" .
 
 :cell_WorksheetSheet1_D17_value
         a           :NumericValue ;
@@ -3640,12 +3644,13 @@
         :hasValue           :cell_WorksheetSheet1_B31_value ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
 
-[ a            owl:AllDisjointClasses ;
-  owl:members  ( :BasicElement :Chart :Comments :Illustration :Table :Text )
-] .
-
 :PivotTable  a           owl:Class ;
         rdfs:subClassOf  :Table .
+
+:cell_WorksheetSheet1_H17_value
+        a           :StringValue ;
+        rdfs:label  "StringValue" ;
+        :CellValue  "Lakes and Rivers" .
 
 :cell_WorksheetSheet1_D52
         a                   :cell ;
@@ -3655,11 +3660,6 @@
         :hasRow             :row_WorksheetSheet1_52 ;
         :hasValue           :cell_WorksheetSheet1_D52_value ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
-
-:cell_WorksheetSheet1_H17_value
-        a           :StringValue ;
-        rdfs:label  "StringValue" ;
-        :CellValue  "Lakes and Rivers" .
 
 :cell_WorksheetSheet1_F27
         a                   :cell ;
@@ -4078,6 +4078,11 @@
         :hasValue           :cell_WorksheetSheet1_A24_value ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
 
+:cell_WorksheetSheet1_A6_value
+        a           :StringValue ;
+        rdfs:label  "StringValue" ;
+        :CellValue  "Eastern Lowland Gorilla" .
+
 :cell_WorksheetSheet1_H43
         a                   :cell ;
         rdfs:label          "Cell_H43" ;
@@ -4086,11 +4091,6 @@
         :hasRow             :row_WorksheetSheet1_43 ;
         :hasValue           :cell_WorksheetSheet1_H43_value ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
-
-:cell_WorksheetSheet1_A6_value
-        a           :StringValue ;
-        rdfs:label  "StringValue" ;
-        :CellValue  "Eastern Lowland Gorilla" .
 
 :cell_WorksheetSheet1_H6_value
         a           :StringValue ;
@@ -4433,14 +4433,6 @@
         rdfs:label  "StringValue" ;
         :CellValue  "Sub-Saharan Africa" .
 
-:row_WorksheetSheet1_42
-        a                   :row ;
-        rdfs:label          "Row_42" ;
-        :RowID              "42"^^xsd:long ;
-        :hasCell            :cell_WorksheetSheet1_A42 , :cell_WorksheetSheet1_H42 , :cell_WorksheetSheet1_F42 , :cell_WorksheetSheet1_B42 , :cell_WorksheetSheet1_E42 , :cell_WorksheetSheet1_D42 , :cell_WorksheetSheet1_C42 , :cell_WorksheetSheet1_G42 ;
-        :hasColumn          :column_WorksheetSheet1_B , :column_WorksheetSheet1_F , :column_WorksheetSheet1_A , :column_WorksheetSheet1_D , :column_WorksheetSheet1_H , :column_WorksheetSheet1_E , :column_WorksheetSheet1_C , :column_WorksheetSheet1_G ;
-        :isPartOfWorksheet  :Worksheet_Sheet1 .
-
 :cell_WorksheetSheet1_E47
         a                   :cell ;
         rdfs:label          "Cell_E47" ;
@@ -4448,6 +4440,14 @@
         :hasColumn          :column_WorksheetSheet1_E ;
         :hasRow             :row_WorksheetSheet1_47 ;
         :hasValue           :cell_WorksheetSheet1_E47_value ;
+        :isPartOfWorksheet  :Worksheet_Sheet1 .
+
+:row_WorksheetSheet1_42
+        a                   :row ;
+        rdfs:label          "Row_42" ;
+        :RowID              "42"^^xsd:long ;
+        :hasCell            :cell_WorksheetSheet1_A42 , :cell_WorksheetSheet1_H42 , :cell_WorksheetSheet1_F42 , :cell_WorksheetSheet1_B42 , :cell_WorksheetSheet1_E42 , :cell_WorksheetSheet1_D42 , :cell_WorksheetSheet1_C42 , :cell_WorksheetSheet1_G42 ;
+        :hasColumn          :column_WorksheetSheet1_B , :column_WorksheetSheet1_F , :column_WorksheetSheet1_A , :column_WorksheetSheet1_D , :column_WorksheetSheet1_H , :column_WorksheetSheet1_E , :column_WorksheetSheet1_C , :column_WorksheetSheet1_G ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
 
 :cell_WorksheetSheet1_A31_value
@@ -4614,15 +4614,15 @@
         rdfs:label  "StringValue" ;
         :CellValue  "5,5 pounds" .
 
-:cell_WorksheetSheet1_H10_value
-        a           :StringValue ;
-        rdfs:label  "StringValue" ;
-        :CellValue  "Forest" .
-
 :cell_WorksheetSheet1_D50_value
         a           :StringValue ;
         rdfs:label  "StringValue" ;
         :CellValue  "unknown" .
+
+:cell_WorksheetSheet1_H10_value
+        a           :StringValue ;
+        rdfs:label  "StringValue" ;
+        :CellValue  "Forest" .
 
 :cell_WorksheetSheet1_D41
         a                   :cell ;
@@ -4776,15 +4776,6 @@
         :hasValue           :cell_WorksheetSheet1_D9_value ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
 
-:cell_WorksheetSheet1_G49
-        a                   :cell ;
-        rdfs:label          "Cell_G49" ;
-        :CellID             "G49" ;
-        :hasColumn          :column_WorksheetSheet1_G ;
-        :hasRow             :row_WorksheetSheet1_49 ;
-        :hasValue           :cell_WorksheetSheet1_G49_value ;
-        :isPartOfWorksheet  :Worksheet_Sheet1 .
-
 :cell_WorksheetSheet1_C21
         a                   :cell ;
         rdfs:label          "Cell_C21" ;
@@ -4792,6 +4783,15 @@
         :hasColumn          :column_WorksheetSheet1_C ;
         :hasRow             :row_WorksheetSheet1_21 ;
         :hasValue           :cell_WorksheetSheet1_C21_value ;
+        :isPartOfWorksheet  :Worksheet_Sheet1 .
+
+:cell_WorksheetSheet1_G49
+        a                   :cell ;
+        rdfs:label          "Cell_G49" ;
+        :CellID             "G49" ;
+        :hasColumn          :column_WorksheetSheet1_G ;
+        :hasRow             :row_WorksheetSheet1_49 ;
+        :hasValue           :cell_WorksheetSheet1_G49_value ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
 
 :cell_WorksheetSheet1_A45_value
@@ -4899,11 +4899,6 @@
         rdfs:label  "StringValue" ;
         :CellValue  "Chondrichthyes" .
 
-:cell_WorksheetSheet1_H50_value
-        a           :StringValue ;
-        rdfs:label  "StringValue" ;
-        :CellValue  "Forest" .
-
 :cell_WorksheetSheet1_B33
         a                   :cell ;
         rdfs:label          "Cell_B33" ;
@@ -4917,6 +4912,11 @@
         a           :NumericValue ;
         rdfs:label  "NumericValue" ;
         :CellValue  "370.0"^^xsd:float .
+
+:cell_WorksheetSheet1_H50_value
+        a           :StringValue ;
+        rdfs:label  "StringValue" ;
+        :CellValue  "Forest" .
 
 :cell_WorksheetSheet1_B48_value
         a           :StringValue ;
@@ -5224,10 +5224,6 @@
         rdfs:label  "NumericValue" ;
         :CellValue  "80000.0"^^xsd:float .
 
-[ a            owl:AllDisjointClasses ;
-  owl:members  ( :BooleanValue :ErrorValue :FormulaValue :SparklineValue :StringValue )
-] .
-
 :Y-Start  a          owl:DatatypeProperty ;
         rdfs:domain  :Table ;
         rdfs:range   [ a                     rdfs:Datatype ;
@@ -5323,6 +5319,14 @@
         :hasValue           :cell_WorksheetSheet1_A40_value ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
 
+:CellID  a           owl:DatatypeProperty ;
+        rdfs:domain  :FormulaValue ;
+        rdfs:range   [ a                     rdfs:Datatype ;
+                       owl:onDatatype        xsd:string ;
+                       owl:withRestrictions  ( [ xsd:minLength  2 ]
+                                             )
+                     ] .
+
 :cell_WorksheetSheet1_H13
         a                   :cell ;
         rdfs:label          "Cell_H13" ;
@@ -5331,14 +5335,6 @@
         :hasRow             :row_WorksheetSheet1_13 ;
         :hasValue           :cell_WorksheetSheet1_H13_value ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
-
-:CellID  a           owl:DatatypeProperty ;
-        rdfs:domain  :FormulaValue ;
-        rdfs:range   [ a                     rdfs:Datatype ;
-                       owl:onDatatype        xsd:string ;
-                       owl:withRestrictions  ( [ xsd:minLength  2 ]
-                                             )
-                     ] .
 
 :cell_WorksheetSheet1_G20_value
         a           :StringValue ;
@@ -5656,6 +5652,11 @@
         :hasColumn          :column_WorksheetSheet1_B , :column_WorksheetSheet1_A , :column_WorksheetSheet1_F , :column_WorksheetSheet1_E , :column_WorksheetSheet1_D , :column_WorksheetSheet1_C , :column_WorksheetSheet1_H , :column_WorksheetSheet1_G ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
 
+:cell_WorksheetSheet1_G23_value
+        a           :StringValue ;
+        rdfs:label  "StringValue" ;
+        :CellValue  "Congo Basin" .
+
 :cell_WorksheetSheet1_A21
         a                   :cell ;
         rdfs:label          "Cell_A21" ;
@@ -5664,11 +5665,6 @@
         :hasRow             :row_WorksheetSheet1_21 ;
         :hasValue           :cell_WorksheetSheet1_A21_value ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
-
-:cell_WorksheetSheet1_G23_value
-        a           :StringValue ;
-        rdfs:label  "StringValue" ;
-        :CellValue  "Congo Basin" .
 
 :cell_WorksheetSheet1_H40
         a                   :cell ;
@@ -5809,6 +5805,11 @@
         rdfs:label  "StringValue" ;
         :CellValue  "Oceans" .
 
+:cell_WorksheetSheet1_B30_value
+        a           :StringValue ;
+        rdfs:label  "StringValue" ;
+        :CellValue  "Mammalia" .
+
 :cell_WorksheetSheet1_D29
         a                   :cell ;
         rdfs:label          "Cell_D29" ;
@@ -5817,11 +5818,6 @@
         :hasRow             :row_WorksheetSheet1_29 ;
         :hasValue           :cell_WorksheetSheet1_D29_value ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
-
-:cell_WorksheetSheet1_B30_value
-        a           :StringValue ;
-        rdfs:label  "StringValue" ;
-        :CellValue  "Mammalia" .
 
 :cell_WorksheetSheet1_G20
         a                   :cell ;
@@ -5847,11 +5843,6 @@
         rdfs:label  "StringValue" ;
         :CellValue  "Actinopterygii" .
 
-:cell_WorksheetSheet1_D29_value
-        a           :StringValue ;
-        rdfs:label  "StringValue" ;
-        :CellValue  "unknown" .
-
 :cell_WorksheetSheet1_B22
         a                   :cell ;
         rdfs:label          "Cell_B22" ;
@@ -5865,6 +5856,11 @@
         a           :StringValue ;
         rdfs:label  "StringValue" ;
         :CellValue  "Species" .
+
+:cell_WorksheetSheet1_D29_value
+        a           :StringValue ;
+        rdfs:label  "StringValue" ;
+        :CellValue  "unknown" .
 
 :cell_WorksheetSheet1_B2_value
         a           :StringValue ;
@@ -6118,6 +6114,10 @@
         rdfs:label  "StringValue" ;
         :CellValue  "Actinopterygii" .
 
+[ a            owl:AllDisjointClasses ;
+  owl:members  ( :BasicElement :Chart :Comments :Illustration :Table :Text )
+] .
+
 :cell_WorksheetSheet1_F52_value
         a           :StringValue ;
         rdfs:label  "StringValue" ;
@@ -6199,6 +6199,14 @@
         :hasValue           :cell_WorksheetSheet1_F13_value ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
 
+:row_WorksheetSheet1_38
+        a                   :row ;
+        rdfs:label          "Row_38" ;
+        :RowID              "38"^^xsd:long ;
+        :hasCell            :cell_WorksheetSheet1_A38 , :cell_WorksheetSheet1_E38 , :cell_WorksheetSheet1_G38 , :cell_WorksheetSheet1_F38 , :cell_WorksheetSheet1_B38 , :cell_WorksheetSheet1_D38 , :cell_WorksheetSheet1_C38 , :cell_WorksheetSheet1_H38 ;
+        :hasColumn          :column_WorksheetSheet1_F , :column_WorksheetSheet1_A , :column_WorksheetSheet1_C , :column_WorksheetSheet1_D , :column_WorksheetSheet1_B , :column_WorksheetSheet1_G , :column_WorksheetSheet1_E , :column_WorksheetSheet1_H ;
+        :isPartOfWorksheet  :Worksheet_Sheet1 .
+
 :cell_WorksheetSheet1_C36_value
         a           :StringValue ;
         rdfs:label  "StringValue" ;
@@ -6234,14 +6242,6 @@
                                   ]
                      ] .
 
-:row_WorksheetSheet1_38
-        a                   :row ;
-        rdfs:label          "Row_38" ;
-        :RowID              "38"^^xsd:long ;
-        :hasCell            :cell_WorksheetSheet1_A38 , :cell_WorksheetSheet1_E38 , :cell_WorksheetSheet1_G38 , :cell_WorksheetSheet1_F38 , :cell_WorksheetSheet1_B38 , :cell_WorksheetSheet1_D38 , :cell_WorksheetSheet1_C38 , :cell_WorksheetSheet1_H38 ;
-        :hasColumn          :column_WorksheetSheet1_F , :column_WorksheetSheet1_A , :column_WorksheetSheet1_C , :column_WorksheetSheet1_D , :column_WorksheetSheet1_B , :column_WorksheetSheet1_G , :column_WorksheetSheet1_E , :column_WorksheetSheet1_H ;
-        :isPartOfWorksheet  :Worksheet_Sheet1 .
-
 :CellValue  a        owl:DatatypeProperty ;
         rdfs:domain  :StringValue , :NumericValue , :BooleanValue ;
         rdfs:range   [ a            rdfs:Datatype ;
@@ -6261,11 +6261,6 @@
         :hasValue           :cell_WorksheetSheet1_A15_value ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
 
-:cell_WorksheetSheet1_C47_value
-        a           :StringValue ;
-        rdfs:label  "StringValue" ;
-        :CellValue  "Near Threatened" .
-
 :cell_WorksheetSheet1_H34
         a                   :cell ;
         rdfs:label          "Cell_H34" ;
@@ -6274,6 +6269,11 @@
         :hasRow             :row_WorksheetSheet1_34 ;
         :hasValue           :cell_WorksheetSheet1_H34_value ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
+
+:cell_WorksheetSheet1_C47_value
+        a           :StringValue ;
+        rdfs:label  "StringValue" ;
+        :CellValue  "Near Threatened" .
 
 :SignatureLine  a        owl:Class ;
         rdfs:subClassOf  :Text .
@@ -6657,9 +6657,6 @@
         :hasValue           :cell_WorksheetSheet1_C17_value ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
 
-:HeaderName  a      owl:DatatypeProperty ;
-        rdfs:range  xsd:string .
-
 :row_WorksheetSheet1_33
         a                   :row ;
         rdfs:label          "Row_33" ;
@@ -6667,6 +6664,9 @@
         :hasCell            :cell_WorksheetSheet1_D33 , :cell_WorksheetSheet1_B33 , :cell_WorksheetSheet1_E33 , :cell_WorksheetSheet1_H33 , :cell_WorksheetSheet1_F33 , :cell_WorksheetSheet1_G33 , :cell_WorksheetSheet1_C33 , :cell_WorksheetSheet1_A33 ;
         :hasColumn          :column_WorksheetSheet1_H , :column_WorksheetSheet1_G , :column_WorksheetSheet1_D , :column_WorksheetSheet1_F , :column_WorksheetSheet1_E , :column_WorksheetSheet1_C , :column_WorksheetSheet1_A , :column_WorksheetSheet1_B ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
+
+:HeaderName  a      owl:DatatypeProperty ;
+        rdfs:range  xsd:string .
 
 :ExcelMacro  a           owl:Class ;
         rdfs:subClassOf  [ a                  owl:Restriction ;
@@ -6853,11 +6853,6 @@
 :3D-Models  a            owl:Class ;
         rdfs:subClassOf  :Illustration .
 
-:cell_WorksheetSheet1_G9_value
-        a           :StringValue ;
-        rdfs:label  "StringValue" ;
-        :CellValue  "Borneo, Sumatra, Tapanuli" .
-
 :cell_WorksheetSheet1_B11
         a                   :cell ;
         rdfs:label          "Cell_B11" ;
@@ -6866,6 +6861,11 @@
         :hasRow             :row_WorksheetSheet1_11 ;
         :hasValue           :cell_WorksheetSheet1_B11_value ;
         :isPartOfWorksheet  :Worksheet_Sheet1 .
+
+:cell_WorksheetSheet1_G9_value
+        a           :StringValue ;
+        rdfs:label  "StringValue" ;
+        :CellValue  "Borneo, Sumatra, Tapanuli" .
 
 :cell_WorksheetSheet1_F39
         a                   :cell ;

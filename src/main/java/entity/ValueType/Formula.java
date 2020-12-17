@@ -57,6 +57,8 @@ public abstract class Formula {
         return stringValue;
     }
 
+    public abstract void add(Formula formula);
+
     public void setStringValue(String stringValue) {
         this.stringValue = stringValue;
     }
