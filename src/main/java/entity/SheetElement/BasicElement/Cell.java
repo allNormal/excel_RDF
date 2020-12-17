@@ -2,6 +2,7 @@ package entity.SheetElement.BasicElement;
 
 import entity.Constraints.Constraint;
 import entity.ValueType.ErrorValue;
+import entity.ValueType.BasicFormula;
 import entity.ValueType.Formula;
 import entity.ValueType.Value;
 import entity.Worksheet.Worksheet;
@@ -69,8 +70,8 @@ public class Cell extends BasicElement {
         }
     }
 
-    public void setFormulaValue(Formula formula){
-        this.formulaValue = formula;
+    public void setFormulaValue(Formula basicFormula){
+        this.formulaValue = basicFormula;
     }
 
     public void SetErrorValue(String value){

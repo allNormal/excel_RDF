@@ -26,10 +26,10 @@ public class excelTest {
 
     @BeforeAll
     void initFile() throws IOException {
-        final String[] FILEPATH = {"C:\\Users\\43676\\Desktop\\uni\\sepm-individual-assignment-java-template\\template\\rdfTest\\src\\main\\resources\\simple_test.xlsm",
-                "C:\\Users\\43676\\Desktop\\uni\\sepm-individual-assignment-java-template\\template\\rdfTest\\src\\main\\resources\\test.xlsx",
-                "C:\\Users\\43676\\Desktop\\uni\\sepm-individual-assignment-java-template\\template\\rdfTest\\src\\main\\resources\\Endangered_Species.xlsx",
-                "C:\\Users\\43676\\Desktop\\uni\\sepm-individual-assignment-java-template\\template\\rdfTest\\src\\main\\resources\\reptile_checklist_2020_08.xlsx"};
+        final String[] FILEPATH = {"src/main/resources/simple_test.xlsm",
+                "src/main/resources/test.xlsx",
+                "src/main/resources/Endangered_Species.xlsx",
+                "src/main/resources/reptile_checklist_2020_08.xlsx"};
         File file;
         for(int i = 0; i<FILEPATH.length; i++) {
             file = new File(FILEPATH[i]);
@@ -63,7 +63,7 @@ public class excelTest {
     @Test
     @DisplayName("Testing if it read the correct number of cells")
     void cellTest() {
-        int[][] expected = {{68, 46},{8188, 483, 160, 2, 16}, {416}, {0}};
+        int[][] expected = {{70, 46},{8188, 483, 160, 2, 16}, {416}, {0}};
         int[][] actual = new int[expected.length][];
         for(int i = 0; i<this.readExcel.length; i++) {
             Workbook workbook1 = readExcel[i].getWorkbook();

@@ -1,25 +1,27 @@
 package entity.ValueType;
 
-
 import entity.SheetElement.BasicElement.Cell;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Formula {
+public abstract class Formula {
+
     private String formulaFunction;
+    private List<Cell> cellDependency =  new ArrayList<>();
+    private Value valueType;
+    private FunctionType functionType;
     private String stringValue;
     private Boolean booleanValue;
-    private List<Cell> cellDependency = new ArrayList<>();
     private Byte errorValue;
     private float numericValue;
-    private Value value;
 
-    public Formula(String formula) {
-        this.formulaFunction = formula;
+
+    public Formula(String formulaFunction) {
+        this.formulaFunction = formulaFunction;
     }
 
-    public void add(Cell cell) {
+    public void addDependencies(Cell cell) {
         cellDependency.add(cell);
     }
 
@@ -27,8 +29,28 @@ public class Formula {
         return cellDependency;
     }
 
+    public Value getValueType() {
+        return valueType;
+    }
+
+    public void setValueType(Value valueType) {
+        this.valueType = valueType;
+    }
+
+    public FunctionType getFunctionType() {
+        return functionType;
+    }
+
+    public void setFunctionType(FunctionType functionType) {
+        this.functionType = functionType;
+    }
+
     public String getFormulaFunction() {
         return formulaFunction;
+    }
+
+    public void setFormulaFunction(String formulaFunction) {
+        this.formulaFunction = formulaFunction;
     }
 
     public String getStringValue() {
@@ -47,27 +69,19 @@ public class Formula {
         this.booleanValue = booleanValue;
     }
 
-    public float getNumericValue() {
-        return numericValue;
-    }
-
-    public void setNumericValue(float numericValue) {
-        this.numericValue = numericValue;
-    }
-
-    public void setValue(Value value){
-        this.value = value;
-    }
-
-    public Value getValue() {
-        return value;
-    }
-
     public Byte getErrorValue() {
         return errorValue;
     }
 
     public void setErrorValue(Byte errorValue) {
         this.errorValue = errorValue;
+    }
+
+    public float getNumericValue() {
+        return numericValue;
+    }
+
+    public void setNumericValue(float numericValue) {
+        this.numericValue = numericValue;
     }
 }

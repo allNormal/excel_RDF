@@ -30,7 +30,7 @@
     </properties>
 
     <groupId>groupId</groupId>
-    <artifactId>rdfTest</artifactId>
+    <artifactId>excel_RDF</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
@@ -47,7 +47,7 @@
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>apache-jena-libs</artifactId>
-            <version>3.16.0</version>
+            <version>3.9.0</version>
             <type>pom</type>
         </dependency>
 

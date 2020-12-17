@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Pattern;
 
 import entity.SheetElement.BasicElement.Column;
 import entity.SheetElement.Charts.Chart;
@@ -13,8 +12,7 @@ import entity.SheetElement.Illustrations.Illustrations;
 import entity.SheetElement.SheetElement;
 import entity.SheetElement.Tables.Table;
 import entity.SheetElement.Texts.Text;
-import entity.ValueType.Formula;
-import entity.ValueType.Value;
+import entity.ValueType.*;
 import entity.Workbook.Macro;
 import entity.Workbook.Workbook;
 import entity.Worksheet.Worksheet;
@@ -213,23 +211,24 @@ public class readExcel {
                         break;
                     case FORMULA:
                         cell1.setValue(Value.FORMULA);
-                        Formula formula = new Formula(cell.getCellFormula());
+                        FormulaConverter formulaConverter =  new FormulaConverter(cell.getCellFormula());
+                        Formula formula = formulaConverter.getFormula();
                         switch (cell.getCachedFormulaResultType()){
                             case BOOLEAN:
                                 formula.setBooleanValue(cell.getBooleanCellValue());
-                                formula.setValue(Value.BOOLEAN);
+                                formula.setValueType(Value.BOOLEAN);
                                 break;
                             case STRING:
                                 formula.setStringValue(cell.getStringCellValue());
-                                formula.setValue(Value.STRING);
+                                formula.setValueType(Value.STRING);
                                 break;
                             case NUMERIC:
                                 formula.setNumericValue((float)cell.getNumericCellValue());
-                                formula.setValue(Value.NUMERIC);
+                                formula.setValueType(Value.NUMERIC);
                                 break;
                             case ERROR:
                                 formula.setErrorValue(cell.getErrorCellValue());
-                                formula.setValue(Value.ERROR);
+                                formula.setValueType(Value.ERROR);
                         }
                         cell1.setFormulaValue(formula);
                         break;
@@ -275,7 +274,29 @@ public class readExcel {
         for(int i = 0; i<cell.size(); i++){
             entity.SheetElement.BasicElement.Cell cell1 = (entity.SheetElement.BasicElement.Cell)cell.get(i);
             if(cell1.getValue() == Value.FORMULA) {
-                addFormulaCellDependency(cell1.getFormulaValue().getFormulaFunction(), cell, cell1);
+                if(cell1.getFormulaValue().getFunctionType() == FunctionType.BASIC) {
+                    addFormulaCellDependency(cell1.getFormulaValue().getFormulaFunction(), cell, cell1);
+                } else if(cell1.getFormulaValue().getFunctionType() == FunctionType.NESTED) {
+                    NestedFormula nestedFormula = (NestedFormula) cell1.getFormulaValue();
+                    formulaDependencyCheck(nestedFormula.getFormulaList(), cell, cell1);
+                }
+            }
+        }
+    }
+
+    /**
+     * recursive function for nested formula
+     * @param formulas list of formula in a nested formula
+     * @param cell list of cell
+     * @param cell1 cell which the list of formula from
+     */
+    private void formulaDependencyCheck(List<Formula> formulas, List<SheetElement> cell, entity.SheetElement.BasicElement.Cell cell1) {
+        for(int i = 0; i<formulas.size(); i++){
+            if(formulas.get(i).getFunctionType() == FunctionType.BASIC) {
+                addFormulaCellDependency(formulas.get(i).getFormulaFunction(), cell, cell1);
+            } else if(formulas.get(i).getFunctionType() == FunctionType.NESTED) {
+                NestedFormula nestedFormula = (NestedFormula) formulas.get(i);
+                formulaDependencyCheck(nestedFormula.getFormulaList(),cell,cell1);
             }
         }
     }
@@ -443,7 +464,7 @@ public class readExcel {
                     else return false;
                 }
             case FORMULA:
-                switch (cell1.getFormulaValue().getValue()){
+                switch (cell1.getFormulaValue().getValueType()){
                     case BOOLEAN:
                         if(operator.equals("==")) {
                             if(cell1.getFormulaValue().getBooleanValue() == cell2.getFormulaValue().getBooleanValue()) return true;
@@ -512,8 +533,8 @@ public class readExcel {
                         .orElse(null);
                 if(cell1 == null) continue;
                 else{
-                    Formula formula1 = cell.getFormulaValue();
-                    formula1.add(cell1);
+                    Formula basicFormula1 = cell.getFormulaValue();
+                    basicFormula1.addDependencies(cell1);
                 }
             }
             else if(temp[i].matches(patternCellFromOtherSheet)) {
@@ -532,7 +553,7 @@ public class readExcel {
                                 .findAny()
                                 .orElse(null);
                         if(cell1 != null) {
-                            cell.getFormulaValue().add(cell1);
+                            cell.getFormulaValue().addDependencies(cell1);
                         }
                     }
                 }
@@ -547,8 +568,8 @@ public class readExcel {
                             .orElse(null);
                     if(cell2 == null) continue;
                     else{
-                        Formula formula1 = cell.getFormulaValue();
-                        formula1.add(cell2);
+                        Formula basicFormula1 = cell.getFormulaValue();
+                        basicFormula1.addDependencies(cell2);
                     }
                 }
             }
@@ -572,7 +593,7 @@ public class readExcel {
                                     .findAny()
                                     .orElse(null);
                             if (cell1 != null) {
-                                cell.getFormulaValue().add(cell1);
+                                cell.getFormulaValue().addDependencies(cell1);
                             }
                         }
                     }
@@ -605,7 +626,6 @@ public class readExcel {
                 break;
             }
         }
-        if(column == "0") System.out.println(result);
         return result;
     }
 

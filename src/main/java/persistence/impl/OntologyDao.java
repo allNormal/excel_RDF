@@ -11,9 +11,6 @@ import entity.Worksheet.Worksheet;
 import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.vocabulary.RDFS;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.*;
 import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
@@ -25,8 +22,6 @@ public class OntologyDao implements persistence.OntologyDao {
     private Workbook workbook;
     private readExcel readExcel;
     private OntModel model;
-    private final static Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
     public OntologyDao(){
 
     }
@@ -43,7 +38,6 @@ public class OntologyDao implements persistence.OntologyDao {
             this.model = this.converter.getModel();
             convertExcelToOntology();
             saveModel(filepath);
-            LOGGER.trace("Succesfully convert excel file ({}) to ontology", file.getName());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -224,7 +218,7 @@ public class OntologyDao implements persistence.OntologyDao {
                 /**
                  * add value into formula
                  */
-                switch(cell.getFormulaValue().getValue()) {
+                switch(cell.getFormulaValue().getValueType()) {
                     case BOOLEAN:
                         val.addLiteral(this.converter.getCellValue(), cell.getFormulaValue().getBooleanValue());
                         break;

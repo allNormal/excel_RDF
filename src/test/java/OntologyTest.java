@@ -22,17 +22,17 @@ public class OntologyTest {
 
     @BeforeAll
     void initall() {
-        final String[] FILEPATH = {"C:\\Users\\43676\\Desktop\\uni\\sepm-individual-assignment-java-template\\template\\rdfTest\\src\\main\\resources\\simple_test.xlsm",
-                "C:\\Users\\43676\\Desktop\\uni\\sepm-individual-assignment-java-template\\template\\rdfTest\\src\\main\\resources\\test.xlsx",
-                "C:\\Users\\43676\\Desktop\\uni\\sepm-individual-assignment-java-template\\template\\rdfTest\\src\\main\\resources\\Endangered_Species.xlsx",
-                "C:\\Users\\43676\\Desktop\\uni\\sepm-individual-assignment-java-template\\template\\rdfTest\\src\\main\\resources\\reptile_checklist_2020_08.xlsx"};
+        final String[] FILEPATH = {"src/main/resources/simple_test.xlsm",
+                "src/main/resources/test.xlsx",
+                "src/main/resources/Endangered_Species.xlsx",
+                "src/main/resources/reptile_checklist_2020_08.xlsx"};
 
         OntologyDao dao = new OntologyDao();
         OntologyService ontologyService = new OntologyService(dao);
         for(int i = 0; i<FILEPATH.length; i++) {
             ontologyService.create(FILEPATH[i]);
             this.ontModels[i] = ModelFactory.createOntologyModel(OWL_MEM);
-            this.ontModels[i].read("C:\\Users\\43676\\Desktop\\uni\\sepm-individual-assignment-java-template\\template\\rdfTest\\OntologyOut\\"+ new File(FILEPATH[i]).getName()+".ttl");
+            this.ontModels[i].read("OntologyOut\\"+ new File(FILEPATH[i]).getName()+".ttl");
         }
 
     }
@@ -53,7 +53,7 @@ public class OntologyTest {
         OntClass cell;
         OntClass worksheet;
         DatatypeProperty isPartOfWorksheet;
-        int[] expected = {74, 8426, 416, 0};
+        int[] expected = {77, 8426, 416, 0};
         int[] actual = new int[expected.length];
         int count = 0;
 

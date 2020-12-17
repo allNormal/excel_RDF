@@ -1,0 +1,699 @@
+@prefix :      <http://www.semanticweb.org/GregorKaefer/ontologies/2020/8/excelOntology#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml:   <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+
+:CompatibleTo  a    owl:SymmetricProperty , owl:ObjectProperty ;
+        rdfs:range  :Excel .
+
+:X-End  a            owl:DatatypeProperty ;
+        rdfs:domain  :Table ;
+        rdfs:range   xsd:string .
+
+:SmartArt  a             owl:Class ;
+        rdfs:subClassOf  :Illustration .
+
+:Y-Start  a          owl:DatatypeProperty ;
+        rdfs:domain  :Table ;
+        rdfs:range   [ a                     rdfs:Datatype ;
+                       owl:onDatatype        xsd:integer ;
+                       owl:withRestrictions  ( [ xsd:minExclusive  0 ]
+                                             )
+                     ] .
+
+:Text   a                owl:Class ;
+        rdfs:subClassOf  :SheetElement ;
+        rdfs:subClassOf  [ a                   owl:Restriction ;
+                           owl:onProperty      :ElementName ;
+                           owl:someValuesFrom  xsd:string
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  :StringValue ;
+                           owl:onProperty     :hasValue
+                         ] .
+
+:StringValue  a          owl:Class ;
+        rdfs:subClassOf  :Value ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :CellValue
+                         ] .
+
+:row    a                owl:Class ;
+        rdfs:subClassOf  :BasicElement ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:positiveInteger ;
+                           owl:onProperty     :RowID
+                         ] ;
+        rdfs:subClassOf  [ a                            owl:Restriction ;
+                           owl:minQualifiedCardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onClass                  :cell ;
+                           owl:onProperty               :hasCell
+                         ] .
+
+:RadarChart  a           owl:Class ;
+        rdfs:subClassOf  :Chart .
+
+:Workbook_reptile_checklist_2020_08.xlsx
+        a              :Workbook ;
+        rdfs:label     "reptile_checklist_2020_08.xlsx" ;
+        :Extension     "xlsx" ;
+        :FileName      "reptile_checklist_2020_08.xlsx" ;
+        :hasWorkSheet  :Worksheet_Sheet1 .
+
+:NumericValue  a          owl:Class ;
+        rdfs:subClassOf   :Value ;
+        rdfs:subClassOf   [ a                  owl:Restriction ;
+                            owl:allValuesFrom  [ a            rdfs:Datatype ;
+                                                 owl:unionOf  ( xsd:dateTime xsd:float )
+                                               ] ;
+                            owl:onProperty     :CellValue
+                          ] ;
+        owl:disjointWith  :StringValue , :SparklineValue .
+
+:hasInput  a           owl:ObjectProperty ;
+        rdfs:domain    :FormulaValue ;
+        rdfs:range     :cell ;
+        owl:inverseOf  :isUsedIn .
+
+:Workbook  a             owl:Class ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :FileName
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :Extension
+                         ] ;
+        rdfs:subClassOf  [ a                            owl:Restriction ;
+                           owl:minQualifiedCardinality  "0"^^xsd:nonNegativeInteger ;
+                           owl:onClass                  :ExcelMacro ;
+                           owl:onProperty               :hasMacro
+                         ] ;
+        rdfs:subClassOf  [ a                            owl:Restriction ;
+                           owl:minQualifiedCardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onClass                  :Excel ;
+                           owl:onProperty               :CompatibleTo
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  :Worksheet ;
+                           owl:onProperty     :hasWorkSheet
+                         ] .
+
+:FunnelChart  a          owl:Class ;
+        rdfs:subClassOf  :Chart .
+
+:MacroTitle  a       owl:DatatypeProperty ;
+        rdfs:domain  :Workbook ;
+        rdfs:range   xsd:string .
+
+:DoughnutChart  a        owl:Class ;
+        rdfs:subClassOf  :Chart .
+
+:Excel  a                owl:Class ;
+        rdfs:subClassOf  [ a                            owl:Restriction ;
+                           owl:minQualifiedCardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onClass                  :Workbook ;
+                           owl:onProperty               :CompatibleTo
+                         ] .
+
+:hasConstraint  a    owl:ObjectProperty ;
+        rdfs:domain  :SheetElement ;
+        rdfs:range   :Constraint .
+
+:Y-End  a            owl:DatatypeProperty ;
+        rdfs:domain  :Table ;
+        rdfs:range   [ a                     rdfs:Datatype ;
+                       owl:onDatatype        xsd:integer ;
+                       owl:withRestrictions  ( [ xsd:minExclusive  0 ]
+                                             )
+                     ] .
+
+:TextBox  a              owl:Class ;
+        rdfs:subClassOf  :Text .
+
+:hasSheetElement  a         owl:ObjectProperty ;
+        rdfs:domain         :Worksheet ;
+        rdfs:range          :SheetElement ;
+        rdfs:subPropertyOf  owl:topObjectProperty ;
+        owl:inverseOf       :isPartOfWorksheet .
+
+:SignatureLine  a        owl:Class ;
+        rdfs:subClassOf  :Text .
+
+:SheetElement  a         owl:Class ;
+        rdfs:subClassOf  [ a                            owl:Restriction ;
+                           owl:minQualifiedCardinality  "0"^^xsd:nonNegativeInteger ;
+                           owl:onClass                  :Worksheet ;
+                           owl:onProperty               :isPartOfWorksheet
+                         ] ;
+        rdfs:subClassOf  [ a                            owl:Restriction ;
+                           owl:minQualifiedCardinality  "0"^^xsd:nonNegativeInteger ;
+                           owl:onClass                  :Constraint ;
+                           owl:onProperty               :hasConstraint
+                         ] .
+
+:DefaultTable  a         owl:Class ;
+        rdfs:subClassOf  :Table .
+
+:HistogrammChart  a      owl:Class ;
+        rdfs:subClassOf  :Chart .
+
+:ColumnID  a        owl:DatatypeProperty ;
+        rdfs:range  [ a                     rdfs:Datatype ;
+                      owl:onDatatype        xsd:string ;
+                      owl:withRestrictions  ( [ xsd:minLength  1 ]
+                                            )
+                    ] .
+
+:X-Start  a          owl:DatatypeProperty ;
+        rdfs:domain  :Table ;
+        rdfs:range   xsd:string .
+
+:DataLabels  a       owl:DatatypeProperty ;
+        rdfs:domain  :Chart ;
+        rdfs:range   [ a            rdfs:Datatype ;
+                       owl:unionOf  ( xsd:boolean xsd:integer xsd:string )
+                     ] .
+
+:Icons  a                owl:Class ;
+        rdfs:subClassOf  :Illustration .
+
+:ScatterChart  a         owl:Class ;
+        rdfs:subClassOf  :Chart .
+
+:FunctionName  a     owl:DatatypeProperty ;
+        rdfs:domain  :FormulaValue , :Constraint ;
+        rdfs:range   xsd:string .
+
+:Value  a       owl:Class .
+
+:FileName  a        owl:DatatypeProperty ;
+        rdfs:range  xsd:string .
+
+:3D-Models  a            owl:Class ;
+        rdfs:subClassOf  :Illustration .
+
+:CellValue  a        owl:DatatypeProperty ;
+        rdfs:domain  :StringValue , :NumericValue , :BooleanValue ;
+        rdfs:range   [ a            rdfs:Datatype ;
+                       owl:unionOf  ( [ a            rdfs:Datatype ;
+                                        owl:unionOf  ( xsd:dateTime xsd:float )
+                                      ]
+                                      xsd:boolean xsd:string
+                                    )
+                     ] .
+
+:Position  a         owl:DatatypeProperty ;
+        rdfs:domain  :Table ;
+        rdfs:range   xsd:string .
+
+:Constraint  a           owl:Class ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :FunctionName
+                         ] .
+
+:BarChart  a             owl:Class ;
+        rdfs:subClassOf  :Chart .
+
+:ChartLegend  a      owl:DatatypeProperty ;
+        rdfs:domain  :Chart ;
+        rdfs:range   xsd:string .
+
+:hasWorkSheet  a       owl:ObjectProperty ;
+        rdfs:domain    :Workbook ;
+        rdfs:range     :Worksheet ;
+        owl:inverseOf  :isInWorkbook .
+
+:PieChart  a             owl:Class ;
+        rdfs:subClassOf  :Chart .
+
+:CellID  a           owl:DatatypeProperty ;
+        rdfs:domain  :FormulaValue ;
+        rdfs:range   [ a                     rdfs:Datatype ;
+                       owl:onDatatype        xsd:string ;
+                       owl:withRestrictions  ( [ xsd:minLength  2 ]
+                                             )
+                     ] .
+
+<http://www.semanticweb.org/GregorKaefer/ontologies/2020/8/excelOntology#Header&Footer>
+        a                owl:Class ;
+        rdfs:subClassOf  :Text .
+
+:Shapes  a               owl:Class ;
+        rdfs:subClassOf  :Illustration .
+
+:isPartOfWorksheet  a  owl:ObjectProperty ;
+        rdfs:domain  :SheetElement ;
+        rdfs:range   :Worksheet .
+
+:cell   a                owl:Class ;
+        rdfs:subClassOf  :BasicElement ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :CellStatus
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :CellID
+                         ] ;
+        rdfs:subClassOf  [ a                         owl:Restriction ;
+                           owl:onClass               :row ;
+                           owl:onProperty            :hasRow ;
+                           owl:qualifiedCardinality  "1"^^xsd:nonNegativeInteger
+                         ] ;
+        rdfs:subClassOf  [ a                         owl:Restriction ;
+                           owl:onClass               :column ;
+                           owl:onProperty            :hasColumn ;
+                           owl:qualifiedCardinality  "1"^^xsd:nonNegativeInteger
+                         ] ;
+        rdfs:subClassOf  [ a                            owl:Restriction ;
+                           owl:minQualifiedCardinality  "0"^^xsd:nonNegativeInteger ;
+                           owl:onClass                  :FormulaValue ;
+                           owl:onProperty               :isUsedIn
+                         ] ;
+        rdfs:subClassOf  [ a                            owl:Restriction ;
+                           owl:minQualifiedCardinality  "0"^^xsd:nonNegativeInteger ;
+                           owl:onClass                  :Comments ;
+                           owl:onProperty               :hasComment
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  [ a            owl:Class ;
+                                                owl:unionOf  ( :BooleanValue :ErrorValue :FormulaValue :NumericValue :SparklineValue :StringValue )
+                                              ] ;
+                           owl:onProperty     :hasValue
+                         ] .
+
+:ErrorValue  a            owl:Class ;
+        rdfs:subClassOf   :Value ;
+        rdfs:subClassOf   [ a                  owl:Restriction ;
+                            owl:allValuesFrom  xsd:string ;
+                            owl:onProperty     :ErrorName
+                          ] ;
+        rdfs:subClassOf   [ a                  owl:Restriction ;
+                            owl:allValuesFrom  xsd:string ;
+                            owl:onProperty     :Description
+                          ] ;
+        owl:disjointWith  :NumericValue .
+
+:ErrorName  a        owl:DatatypeProperty ;
+        rdfs:domain  :ErrorValue ;
+        rdfs:range   [ a          rdfs:Datatype ;
+                       owl:oneOf  [ a          rdf:List ;
+                                    rdf:first  "#DIV/0!" ;
+                                    rdf:rest   [ a          rdf:List ;
+                                                 rdf:first  "#GETTING_DATA" ;
+                                                 rdf:rest   [ a          rdf:List ;
+                                                              rdf:first  "#N/A" ;
+                                                              rdf:rest   [ a          rdf:List ;
+                                                                           rdf:first  "#NAME?" ;
+                                                                           rdf:rest   [ a          rdf:List ;
+                                                                                        rdf:first  "#NULL!" ;
+                                                                                        rdf:rest   [ a          rdf:List ;
+                                                                                                     rdf:first  "#NUM!" ;
+                                                                                                     rdf:rest   [ a          rdf:List ;
+                                                                                                                  rdf:first  "#REF!" ;
+                                                                                                                  rdf:rest   [ a          rdf:List ;
+                                                                                                                               rdf:first  "#VALUE!" ;
+                                                                                                                               rdf:rest   ()
+                                                                                                                             ]
+                                                                                                                ]
+                                                                                                   ]
+                                                                                      ]
+                                                                         ]
+                                                            ]
+                                               ]
+                                  ]
+                     ] .
+
+:Macro  a            owl:DatatypeProperty ;
+        rdfs:domain  :Workbook ;
+        rdfs:range   xsd:string .
+
+:Table  a                owl:Class ;
+        rdfs:subClassOf  :SheetElement ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:positiveInteger ;
+                           owl:onProperty     :Y-Start
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:positiveInteger ;
+                           owl:onProperty     :Y-End
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :X-Start
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :X-End
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :Position
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :ElementName
+                         ] ;
+        rdfs:subClassOf  [ a                            owl:Restriction ;
+                           owl:minQualifiedCardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onClass                  :cell ;
+                           owl:onProperty               :hasCell
+                         ] .
+
+:WaterfallChart  a       owl:Class ;
+        rdfs:subClassOf  :Chart .
+
+:ComboChart  a           owl:Class ;
+        rdfs:subClassOf  :Chart .
+
+:column  a               owl:Class ;
+        rdfs:subClassOf  :BasicElement ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :ColumnID
+                         ] ;
+        rdfs:subClassOf  [ a                            owl:Restriction ;
+                           owl:minQualifiedCardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onClass                  :cell ;
+                           owl:onProperty               :hasCell
+                         ] .
+
+:SurfaceChart  a         owl:Class ;
+        rdfs:subClassOf  :Chart .
+
+:BooleanValue  a          owl:Class ;
+        rdfs:subClassOf   :Value ;
+        rdfs:subClassOf   [ a                  owl:Restriction ;
+                            owl:allValuesFrom  xsd:boolean ;
+                            owl:onProperty     :CellValue
+                          ] ;
+        owl:disjointWith  :NumericValue .
+
+:HeaderName  a      owl:DatatypeProperty ;
+        rdfs:range  xsd:string .
+
+:hasColumn  a               owl:ObjectProperty ;
+        rdfs:domain         :cell ;
+        rdfs:range          :column ;
+        rdfs:subPropertyOf  owl:topObjectProperty .
+
+:LineChart  a            owl:Class ;
+        rdfs:subClassOf  :Chart .
+
+:FormulaValue  a          owl:Class ;
+        rdfs:subClassOf   :Value ;
+        rdfs:subClassOf   [ a                  owl:Restriction ;
+                            owl:allValuesFrom  xsd:string ;
+                            owl:onProperty     :FunctionName
+                          ] ;
+        rdfs:subClassOf   [ a                  owl:Restriction ;
+                            owl:allValuesFrom  [ a            rdfs:Datatype ;
+                                                 owl:unionOf  ( [ a            rdfs:Datatype ;
+                                                                  owl:unionOf  ( xsd:dateTime xsd:float )
+                                                                ]
+                                                                xsd:boolean xsd:string
+                                                              )
+                                               ] ;
+                            owl:onProperty     :CellValue
+                          ] ;
+        rdfs:subClassOf   [ a                  owl:Restriction ;
+                            owl:allValuesFrom  xsd:string ;
+                            owl:onProperty     :CellID
+                          ] ;
+        rdfs:subClassOf   [ a                            owl:Restriction ;
+                            owl:minQualifiedCardinality  "0"^^xsd:nonNegativeInteger ;
+                            owl:onClass                  :cell ;
+                            owl:onProperty               :hasCell
+                          ] ;
+        rdfs:subClassOf   [ a                  owl:Restriction ;
+                            owl:allValuesFrom  :cell ;
+                            owl:onProperty     :hasInput
+                          ] ;
+        owl:disjointWith  :NumericValue .
+
+:Worksheet_Sheet1  a   :Worksheet ;
+        rdfs:label     "Sheet1" ;
+        :SheetName     "Sheet1" ;
+        :isInWorkbook  :Workbook_reptile_checklist_2020_08.xlsx .
+
+:NumericFunction  a       owl:Class ;
+        rdfs:subClassOf   :Constraint ;
+        rdfs:subClassOf   [ a                  owl:Restriction ;
+                            owl:allValuesFrom  xsd:integer ;
+                            owl:onProperty     :ValueConstraint
+                          ] ;
+        owl:disjointWith  :StringFunction .
+
+:StringFunction  a       owl:Class ;
+        rdfs:subClassOf  :Constraint ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :ValueConstraint
+                         ] .
+
+:BoxAndWhiskerChart  a   owl:Class ;
+        rdfs:subClassOf  :Chart .
+
+:ChartTitle  a              owl:DatatypeProperty ;
+        rdfs:domain         :Chart ;
+        rdfs:range          xsd:string ;
+        rdfs:subPropertyOf  owl:topDataProperty .
+
+:       a       owl:Ontology .
+
+:Worksheet  a            owl:Class ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :SheetName
+                         ] ;
+        rdfs:subClassOf  [ a                            owl:Restriction ;
+                           owl:minQualifiedCardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onClass                  :Workbook ;
+                           owl:onProperty               :isInWorkbook
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  :SheetElement ;
+                           owl:onProperty     :hasSheetElement
+                         ] .
+
+:SunburstChart  a        owl:Class ;
+        rdfs:subClassOf  :Chart .
+
+:hasMacro  a         owl:ObjectProperty ;
+        rdfs:domain  :Workbook ;
+        rdfs:range   :ExcelMacro .
+
+:BubbleChart  a          owl:Class ;
+        rdfs:subClassOf  :Chart .
+
+:SparklineValue  a       owl:Class ;
+        rdfs:subClassOf  :Value .
+
+:StockChart  a           owl:Class ;
+        rdfs:subClassOf  :Chart .
+
+:CellStatus  a      owl:DatatypeProperty ;
+        rdfs:range  [ a          rdfs:Datatype ;
+                      owl:oneOf  [ a          rdf:List ;
+                                   rdf:first  "Green" ;
+                                   rdf:rest   [ a          rdf:List ;
+                                                rdf:first  "Red" ;
+                                                rdf:rest   [ a          rdf:List ;
+                                                             rdf:first  "Yellow" ;
+                                                             rdf:rest   ()
+                                                           ]
+                                              ]
+                                 ]
+                    ] .
+
+:hasRow  a                  owl:ObjectProperty ;
+        rdfs:domain         :cell ;
+        rdfs:range          :row ;
+        rdfs:subPropertyOf  owl:topObjectProperty .
+
+:isUsedIn  a         owl:ObjectProperty ;
+        rdfs:domain  :cell ;
+        rdfs:range   :FormulaValue .
+
+:ExcelMacro  a           owl:Class ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :MacroTitle
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :Macro
+                         ] .
+
+:SheetName  a       owl:DatatypeProperty ;
+        rdfs:range  xsd:string .
+
+:Pictures  a             owl:Class ;
+        rdfs:subClassOf  :Illustration .
+
+:ValueConstraint  a  owl:DatatypeProperty ;
+        rdfs:domain  :Constraint ;
+        rdfs:range   [ a            rdfs:Datatype ;
+                       owl:unionOf  ( xsd:integer xsd:string )
+                     ] .
+
+[ a            owl:AllDisjointClasses ;
+  owl:members  ( :BasicElement :Chart :Comments :Illustration :Table :Text )
+] .
+
+:CommentsValue  a    owl:DatatypeProperty ;
+        rdfs:domain  :Comments ;
+        rdfs:range   xsd:string .
+
+:ColumnChart  a          owl:Class ;
+        rdfs:subClassOf  :Chart .
+
+:Comments  a             owl:Class ;
+        rdfs:subClassOf  :SheetElement ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :CommentsValue
+                         ] .
+
+:AreaChart  a            owl:Class ;
+        rdfs:subClassOf  :Chart .
+
+:TreeMapChart  a         owl:Class ;
+        rdfs:subClassOf  :Chart .
+
+:hasComment  a       owl:ObjectProperty ;
+        rdfs:domain  :cell ;
+        rdfs:range   :Comments .
+
+:Illustration  a         owl:Class ;
+        rdfs:subClassOf  :SheetElement ;
+        rdfs:subClassOf  [ a                   owl:Restriction ;
+                           owl:onProperty      :ElementName ;
+                           owl:someValuesFrom  xsd:string
+                         ] .
+
+:BasicElement  a         owl:Class ;
+        rdfs:subClassOf  :SheetElement .
+
+:Chart  a                owl:Class ;
+        rdfs:subClassOf  :SheetElement ;
+        rdfs:subClassOf  [ a                            owl:Restriction ;
+                           owl:minQualifiedCardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onDataRange              [ a                   rdfs:Datatype ;
+                                                          owl:intersectionOf  ( [ a            rdfs:Datatype ;
+                                                                                  owl:unionOf  ( xsd:boolean xsd:integer xsd:string )
+                                                                                ]
+                                                                                [ a            rdfs:Datatype ;
+                                                                                  owl:unionOf  ( [ a                         rdfs:Datatype ;
+                                                                                                   owl:datatypeComplementOf  [ a            rdfs:Datatype ;
+                                                                                                                               owl:unionOf  ( xsd:boolean xsd:integer )
+                                                                                                                             ]
+                                                                                                 ]
+                                                                                                 [ a                         rdfs:Datatype ;
+                                                                                                   owl:datatypeComplementOf  [ a            rdfs:Datatype ;
+                                                                                                                               owl:unionOf  ( xsd:boolean xsd:string )
+                                                                                                                             ]
+                                                                                                 ]
+                                                                                                 [ a                         rdfs:Datatype ;
+                                                                                                   owl:datatypeComplementOf  [ a            rdfs:Datatype ;
+                                                                                                                               owl:unionOf  ( xsd:integer xsd:string )
+                                                                                                                             ]
+                                                                                                 ]
+                                                                                               )
+                                                                                ]
+                                                                              )
+                                                        ] ;
+                           owl:onProperty               :DataLabels
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :ChartTitle
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :ChartLegend
+                         ] .
+
+:FilePath  a        owl:DatatypeProperty ;
+        rdfs:range  xsd:string .
+
+:hasValue  a         owl:ObjectProperty ;
+        rdfs:domain  :cell ;
+        rdfs:range   :Value .
+
+:Extension  a       owl:DatatypeProperty ;
+        rdfs:range  [ a          rdfs:Datatype ;
+                      owl:oneOf  [ a          rdf:List ;
+                                   rdf:first  ".xla" ;
+                                   rdf:rest   [ a          rdf:List ;
+                                                rdf:first  ".xlam" ;
+                                                rdf:rest   [ a          rdf:List ;
+                                                             rdf:first  ".xlr" ;
+                                                             rdf:rest   [ a          rdf:List ;
+                                                                          rdf:first  ".xls" ;
+                                                                          rdf:rest   [ a          rdf:List ;
+                                                                                       rdf:first  ".xlsb" ;
+                                                                                       rdf:rest   [ a          rdf:List ;
+                                                                                                    rdf:first  ".xlsm" ;
+                                                                                                    rdf:rest   [ a          rdf:List ;
+                                                                                                                 rdf:first  ".xlsx" ;
+                                                                                                                 rdf:rest   [ a          rdf:List ;
+                                                                                                                              rdf:first  ".xlt" ;
+                                                                                                                              rdf:rest   [ a          rdf:List ;
+                                                                                                                                           rdf:first  ".xltm" ;
+                                                                                                                                           rdf:rest   [ a          rdf:List ;
+                                                                                                                                                        rdf:first  ".xltx" ;
+                                                                                                                                                        rdf:rest   [ a          rdf:List ;
+                                                                                                                                                                     rdf:first  ".xlw" ;
+                                                                                                                                                                     rdf:rest   [ a          rdf:List ;
+                                                                                                                                                                                  rdf:first  ".xml" ;
+                                                                                                                                                                                  rdf:rest   ()
+                                                                                                                                                                                ]
+                                                                                                                                                                   ]
+                                                                                                                                                      ]
+                                                                                                                                         ]
+                                                                                                                            ]
+                                                                                                               ]
+                                                                                                  ]
+                                                                                     ]
+                                                                        ]
+                                                           ]
+                                              ]
+                                 ]
+                    ] .
+
+:PivotTable  a           owl:Class ;
+        rdfs:subClassOf  :Table .
+
+:hasCell  a                 owl:ObjectProperty ;
+        rdfs:domain         :row , :Table , :column , :FormulaValue ;
+        rdfs:range          :cell ;
+        rdfs:subPropertyOf  owl:topObjectProperty ;
+        owl:inverseOf       :hasColumn , :isUsedIn , :hasRow .
+
+:RowID  a           owl:DatatypeProperty ;
+        rdfs:range  xsd:positiveInteger .
+
+:WordLine  a             owl:Class ;
+        rdfs:subClassOf  :Text .
+
+[ a            owl:AllDisjointClasses ;
+  owl:members  ( :BooleanValue :ErrorValue :FormulaValue :SparklineValue :StringValue )
+] .
+
+:isInWorkbook  a     owl:ObjectProperty ;
+        rdfs:domain  :Worksheet ;
+        rdfs:range   :Workbook .
+
+:Description  a      owl:DatatypeProperty ;
+        rdfs:domain  :ErrorValue ;
+        rdfs:range   xsd:string .
+
+:ElementName  a      owl:DatatypeProperty ;
+        rdfs:domain  :SheetElement ;
+        rdfs:range   xsd:string .

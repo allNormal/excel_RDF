@@ -5,7 +5,6 @@ import org.apache.jena.ontology.ObjectProperty;
 import org.apache.jena.ontology.OntClass;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.rdf.model.ModelFactory;
-import org.apache.jena.vocabulary.RDFS;
 
 import static org.apache.jena.ontology.OntModelSpec.*;
 
@@ -155,7 +154,7 @@ public class OntologyConverter {
      */
     private void loadModels(){
         this.model = ModelFactory.createOntologyModel(OWL_MEM);
-        this.model.read("C:\\Users\\43676\\Desktop\\uni\\sepm-individual-assignment-java-template\\template\\rdfTest\\src\\main\\resources\\excel_owl\\excel_ontology.ttl");
+        this.model.read("src/main/resources/excel_owl/excel_ontology.ttl");
 
     }
 
