@@ -54,7 +54,7 @@ public class readExcel {
 
         //iterate through sheet in workbook
         for(Sheet sheet : myWorkBook){
-            Worksheet worksheet = new Worksheet(sheet.getSheetName(), workbook);
+            Worksheet worksheet = new Worksheet(sheet.getSheetName().replace(" ", ""), workbook);
             readBasicElement(sheet, worksheet);
             readTable(myWorkBook, sheet.getSheetName(), worksheet);
             readChart(myWorkBook, sheet.getSheetName(), worksheet);
@@ -293,7 +293,6 @@ public class readExcel {
     private void formulaDependencyCheck(List<Formula> formulas, List<SheetElement> cell, entity.SheetElement.BasicElement.Cell cell1) {
         for(int i = 0; i<formulas.size(); i++){
             if(formulas.get(i).getFunctionType() == FunctionType.BASIC) {
-                System.out.println("check " + i + " " + formulas.get(i).getFormulaFunction());
                 addFormulaCellDependency(formulas.get(i).getFormulaFunction(), cell, cell1);
             } else if(formulas.get(i).getFunctionType() == FunctionType.NESTED) {
                 NestedFormula nestedFormula = (NestedFormula) formulas.get(i);
@@ -515,16 +514,23 @@ public class readExcel {
      * @param cell cell that have a Formula value.
      */
     private void addFormulaCellDependency(String formula, List<SheetElement> cellList, entity.SheetElement.BasicElement.Cell cell) {
+        formula = formula.replaceAll("\\$", "");
+        formula = formula.replaceAll("'", "");
+        formula = formula.replaceAll("\\s","");
+        System.out.println("got " + formula);
         String patternCell = "[a-zA-Z]+\\d+";
         String patternCellToCell = patternCell + ":" + patternCell;
         String patternCellFromOtherSheet = "'*[a-zA-Z]+\\d*'*![a-zA-Z]+\\d+\\s*";
         String patternCellToCellFromOtherSheet = patternCellFromOtherSheet + ":" + patternCellFromOtherSheet;
         String regex = "\\(|\\)|,|\\+|-|\\*|/|;";
         String[] temp = formula.split(regex);
+        /*
         if(formula.contains("IF") || formula.contains("if")) {
             ifFormulaDependency(formula.replaceFirst("IF|if", ""), cellList, cell);
             return;
         }
+
+         */
         for(int i = 0;i<temp.length; i++) {
             if(temp[i].matches(patternCell)){
                 String check = temp[i];
@@ -534,6 +540,7 @@ public class readExcel {
                         .orElse(null);
                 if(cell1 == null) continue;
                 else{
+                    System.out.println("adding " + cell1.getCellId());
                     Formula basicFormula1 = cell.getFormulaValue();
                     basicFormula1.addDependencies(cell1);
                 }
@@ -541,20 +548,26 @@ public class readExcel {
             else if(temp[i].matches(patternCellFromOtherSheet)) {
                 String[] worksheetCellSplit = temp[i].split("!");
                 List<Worksheet> worksheets = this.workbook.getWorksheets();
-                Worksheet worksheet = worksheets.stream()
-                        .filter(worksheet1 -> worksheetCellSplit[0].equals(worksheet1.getSheetName()))
-                        .findAny()
-                        .orElse(null);
+                if(worksheetCellSplit[0].toLowerCase().equals("tabelle")) {
+                    addFormulaCellDependency(worksheetCellSplit[1], cellList, cell);
+                }
+                else {
+                    Worksheet worksheet = worksheets.stream()
+                            .filter(worksheet1 -> worksheetCellSplit[0].equals(worksheet1.getSheetName()))
+                            .findAny()
+                            .orElse(null);
 
-                if(worksheet!= null){
-                    List<SheetElement> cells = worksheet.getSheets().getOrDefault(CELL, null);
-                    if(cells != null) {
-                        entity.SheetElement.BasicElement.Cell cell1 = (entity.SheetElement.BasicElement.Cell)cells.stream()
-                                .filter(cellTemp -> worksheetCellSplit[1].equals(cellTemp.title()))
-                                .findAny()
-                                .orElse(null);
-                        if(cell1 != null) {
-                            cell.getFormulaValue().addDependencies(cell1);
+                    if (worksheet != null) {
+                        List<SheetElement> cells = worksheet.getSheets().getOrDefault(CELL, null);
+                        if (cells != null) {
+                            entity.SheetElement.BasicElement.Cell cell1 = (entity.SheetElement.BasicElement.Cell) cells.stream()
+                                    .filter(cellTemp -> worksheetCellSplit[1].equals(cellTemp.title()))
+                                    .findAny()
+                                    .orElse(null);
+                            if (cell1 != null) {
+                                System.out.println("adding " + cell1.getCellId());
+                                cell.getFormulaValue().addDependencies(cell1);
+                            }
                         }
                     }
                 }
@@ -569,6 +582,7 @@ public class readExcel {
                             .orElse(null);
                     if(cell2 == null) continue;
                     else{
+                        System.out.println("adding " + cell2.getCellId());
                         Formula basicFormula1 = cell.getFormulaValue();
                         basicFormula1.addDependencies(cell2);
                     }
@@ -594,6 +608,7 @@ public class readExcel {
                                     .findAny()
                                     .orElse(null);
                             if (cell1 != null) {
+                                System.out.println("adding " + cell1.getCellId());
                                 cell.getFormulaValue().addDependencies(cell1);
                             }
                         }

@@ -63,7 +63,7 @@ public class excelTest {
     @Test
     @DisplayName("Testing if it read the correct number of cells")
     void cellTest() {
-        int[][] expected = {{70, 46},{8188, 483, 160, 2, 16}, {416}, {0}};
+        int[][] expected = {{74, 46},{8188, 483, 160, 2, 16}, {416}, {0}};
         int[][] actual = new int[expected.length][];
         for(int i = 0; i<this.readExcel.length; i++) {
             Workbook workbook1 = readExcel[i].getWorkbook();

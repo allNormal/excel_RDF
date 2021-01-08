@@ -43,6 +43,11 @@ public class OntologyDao implements persistence.OntologyDao {
         }
     }
 
+    @Override
+    public List<String> getCellDependencies(String cell) {
+        return null;
+    }
+
     private void createRepoGraphDB(String filePath) {
         FileOutputStream out = null;
         File myFile = new File(filePath);
