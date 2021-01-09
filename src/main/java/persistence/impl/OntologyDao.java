@@ -132,7 +132,7 @@ public class OntologyDao implements persistence.OntologyDao {
         FileOutputStream out = null;
         File myFile = new File(filePath);
         try {
-            out = new FileOutputStream("./OntologyOut/" + myFile.getName()+".ttl");
+            out = new FileOutputStream("./OntologyOut/" + myFile.getName().replaceAll(" ", "_")+".ttl");
         } catch (IOException e) {
             System.out.println(e);
         }

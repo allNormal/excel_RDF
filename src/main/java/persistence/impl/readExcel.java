@@ -50,11 +50,11 @@ public class readExcel {
 
         // Finds the workbook instance for XLSX file
         myWorkBook = new XSSFWorkbook (fis);
-        this.workbook = new Workbook((FileUtils.getFileExtension(file)),file.getName());
+        this.workbook = new Workbook((FileUtils.getFileExtension(file)),file.getName().replaceAll(" ", "_"));
 
         //iterate through sheet in workbook
         for(Sheet sheet : myWorkBook){
-            Worksheet worksheet = new Worksheet(sheet.getSheetName().replace(" ", ""), workbook);
+            Worksheet worksheet = new Worksheet(sheet.getSheetName().replaceAll(" ", ""), workbook);
             readBasicElement(sheet, worksheet);
             readTable(myWorkBook, sheet.getSheetName(), worksheet);
             readChart(myWorkBook, sheet.getSheetName(), worksheet);
@@ -516,7 +516,7 @@ public class readExcel {
     private void addFormulaCellDependency(String formula, List<SheetElement> cellList, entity.SheetElement.BasicElement.Cell cell) {
         formula = formula.replaceAll("\\$", "");
         formula = formula.replaceAll("'", "");
-        formula = formula.replaceAll("\\s","");
+        formula = formula.replaceAll(" ","");
         System.out.println("got " + formula);
         String patternCell = "[a-zA-Z]+\\d+";
         String patternCellToCell = patternCell + ":" + patternCell;
@@ -524,6 +524,7 @@ public class readExcel {
         String patternCellToCellFromOtherSheet = patternCellFromOtherSheet + ":" + patternCellFromOtherSheet;
         String regex = "\\(|\\)|,|\\+|-|\\*|/|;";
         String[] temp = formula.split(regex);
+
         /*
         if(formula.contains("IF") || formula.contains("if")) {
             ifFormulaDependency(formula.replaceFirst("IF|if", ""), cellList, cell);
