@@ -628,16 +628,25 @@ public class readExcel {
         int min = 65;
         int temp = Integer.parseInt(column);
         boolean check = false;
-
         while(temp >= 0) {
             if(temp <= 25){
                 check = true;
             }
             int calc = temp % 26;
             temp = temp/26;
-
-            char character = (char) (min + calc);
-            result = result + character;
+            if(temp >=1 && temp <=25) {
+                char character = (char) (min + (temp-1));
+                result = result + character;
+                character = (char) (min + calc);
+                result = result + character;
+                break;
+            } else if(temp > 25) {
+                char character = (char)(min + ((temp/26) - 1));
+                result = result + character;
+            } else {
+                char character = (char) (min + calc);
+                result = result + character;
+            }
             if(check){
                 break;
             }

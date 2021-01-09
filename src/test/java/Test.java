@@ -9,6 +9,7 @@ public class Test {
 
         OntologyDao abc = new OntologyDao();
         OntologyService test = new OntologyService(abc);
+        //test.create("src/main/resources/simple_test.xlsm");
         test.create("src/main/resources/OBARIS SC2 Alle_Parameter_2007-2013_Basisversion_Erosion.xlsm");
     }
 
