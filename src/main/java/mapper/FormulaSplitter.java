@@ -1,4 +1,4 @@
-package persistence.impl;
+package mapper;
 
 import java.util.ArrayList;
 import java.util.List;

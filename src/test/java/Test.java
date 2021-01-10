@@ -14,6 +14,7 @@ public class Test {
 
         OntologyDao abc = new OntologyDao();
         OntologyService test = new OntologyService(abc);
+        /*
         test.create("src/main/resources/simple_test.xlsm");
         Collection<String> testCheckDependency = test.getDependency("F4", "Sheet1");
         System.out.println("Dependency...");
@@ -30,7 +31,14 @@ public class Test {
         for(String temp : testCheckReverseDependency) {
             System.out.println(temp);
         }
-         //test.create("src/main/resources/OBARIS SC2 Alle_Parameter_2007-2013_Basisversion_Erosion.xlsm");
+
+         */
+        test.create("src/main/resources/OBARIS SC2 Alle_Parameter_2007-2013_Basisversion_Erosion.xlsm");
+        Collection<String> testCheck = test.getDependency("CN4", "Basicinfo");
+        System.out.println("Dependency");
+        for(String temp : testCheck) {
+            System.out.println(temp);
+        }
     }
 
 }

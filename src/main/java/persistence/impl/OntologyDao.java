@@ -9,6 +9,7 @@ import entity.SheetElement.Tables.Table;
 import entity.SheetElement.Texts.Text;
 import entity.Workbook.Workbook;
 import entity.Worksheet.Worksheet;
+import mapper.readExcel;
 import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.query.*;
@@ -23,7 +24,7 @@ import java.util.Map;
 public class OntologyDao implements persistence.OntologyDao {
     private OntologyConverter converter;
     private Workbook workbook;
-    private readExcel readExcel;
+    private mapper.readExcel readExcel;
     private OntModel model;
     public OntologyDao(){
 
@@ -148,7 +149,7 @@ public class OntologyDao implements persistence.OntologyDao {
                     "ORDER BY ASC(?cellId)";
 
         }
-        
+
         Query query = QueryFactory.create(queryString);
 
         QueryExecution qExec = QueryExecutionFactory.create(query, this.model);

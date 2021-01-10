@@ -6,8 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.runner.RunWith;
-import persistence.impl.readExcel;
+import mapper.readExcel;
 
 import java.io.File;
 import java.io.IOException;

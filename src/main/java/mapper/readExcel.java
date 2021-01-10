@@ -1,4 +1,4 @@
-package persistence.impl;
+package mapper;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -62,6 +62,13 @@ public class readExcel {
             readText(myWorkBook, sheet.getSheetName(), worksheet);
             this.workbook.addWorksheet(worksheet);
         }
+
+        for(int i = 0; i< this.workbook.getWorksheets().size(); i++) {
+            Worksheet ws = this.workbook.getWorksheets().get(i);
+            List<SheetElement> cell = ws.getSheets().get(CELL);
+            formulaCellDependencyCheck(cell);
+        }
+
         //check if extension = macro or not
         if(this.workbook.getExtension().equals("xlsm")) {
             readMacro(file);
@@ -258,7 +265,7 @@ public class readExcel {
 
         worksheet.addElement(ROW, rowTemp);
         worksheet.addElement(CELL, cellTemp);
-        formulaCellDependencyCheck(cellTemp);
+        //formulaCellDependencyCheck(cellTemp);
         List<SheetElement> colTemp = new ArrayList<>();
         for(Map.Entry<String, Column> temp : columnTemp.entrySet()) {
             colTemp.add(temp.getValue());
@@ -520,6 +527,7 @@ public class readExcel {
         String patternCellToCell = patternCell + ":" + patternCell;
         String patternCellFromOtherSheet = "'*[a-zA-Z]+\\d*'*![a-zA-Z]+\\d+\\s*";
         String patternCellToCellFromOtherSheet = patternCellFromOtherSheet + ":" + patternCellFromOtherSheet;
+        String patternCellToCellFromOtherSheet2 = patternCellFromOtherSheet + ":" + patternCell;
         String regex = "\\(|\\)|,|\\+|-|\\*|/|;";
         String[] temp = formula.split(regex);
 
@@ -595,6 +603,30 @@ public class readExcel {
 
                 if(worksheet!= null){
                     List<String> cell2 = cellToCell(tempSplit);
+                    List<SheetElement> cells = worksheet.getSheets().getOrDefault(CELL, null);
+                    if(cells != null) {
+                        for(int l = 0; l<cell2.size(); l++) {
+                            String workSheetTemp = cell2.get(l);
+                            entity.SheetElement.BasicElement.Cell cell1 = (entity.SheetElement.BasicElement.Cell) cells.stream()
+                                    .filter(cellTemp -> workSheetTemp.equals(cellTemp.title()))
+                                    .findAny()
+                                    .orElse(null);
+                            if (cell1 != null) {
+                                cell.getFormulaValue().addDependencies(cell1);
+                            }
+                        }
+                    }
+                }
+            } else if(temp[i].matches(patternCellToCellFromOtherSheet2)) {
+                String[] worksheetCellSplit = temp[i].split("!");
+                List<Worksheet> worksheets = this.workbook.getWorksheets();
+                Worksheet worksheet = worksheets.stream()
+                        .filter(worksheet1 -> worksheetCellSplit[0].equals(worksheet1.getSheetName()))
+                        .findAny()
+                        .orElse(null);
+
+                if(worksheet!= null){
+                    List<String> cell2 = cellToCell(worksheetCellSplit[1]);
                     List<SheetElement> cells = worksheet.getSheets().getOrDefault(CELL, null);
                     if(cells != null) {
                         for(int l = 0; l<cell2.size(); l++) {
