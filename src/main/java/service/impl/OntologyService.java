@@ -34,4 +34,9 @@ public class OntologyService implements service.OntologyService {
         return dao.addConstraint(type, typeID, worksheetName, operator, value);
     }
 
+    @Override
+    public Collection<String> getReverseDependency(String cellID, String worksheetName) {
+        return dao.getReverseDependencies(cellID, worksheetName);
+    }
+
 }

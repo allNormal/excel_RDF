@@ -4,7 +4,6 @@ import entity.Operator;
 import entity.SheetElement.ElementType;
 
 import java.util.Collection;
-import java.util.Map;
 
 public interface OntologyService {
 
@@ -14,5 +13,7 @@ public interface OntologyService {
 
     Collection<String> addConstraint(ElementType type, String typeID, String worksheetName,
                                                               Operator operator, String value);
+
+    Collection<String> getReverseDependency(String cellID, String worksheetName);
 
 }

@@ -164,6 +164,50 @@ public class OntologyDao implements persistence.OntologyDao {
         return result;
     }
 
+    @Override
+    public Collection<String> getReverseDependencies(String cellID, String worksheetName) {
+
+        String queryString = "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
+                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "PREFIX : <http://www.semanticweb.org/GregorKaefer/ontologies/2020/8/excelOntology#>\n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX ns: <http://xmlns.com/foaf/0.1/>\n" +
+                "\n" +
+                "SELECT DISTINCT ?cellDependencyIsUsedIn\n" +
+                "WHERE {\n" +
+                "    ?worksheet rdf:type :Worksheet.\n" +
+                "    ?worksheet :SheetName ?worksheetName.\n" +
+                "    ?cell rdf:type :cell.\n" +
+                "    ?cell :CellID ?cellId.\n" +
+                "    ?worksheet :hasSheetElement ?cell.\n" +
+                "    ?cell :isUsedIn ?valueType.\n" +
+                "    ?cellDependencyIsUsedIn rdf:type :cell.\n" +
+                "    ?cellDependencyIsUsedIn :hasValue ?value.\n" +
+                "    ?valueType :FunctionName ?function1.\n" +
+                "    ?value :FunctionName ?function2.\n" +
+                "    Filter(?cellId = '" + cellID + "').\n" +
+                "    Filter(?worksheetName = '" + worksheetName + "').\n" +
+                "    Filter(?function1 = ?function2).\n" +
+                "}\n";
+
+        Query query = QueryFactory.create(queryString);
+        List<String> dependencyListIsUsedIn = new ArrayList<>();
+
+        QueryExecution qExec = QueryExecutionFactory.create(query, this.model);
+        try {
+            ResultSet result = qExec.execSelect();
+            while (result.hasNext()) {
+                QuerySolution solt = result.nextSolution();
+                dependencyListIsUsedIn.add(solt.getResource("cellDependencyIsUsedIn").getLocalName());
+            }
+        } finally {
+            qExec.close();
+        }
+
+        return dependencyListIsUsedIn;
+    }
+
     /**
      * add entity.excel data into the rdf-graph
      */

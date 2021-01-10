@@ -15,12 +15,19 @@ public class Test {
         OntologyDao abc = new OntologyDao();
         OntologyService test = new OntologyService(abc);
         test.create("src/main/resources/simple_test.xlsm");
-        Collection<String> testCheckDependency = test.getDependency("F3", "Sheet1");
+        Collection<String> testCheckDependency = test.getDependency("B2", "Sheet1");
+        System.out.println("Dependency...");
         for(String temp : testCheckDependency) {
             System.out.println(temp);
         }
-        Collection<String> testAddConstraint = test.addConstraint(ElementType.COLUMN,"C", "Sheet1", Operator.GT, "1000");
+        Collection<String> testAddConstraint = test.addConstraint(ElementType.COLUMN,"D", "Sheet1", Operator.GT, "1000");
+        System.out.println("Constraint...");
         for (String temp : testAddConstraint) {
+            System.out.println(temp);
+        }
+        System.out.println("ReverseDependency...");
+        Collection<String> testCheckReverseDependency = test.getReverseDependency("B2", "Sheet1");
+        for(String temp : testCheckReverseDependency) {
             System.out.println(temp);
         }
          //test.create("src/main/resources/OBARIS SC2 Alle_Parameter_2007-2013_Basisversion_Erosion.xlsm");

@@ -445,7 +445,6 @@ public class readExcel {
                     if(cell1.getNumericValue() >= cell2.getNumericValue()) return true;
                     else return false;
                 } else if(operator.equals(">")) {
-                    System.out.println(cell1.getNumericValue() + " " + cell2.getNumericValue());
                     if(cell1.getNumericValue() > cell2.getNumericValue()) return true;
                     else return false;
                 } else if(operator.equals("<=")) {
@@ -517,7 +516,6 @@ public class readExcel {
         formula = formula.replaceAll("\\$", "");
         formula = formula.replaceAll("'", "");
         formula = formula.replaceAll(" ","");
-        System.out.println("got " + formula);
         String patternCell = "[a-zA-Z]+\\d+";
         String patternCellToCell = patternCell + ":" + patternCell;
         String patternCellFromOtherSheet = "'*[a-zA-Z]+\\d*'*![a-zA-Z]+\\d+\\s*";
@@ -541,7 +539,6 @@ public class readExcel {
                         .orElse(null);
                 if(cell1 == null) continue;
                 else{
-                    System.out.println("adding " + cell1.getCellId());
                     Formula basicFormula1 = cell.getFormulaValue();
                     basicFormula1.addDependencies(cell1);
                 }
@@ -566,7 +563,6 @@ public class readExcel {
                                     .findAny()
                                     .orElse(null);
                             if (cell1 != null) {
-                                System.out.println("adding " + cell1.getCellId());
                                 cell.getFormulaValue().addDependencies(cell1);
                             }
                         }
@@ -583,7 +579,6 @@ public class readExcel {
                             .orElse(null);
                     if(cell2 == null) continue;
                     else{
-                        System.out.println("adding " + cell2.getCellId());
                         Formula basicFormula1 = cell.getFormulaValue();
                         basicFormula1.addDependencies(cell2);
                     }
@@ -609,7 +604,6 @@ public class readExcel {
                                     .findAny()
                                     .orElse(null);
                             if (cell1 != null) {
-                                System.out.println("adding " + cell1.getCellId());
                                 cell.getFormulaValue().addDependencies(cell1);
                             }
                         }

@@ -7,11 +7,12 @@ import java.util.Collection;
 
 public interface OntologyDao {
 
-    public void create(String filepath);
+    void create(String filepath);
 
-    public Collection<String> getCellDependencies(String cellID, String worksheetName);
+    Collection<String> getCellDependencies(String cellID, String worksheetName);
 
-    public Collection<String> addConstraint(ElementType type, String typeID, String worksheetName,
+    Collection<String> addConstraint(ElementType type, String typeID, String worksheetName,
                                             Operator operator, String value);
 
+    Collection<String> getReverseDependencies(String cellID, String worksheetName);
 }
