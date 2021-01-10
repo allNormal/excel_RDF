@@ -15,12 +15,12 @@ public class Test {
         OntologyDao abc = new OntologyDao();
         OntologyService test = new OntologyService(abc);
         test.create("src/main/resources/simple_test.xlsm");
-        Collection<String> testCheckDependency = test.getDependency("B2", "Sheet1");
+        Collection<String> testCheckDependency = test.getDependency("F4", "Sheet1");
         System.out.println("Dependency...");
         for(String temp : testCheckDependency) {
             System.out.println(temp);
         }
-        Collection<String> testAddConstraint = test.addConstraint(ElementType.COLUMN,"D", "Sheet1", Operator.GT, "1000");
+        Collection<String> testAddConstraint = test.addConstraint(ElementType.COLUMN,"A", "Sheet1", Operator.NE, "Bread");
         System.out.println("Constraint...");
         for (String temp : testAddConstraint) {
             System.out.println(temp);

@@ -1,7 +1,7 @@
 package entity;
 
 public enum Operator {
-    EQ("="), LT("<"), GT(">"), LE("<="), GE(">="), NE("NOT EXISTS");
+    EQ("="), LT("<"), GT(">"), LE("<="), GE(">="), NE("!=");
 
     private String operator;
     private Operator antonym;

@@ -121,9 +121,10 @@ public class OntologyDao implements persistence.OntologyDao {
 
         if(!isNumeric) value = "'" + value + "'";
 
-        if(type == ElementType.CELL) {
+        queryString += "Filter (?value "+ operator.getOperator() + " " + value + "). \n";
 
-            queryString += "Filter (?value "+ operator.getOperator() + " " + value + "). \n" +
+        if(type == ElementType.CELL) {
+            queryString +=
                      "Filter (?cellId = '" +typeID + "').\n" +
                      "Filter (?worksheetName = '" + worksheetName +"').\n" +
                      "}\n" +
@@ -131,7 +132,7 @@ public class OntologyDao implements persistence.OntologyDao {
 
         } else if(type == ElementType.COLUMN) {
 
-            queryString += "Filter (?value "+ operator.getOperator() + " " + value + "). \n" +
+            queryString +=
                     "Filter (?columnID = '" +typeID + "').\n" +
                     "Filter (?worksheetName = '" + worksheetName +"').\n" +
                     "}\n" +
@@ -140,14 +141,14 @@ public class OntologyDao implements persistence.OntologyDao {
 
         } else if(type == ElementType.ROW) {
 
-            queryString += "Filter(?value "+ operator.getOperator() + " " + value + "). \n" +
+            queryString +=
                     "Filter(?rowID = '" +typeID + "').\n" +
                     "Filter(?worksheetName = '" + worksheetName +"').\n" +
                     "}\n" +
                     "ORDER BY ASC(?cellId)";
 
         }
-
+        
         Query query = QueryFactory.create(queryString);
 
         QueryExecution qExec = QueryExecutionFactory.create(query, this.model);
