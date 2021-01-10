@@ -1,7 +1,12 @@
+import entity.Operator;
+import entity.SheetElement.ElementType;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import persistence.impl.OntologyDao;
 import service.impl.OntologyService;
+
+import java.util.Collection;
+import java.util.List;
 
 public class Test {
 
@@ -9,8 +14,16 @@ public class Test {
 
         OntologyDao abc = new OntologyDao();
         OntologyService test = new OntologyService(abc);
-        //test.create("src/main/resources/simple_test.xlsm");
-        test.create("src/main/resources/OBARIS SC2 Alle_Parameter_2007-2013_Basisversion_Erosion.xlsm");
+        test.create("src/main/resources/simple_test.xlsm");
+        Collection<String> testCheckDependency = test.getDependency("F3", "Sheet1");
+        for(String temp : testCheckDependency) {
+            System.out.println(temp);
+        }
+        Collection<String> testAddConstraint = test.addConstraint(ElementType.COLUMN,"C", "Sheet1", Operator.GT, "1000");
+        for (String temp : testAddConstraint) {
+            System.out.println(temp);
+        }
+         //test.create("src/main/resources/OBARIS SC2 Alle_Parameter_2007-2013_Basisversion_Erosion.xlsm");
     }
 
 }

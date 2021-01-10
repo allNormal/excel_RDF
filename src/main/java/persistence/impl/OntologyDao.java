@@ -1,5 +1,6 @@
 package persistence.impl;
 
+import entity.Operator;
 import entity.SheetElement.BasicElement.Cell;
 import entity.SheetElement.Charts.Chart;
 import entity.SheetElement.ElementType;
@@ -10,10 +11,12 @@ import entity.Workbook.Workbook;
 import entity.Worksheet.Worksheet;
 import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.OntModel;
+import org.apache.jena.query.*;
 import org.apache.jena.vocabulary.RDFS;
+
 import java.io.*;
-import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -44,18 +47,121 @@ public class OntologyDao implements persistence.OntologyDao {
     }
 
     @Override
-    public List<String> getCellDependencies(String cell) {
-        return null;
+    public Collection<String> getCellDependencies(String cellID, String worksheetName) {
+        String queryString = "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
+                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "PREFIX : <http://www.semanticweb.org/GregorKaefer/ontologies/2020/8/excelOntology#>\n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX ns: <http://xmlns.com/foaf/0.1/>\n" +
+                "\n" +
+                "SELECT ?cellDependency\n" +
+                "WHERE {\n" +
+                "    ?worksheet rdf:type :Worksheet.\n" +
+                "    ?worksheet :SheetName ?worksheetName.\n" +
+                "    ?cell rdf:type :cell.\n" +
+                "    ?cell :CellID ?cellId.\n" +
+                "    ?worksheet :hasSheetElement ?cell.\n" +
+                "    ?cell (:hasValue/:hasCell)+ ?cellDependency.\n" +
+                "    Filter(?cellId = '" +cellID + "').\n" +
+                "    Filter(?worksheetName = '" + worksheetName + "').\n" +
+                "}";
+
+        Query query = QueryFactory.create(queryString);
+        List<String> dependencyList = new ArrayList<>();
+
+        QueryExecution qExec = QueryExecutionFactory.create(query, this.model);
+        try {
+            ResultSet result = qExec.execSelect();
+            while (result.hasNext()) {
+                QuerySolution solt = result.nextSolution();
+                dependencyList.add(solt.getResource("cellDependency").getLocalName());
+            }
+        } finally {
+            qExec.close();
+        }
+
+        return dependencyList;
     }
 
-    private void createRepoGraphDB(String filePath) {
-        FileOutputStream out = null;
-        File myFile = new File(filePath);
+    @Override
+    public Collection<String> addConstraint(ElementType type, String typeID, String worksheetName, Operator operator, String value) {
+
+        List<String> result = new ArrayList<>();
+        float valueNumeric = 0;
+        boolean isNumeric = true;
         try {
-            out = new FileOutputStream("./OntologyOut/" + myFile.getName()+".ttl");
-        } catch (IOException e) {
-            System.out.println(e);
+            valueNumeric = Float.parseFloat(value);
+        } catch (NumberFormatException e) {
+            isNumeric = false;
         }
+
+        String queryString = "PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" +
+                "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+                "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" +
+                "PREFIX : <http://www.semanticweb.org/GregorKaefer/ontologies/2020/8/excelOntology#>\n" +
+                "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" +
+                "PREFIX ns: <http://xmlns.com/foaf/0.1/>\n" +
+                "\n" +
+                "SELECT ?cellId\n" +
+                "WHERE {\n" +
+                "    ?worksheet rdf:type :Worksheet.\n" +
+                "    ?worksheet :SheetName ?worksheetName.\n" +
+                "    ?cell rdf:type :cell.\n" +
+                "    ?cell :CellID ?cellId.\n" +
+                "    ?worksheet :hasSheetElement ?cell.\n" +
+                "    ?column rdf:type :column.\n" +
+                "    ?column :ColumnID ?columnID.\n" +
+                "    ?row rdf:type :row.\n" +
+                "    ?row :RowID ?rowID.\n" +
+                "    ?cell :hasRow ?row.\n" +
+                "    ?cell :hasColumn ?column.\n" +
+                "    ?cell :hasValue ?valueType.\n" +
+                "    ?valueType :CellValue ?value.\n";
+
+        if(!isNumeric) value = "'" + value + "'";
+
+        if(type == ElementType.CELL) {
+
+            queryString += "Filter (?value "+ operator.getOperator() + " " + value + "). \n" +
+                     "Filter (?cellId = '" +typeID + "').\n" +
+                     "Filter (?worksheetName = '" + worksheetName +"').\n" +
+                     "}\n" +
+                     "ORDER BY ASC(?cellId)";
+
+        } else if(type == ElementType.COLUMN) {
+
+            queryString += "Filter (?value "+ operator.getOperator() + " " + value + "). \n" +
+                    "Filter (?columnID = '" +typeID + "').\n" +
+                    "Filter (?worksheetName = '" + worksheetName +"').\n" +
+                    "}\n" +
+                    "ORDER BY ASC(?cellId)";
+
+
+        } else if(type == ElementType.ROW) {
+
+            queryString += "Filter(?value "+ operator.getOperator() + " " + value + "). \n" +
+                    "Filter(?rowID = '" +typeID + "').\n" +
+                    "Filter(?worksheetName = '" + worksheetName +"').\n" +
+                    "}\n" +
+                    "ORDER BY ASC(?cellId)";
+
+        }
+
+        Query query = QueryFactory.create(queryString);
+
+        QueryExecution qExec = QueryExecutionFactory.create(query, this.model);
+        try {
+            ResultSet resultSet = qExec.execSelect();
+            while (resultSet.hasNext()) {
+                QuerySolution solt = resultSet.nextSolution();
+                result.add(solt.get("cellId").toString());
+            }
+        } finally {
+            qExec.close();
+        }
+
+        return result;
     }
 
     /**
