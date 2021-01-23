@@ -4,72 +4,301 @@
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@base <http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyVersion2> .
+@base <http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased> .
 
-<http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyVersion2> rdf:type owl:Ontology .
+<http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased> rdf:type owl:Ontology .
 
 #################################################################
 #    Object Properties
 #################################################################
 
-###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyVersion2#hasColumn
-:hasColumn rdf:type owl:ObjectProperty .
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#ValueFor
+:ValueFor rdf:type owl:ObjectProperty ;
+          rdfs:domain :Value ;
+          rdfs:range :ColumnHeader .
 
 
-###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyVersion2#hasFormula
-:hasFormula rdf:type owl:ObjectProperty .
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#hasColumnHeader
+:hasColumnHeader rdf:type owl:ObjectProperty ;
+                 rdfs:domain :Table ;
+                 rdfs:range :ColumnHeader .
 
 
-###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyVersion2#hasFunction
-:hasFunction rdf:type owl:ObjectProperty .
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#hasDependency
+:hasDependency rdf:type owl:ObjectProperty ;
+               rdfs:domain :Formula ;
+               rdfs:range :ColumnHeader ,
+                          :Value .
 
 
-###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyVersion2#hasWorksheet
-:hasWorksheet rdf:type owl:ObjectProperty .
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#hasRowHeader
+:hasRowHeader rdf:type owl:ObjectProperty ;
+              rdfs:domain :Table ;
+              rdfs:range :RowHeader .
+
+
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#hasTable
+:hasTable rdf:type owl:ObjectProperty ;
+          rdfs:domain :Worksheet ;
+          rdfs:range :Table .
+
+
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#hasValue
+:hasValue rdf:type owl:ObjectProperty ;
+          rdfs:domain :RowHeader ,
+                      :Table ;
+          rdfs:range :Value .
+
+
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#hasValueType
+:hasValueType rdf:type owl:ObjectProperty ;
+              rdfs:domain :ColumnHeader ;
+              rdfs:range :ValueType .
+
+
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#hasWorksheet
+:hasWorksheet rdf:type owl:ObjectProperty ;
+              rdfs:domain :Workbook ;
+              rdfs:range :Worksheet .
+
+
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#isUsedIn
+:isUsedIn rdf:type owl:ObjectProperty ;
+          rdfs:domain :ColumnHeader ,
+                      :Value ;
+          rdfs:range :Formula .
 
 
 #################################################################
 #    Data properties
 #################################################################
 
-###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyVersion2#ColumnTitle
-:ColumnTitle rdf:type owl:DatatypeProperty .
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#ActualValue
+:ActualValue rdf:type owl:DatatypeProperty ;
+             rdfs:domain :Value ;
+             rdfs:range rdfs:Literal .
 
 
-###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyVersion2#FunctionTitle
-:FunctionTitle rdf:type owl:DatatypeProperty .
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#ColumnHeaderID
+:ColumnHeaderID rdf:type owl:DatatypeProperty ;
+                rdfs:domain :ColumnHeader ;
+                rdfs:range xsd:string .
 
 
-###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyVersion2#SheetName
-:SheetName rdf:type owl:DatatypeProperty .
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#ColumnHeaderTitle
+:ColumnHeaderTitle rdf:type owl:DatatypeProperty ;
+                   rdfs:domain :ColumnHeader ;
+                   rdfs:range xsd:string .
 
 
-###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyVersion2#WorkbookName
-:WorkbookName rdf:type owl:DatatypeProperty .
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#FormulaFunction
+:FormulaFunction rdf:type owl:DatatypeProperty ;
+                 rdfs:domain :Formula ;
+                 rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#RowEnd
+:RowEnd rdf:type owl:DatatypeProperty ;
+        rdfs:domain :Table ;
+        rdfs:range xsd:integer .
+
+
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#RowHeaderID
+:RowHeaderID rdf:type owl:DatatypeProperty ;
+             rdfs:domain :RowHeader ;
+             rdfs:range xsd:integer .
+
+
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#RowHeaderTitle
+:RowHeaderTitle rdf:type owl:DatatypeProperty ;
+                rdfs:domain :RowHeader ;
+                rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#RowStart
+:RowStart rdf:type owl:DatatypeProperty ;
+          rdfs:domain :Table ;
+          rdfs:range xsd:integer .
+
+
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#SheetName
+:SheetName rdf:type owl:DatatypeProperty ;
+           rdfs:domain :Worksheet ;
+           rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#TableName
+:TableName rdf:type owl:DatatypeProperty ;
+           rdfs:domain :Table ;
+           rdfs:range xsd:string .
+
+
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#WorkbookName
+:WorkbookName rdf:type owl:DatatypeProperty ;
+              rdfs:domain :Workbook ;
+              rdfs:range xsd:string .
 
 
 #################################################################
 #    Classes
 #################################################################
 
-###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyVersion2#Column
-:Column rdf:type owl:Class .
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#Boolean
+:Boolean rdf:type owl:Class ;
+         rdfs:subClassOf :ValueType .
 
 
-###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyVersion2#Formula
-:Formula rdf:type owl:Class .
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#ColumnHeader
+:ColumnHeader rdf:type owl:Class ;
+              rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                owl:onProperty :hasRowHeader ;
+                                owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ;
+                                owl:onClass :RowHeader
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :hasValueType ;
+                                owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                owl:onClass :ValueType
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :ColumnHeaderID ;
+                                owl:allValuesFrom xsd:string
+                              ] ,
+                              [ rdf:type owl:Restriction ;
+                                owl:onProperty :ColumnHeaderTitle ;
+                                owl:allValuesFrom xsd:string
+                              ] .
 
 
-###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyVersion2#Function
-:Function rdf:type owl:Class .
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#Error
+:Error rdf:type owl:Class ;
+       rdfs:subClassOf :ValueType .
 
 
-###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyVersion2#Workbook
-:Workbook rdf:type owl:Class .
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#Formula
+:Formula rdf:type owl:Class ;
+         rdfs:subClassOf :ValueType ,
+                         [ rdf:type owl:Class ;
+                           owl:unionOf ( [ rdf:type owl:Restriction ;
+                                           owl:onProperty :hasDependency ;
+                                           owl:someValuesFrom :ColumnHeader
+                                         ]
+                                         [ rdf:type owl:Restriction ;
+                                           owl:onProperty :hasDependency ;
+                                           owl:someValuesFrom :Value
+                                         ]
+                                       )
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :FormulaFunction ;
+                           owl:allValuesFrom xsd:string
+                         ] .
 
 
-###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyVersion2#Worksheet
-:Worksheet rdf:type owl:Class .
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#Number
+:Number rdf:type owl:Class ;
+        rdfs:subClassOf :ValueType .
+
+
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#RowHeader
+:RowHeader rdf:type owl:Class ;
+           rdfs:subClassOf [ rdf:type owl:Restriction ;
+                             owl:onProperty :hasValue ;
+                             owl:allValuesFrom :Value
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty :hasColumnHeader ;
+                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onClass :ColumnHeader
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty :RowHeaderID ;
+                             owl:allValuesFrom xsd:integer
+                           ] ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty :RowHeaderTitle ;
+                             owl:allValuesFrom xsd:string
+                           ] .
+
+
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#String
+:String rdf:type owl:Class ;
+        rdfs:subClassOf :ValueType .
+
+
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#Table
+:Table rdf:type owl:Class ;
+       rdfs:subClassOf [ rdf:type owl:Restriction ;
+                         owl:onProperty :hasColumnHeader ;
+                         owl:allValuesFrom :ColumnHeader
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :hasRowHeader ;
+                         owl:allValuesFrom :RowHeader
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :hasValue ;
+                         owl:allValuesFrom :Value
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :RowEnd ;
+                         owl:allValuesFrom xsd:integer
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :RowStart ;
+                         owl:allValuesFrom xsd:integer
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :TableName ;
+                         owl:allValuesFrom xsd:string
+                       ] .
+
+
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#Value
+:Value rdf:type owl:Class ;
+       rdfs:subClassOf [ rdf:type owl:Restriction ;
+                         owl:onProperty :isUsedIn ;
+                         owl:minQualifiedCardinality "0"^^xsd:nonNegativeInteger ;
+                         owl:onClass :Formula
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :ValueFor ;
+                         owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                         owl:onClass :ColumnHeader
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :ActualValue ;
+                         owl:allValuesFrom rdfs:Literal
+                       ] .
+
+
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#ValueType
+:ValueType rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#Workbook
+:Workbook rdf:type owl:Class ;
+          rdfs:subClassOf [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasWorksheet ;
+                            owl:allValuesFrom :Worksheet
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :hasWorksheet ;
+                            owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                            owl:onClass :Worksheet
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :WorkbookName ;
+                            owl:allValuesFrom xsd:string
+                          ] .
+
+
+###  http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#Worksheet
+:Worksheet rdf:type owl:Class ;
+           rdfs:subClassOf [ rdf:type owl:Restriction ;
+                             owl:onProperty :SheetName ;
+                             owl:allValuesFrom xsd:string
+                           ] .
 
 
 ###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi

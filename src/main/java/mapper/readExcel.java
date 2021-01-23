@@ -24,11 +24,15 @@ import org.apache.poi.xssf.usermodel.*;
 import static entity.SheetElement.ElementType.*;
 
 
-public class readExcel {
+public class readExcel implements ExcelReader {
 
     private XSSFWorkbook myWorkBook;
     private Workbook workbook;
 
+
+    public readExcel() {
+
+    }
 
     public readExcel(File file) throws IOException {
         readExcelConverter(file);
@@ -39,13 +43,13 @@ public class readExcel {
      * @param file excel file
      * @throws IOException if file not found.
      */
-    private void readExcelConverter(File file) throws IOException {
+    public void readExcelConverter(File file) throws IOException {
 
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
 
         // Finds the workbook instance for XLSX file
@@ -192,6 +196,7 @@ public class readExcel {
         List<SheetElement> cellTemp = new ArrayList<>();
         Map<String, Column> columnTemp = new HashMap<>();
         List<SheetElement> rowTemp = new ArrayList<>();
+        boolean emptyCell = false;
 
         for(Row row : sheet){
             entity.SheetElement.BasicElement.Row row1 = new entity.SheetElement.BasicElement.Row(worksheet,
@@ -205,8 +210,7 @@ public class readExcel {
                         cell1.setStringValue(cell.getRichStringCellValue().getString());
                         break;
                     case BLANK:
-                        cell1.setValue(Value.STRING);
-                        cell1.setStringValue("");
+                        emptyCell = true;
                         break;
                     case ERROR:
                         cell1.setValue(Value.ERROR);
@@ -256,6 +260,10 @@ public class readExcel {
                 else{
                     Column column = columnTemp.get(convertColumn(Integer.toString(cell.getColumnIndex())));
                     column.addCell(cell1);
+                }
+                if(emptyCell) {
+                    emptyCell = false;
+                    continue;
                 }
                 cellTemp.add(cell1);
                 row1.addCell(cell1);
@@ -538,7 +546,7 @@ public class readExcel {
         }
 
          */
-        for(int i = 0;i<temp.length; i++) {
+        for(int i = 0;i<temp.length; i++) {;
             if(temp[i].matches(patternCell)){
                 String check = temp[i];
                 entity.SheetElement.BasicElement.Cell cell1 = (entity.SheetElement.BasicElement.Cell)cellList.stream()
