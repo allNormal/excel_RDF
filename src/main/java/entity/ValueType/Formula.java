@@ -90,4 +90,8 @@ public abstract class Formula {
     public void setNumericValue(float numericValue) {
         this.numericValue = numericValue;
     }
+
+    public List<Column> getColumnDependency() {
+        return columnDependency;
+    }
 }

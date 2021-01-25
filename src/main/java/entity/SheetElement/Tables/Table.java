@@ -103,4 +103,12 @@ public class Table extends SheetElement {
     public void setRows(List<Row> rows) {
         this.rows = rows;
     }
+
+    public List<Column> getColumns() {
+        return columns;
+    }
+
+    public List<Row> getRows() {
+        return rows;
+    }
 }

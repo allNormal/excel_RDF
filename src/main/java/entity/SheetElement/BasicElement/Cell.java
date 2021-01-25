@@ -11,7 +11,9 @@ import org.apache.poi.xssf.usermodel.XSSFComment;
 public class Cell extends BasicElement {
     private String cellId;
     private int row;
+    private String rowID;
     private String column;
+    private String columnTitle;
     private CellStatus status;
     private String stringValue;
     private float numericValue;
@@ -132,5 +134,21 @@ public class Cell extends BasicElement {
 
     public Value getValue() {
         return value;
+    }
+
+    public String getRowID() {
+        return rowID;
+    }
+
+    public void setRowID(String rowID) {
+        this.rowID = rowID;
+    }
+
+    public String getColumnTitle() {
+        return columnTitle;
+    }
+
+    public void setColumnTitle(String columnTitle) {
+        this.columnTitle = columnTitle;
     }
 }

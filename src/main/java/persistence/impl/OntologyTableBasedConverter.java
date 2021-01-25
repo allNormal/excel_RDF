@@ -10,7 +10,7 @@ import static org.apache.jena.ontology.OntModelSpec.OWL_MEM;
 
 public class OntologyTableBasedConverter {
 
-    private final String NS = "http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased#";
+    private final String NS = "http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyVersion2#";
     private OntModel model;
     private String MODEL_NAME;
 

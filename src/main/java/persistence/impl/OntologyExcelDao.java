@@ -43,7 +43,7 @@ public class OntologyExcelDao implements persistence.OntologyDao {
             convertExcelToOntology();
             saveModel(filepath);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 

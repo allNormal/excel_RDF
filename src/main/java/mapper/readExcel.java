@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
+import entity.Restriction.ExcelRestriction;
+import entity.Restriction.Restriction;
 import entity.SheetElement.BasicElement.Column;
 import entity.SheetElement.Charts.Chart;
 import entity.SheetElement.Illustrations.Illustrations;
@@ -74,6 +76,11 @@ public class readExcel implements ExcelReader {
         if(this.workbook.getExtension().equals("xlsm")) {
             readMacro(file);
         }
+
+    }
+
+    @Override
+    public void readExcelConverterWithRestriction(Restriction restriction) throws IOException {
 
     }
 

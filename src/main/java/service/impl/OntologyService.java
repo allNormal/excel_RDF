@@ -4,6 +4,7 @@ import entity.Operator;
 import entity.SheetElement.ElementType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import persistence.OntologyDao;
 import persistence.impl.OntologyExcelDao;
 
 import java.lang.invoke.MethodHandles;
@@ -11,9 +12,9 @@ import java.util.Collection;
 
 public class OntologyService implements service.OntologyService {
     private final static Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private final OntologyExcelDao dao;
+    private final OntologyDao dao;
 
-    public OntologyService(OntologyExcelDao dao) {
+    public OntologyService(OntologyDao dao) {
         this.dao = dao;
     }
 

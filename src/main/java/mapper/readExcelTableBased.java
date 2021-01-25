@@ -1,5 +1,7 @@
 package mapper;
 
+import entity.Restriction.Restriction;
+import entity.Restriction.TableRestriction;
 import entity.SheetElement.BasicElement.Column;
 import entity.SheetElement.SheetElement;
 import entity.SheetElement.Tables.Table;
@@ -11,6 +13,7 @@ import entity.Workbook.Workbook;
 import entity.Worksheet.Worksheet;
 import exception.IncorrectTypeException;
 import org.apache.logging.log4j.core.util.FileUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -32,19 +35,20 @@ public class readExcelTableBased implements ExcelReader {
     private XSSFWorkbook myWorkBook;
     private Workbook workbook;
 
-    readExcelTableBased(File file, int columnHeader, int rowHeader) {
+    public readExcelTableBased(File file, int columnHeader, int rowHeader) {
         try {
             initializeWorkbook(file);
             for(int i = 0; i<workbook.getWorksheets().size(); i++) {
                 workbook.getWorksheets().get(i).setColumnHeaderIndex(columnHeader);
                 workbook.getWorksheets().get(i).setRowHeaderIndex(rowHeader);
             }
+            readExcelConverter();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    readExcelTableBased(File file) {
+    public readExcelTableBased(File file) {
         try {
             initializeWorkbook(file);
         } catch (IOException e) {
@@ -59,14 +63,62 @@ public class readExcelTableBased implements ExcelReader {
         for(Sheet sheet : myWorkBook) {
             for(int i = 0; i<workbook.getWorksheets().size(); i++) {
                 if(workbook.getWorksheets().get(i).getSheetName().equals(sheet.getSheetName().replaceAll(" ", ""))) {
-                    readTable(sheet, workbook.getWorksheets().get(i));
+                    Table table = new Table(workbook.getWorksheets().get(i),
+                            "Table_"+workbook.getWorksheets().get(i).getSheetName());
+                    readTable(table, sheet, workbook.getWorksheets().get(i), null);
+                }
+            }
+        }
+        for(int i = 0; i< this.workbook.getWorksheets().size(); i++) {
+            Worksheet ws = this.workbook.getWorksheets().get(i);
+            List<SheetElement> table = ws.getSheets().get(TABLE);
+            for(int j = 0; j<table.size();j++) {
+                Table table1 = (Table) table.get(j);
+                formulaColumnDependencyCheck(table1.getColumns(), table1.getCell());
+            }
+        }
+    }
+
+    @Override
+    public void readExcelConverterWithRestriction(Restriction restriction) throws IOException {
+        TableRestriction tableRestriction = (TableRestriction) restriction;
+
+        for(int i = 0;i<tableRestriction.getWorksheets().size(); i++) {
+            for(int j = 0; j<workbook.getWorksheets().size(); j++) {
+                if(workbook.getWorksheets().get(i).getSheetName().equals(tableRestriction.getWorksheets().get(i))) {
+                    workbook.getWorksheets().remove(j);
+                    break;
+                }
+            }
+        }
+
+        if(tableRestriction.getColumnsInWorksheet() != null || tableRestriction.getTablesInWorksheet()!= null) {
+            for (Sheet sheet : myWorkBook) {
+                for (int i = 0; i < workbook.getWorksheets().size(); i++) {
+                    if (workbook.getWorksheets().get(i).getSheetName().equals(sheet.getSheetName().replaceAll(" ", ""))) {
+                        if (tableRestriction.getColumnsInWorksheet()!= null &&
+                                tableRestriction.getColumnsInWorksheet().containsKey(sheet.getSheetName())) {
+                            Table table = new Table(workbook.getWorksheets().get(i), "Table_" + workbook.getWorksheets().get(i).getSheetName());
+                            readTable(table, sheet, workbook.getWorksheets().get(i), tableRestriction.getColumnsInWorksheet().get(sheet.getSheetName()));
+                        } else if (tableRestriction.getTablesInWorksheet()!= null &&
+                                tableRestriction.getTablesInWorksheet().containsKey(sheet.getSheetName())) {
+                            Map<String, List<String>> temp = tableRestriction.getTablesInWorksheet().get(sheet.getSheetName());
+                            for(Map.Entry<String, List<String>> tables : temp.entrySet()) {
+                                Table table = new Table(workbook.getWorksheets().get(i), tables.getKey());
+                                readTable(table, sheet, workbook.getWorksheets().get(i), tables.getValue());
+                            }
+                        } else {
+                            Table table = new Table(workbook.getWorksheets().get(i),
+                                    "Table_"+workbook.getWorksheets().get(i).getSheetName());
+                            readTable(table, sheet, workbook.getWorksheets().get(i), null);
+                        }
+                    }
                 }
             }
         }
     }
 
-    public void readTable(Sheet sheet, Worksheet worksheet) {
-        Table table = new Table(worksheet, "Table_" + worksheet.getSheetName());
+    public void readTable(Table table, Sheet sheet, Worksheet worksheet, List<String> columns) {
         List<entity.SheetElement.BasicElement.Cell> cellTemp = new ArrayList<>();
         Map<String, Column> columnTemp = new HashMap<>();
         List<entity.SheetElement.BasicElement.Row> rowTemp = new ArrayList<>();
@@ -76,24 +128,41 @@ public class readExcelTableBased implements ExcelReader {
             entity.SheetElement.BasicElement.Row row1 = new entity.SheetElement.BasicElement.Row(worksheet,
                     Integer.toString(row.getRowNum()));
             for(Cell cell : row) {
+                if(columns != null && columns.contains(convertColumn(Integer.toString(cell.getColumnIndex())))){
+                    continue;
+                }
                 if(cell.getColumnIndex() == worksheet.getRowHeaderIndex()) {
-                    try {
-                        switch (cell.getCellType()) {
-                            case STRING:
-                                row1.setRowTitle(cell.getRichStringCellValue().getString());
-                                break;
-                            default:
-                                throw new IncorrectTypeException("row header must be a type of string");
-
+                    if(cell.getRowIndex() == worksheet.getColumnHeaderIndex()){
+                        row1.setRowTitle("ColumnHeader");
+                    }
+                    else {
+                        try {
+                            switch (cell.getCellType()) {
+                                case STRING:
+                                    row1.setRowTitle(cell.getRichStringCellValue().getString());
+                                    break;
+                                case FORMULA:
+                                    switch (cell.getCachedFormulaResultType()){
+                                        case STRING:
+                                            row1.setRowTitle(cell.getStringCellValue());
+                                            break;
+                                        default:
+                                            throw new IncorrectTypeException("row header must be a type of string");
+                                    }
+                                    break;
+                                default:
+                                    throw new IncorrectTypeException("row header must be a type of string");
+                            }
+                            continue;
+                        } catch (IncorrectTypeException e) {
+                            System.out.println(e.getMessage());
+                            return;
                         }
-                        continue;
-                    } catch (IncorrectTypeException e) {
-                        System.out.println(e.getMessage());
-                        return;
                     }
                 }
                 entity.SheetElement.BasicElement.Cell cell1 = new entity.SheetElement.BasicElement.Cell(worksheet,
                         convertColumn(Integer.toString(cell.getColumnIndex())),cell.getRowIndex());
+                cell1.setRowID(row1.getRowTitle());
                 switch (cell.getCellType()){
                     case STRING:
                         cell1.setValue(Value.STRING);
@@ -142,19 +211,23 @@ public class readExcelTableBased implements ExcelReader {
                     emptyCell = false;
                     continue;
                 }
-                if(!columnTemp.containsKey(Integer.toString(cell.getColumnIndex()))){
-                    Column column = new Column(worksheet, convertColumn(Integer.toString(cell.getColumnIndex())));
-                    try {
-                        if (cell1.getStringValue() == null) {
-                            throw new IncorrectTypeException("column header cannot be a type other than string");
-                        } else {
-                            column.setColumnTitle(cell1.getStringValue());
-                        }
-                    } catch (IncorrectTypeException e) {
-                        System.out.println(e.getMessage());
-                        return;
+                if(!columnTemp.containsKey(convertColumn(Integer.toString(cell.getColumnIndex())))){
+                    if(cell.getRowIndex() >= worksheet.getColumnHeaderIndex()) {
+                        Column column = new Column(worksheet, convertColumn(Integer.toString(cell.getColumnIndex())));
+                            if (cell1.getStringValue() == null) {
+                                column.setColumnTitle("No_Title_Column");
+                                if(row1.getColumnTitle() == null && worksheet.getRowHeaderIndex() == cell.getColumnIndex()) {
+                                    row1.setColumnTitle("No_Title_Column");
+                                }
+                            } else {
+                                column.setColumnTitle(cell1.getStringValue());
+                                if(row1.getColumnTitle() == null && worksheet.getRowHeaderIndex() == cell.getColumnIndex()) {
+                                    row1.setColumnTitle(cell1.getStringValue());
+                                }
+                            }
+                        columnTemp.put(convertColumn(Integer.toString(cell.getColumnIndex())), column);
                     }
-                    columnTemp.put(convertColumn(Integer.toString(cell.getColumnIndex())), column);
+                    continue;
                 }
                 else{
                     Column column = columnTemp.get(convertColumn(Integer.toString(cell.getColumnIndex())));
@@ -167,6 +240,7 @@ public class readExcelTableBased implements ExcelReader {
                         } else if (column.getValue() != cell1.getValue()) {
                             throw new IncorrectTypeException("not all cell in column have the same value type");
                         }
+                        cell1.setColumnTitle(column.getColumnTitle());
                     } catch (IncorrectTypeException e) {
                         System.out.println(e.getMessage());
                         return;
@@ -187,9 +261,14 @@ public class readExcelTableBased implements ExcelReader {
             colTemp.add(temp.getValue());
         }
         table.setColumns(colTemp);
-        List<SheetElement> tables = new ArrayList<>();
-        tables.add(table);
-        worksheet.addElement(TABLE, tables);
+        if(worksheet.getSheets().containsKey(TABLE)) {
+            List<SheetElement> temp = worksheet.getSheets().get(TABLE);
+            worksheet.getSheets().replace(TABLE, temp);
+        } else {
+            List<SheetElement> tables = new ArrayList<>();
+            tables.add(table);
+            worksheet.addElement(TABLE, tables);
+        }
     }
 
     private void initializeWorkbook(File file) throws IOException {
@@ -214,7 +293,7 @@ public class readExcelTableBased implements ExcelReader {
      * add column dependency to column that have Formula value.
      * @param column list of column.
      */
-    private void formulaColumnDependencyCheck(List<SheetElement> column, List<SheetElement> cells){
+    private void formulaColumnDependencyCheck(List<Column> column, List<entity.SheetElement.BasicElement.Cell> cells){
         for(int i = 0; i<column.size(); i++){
             Column column1 = (Column) column.get(i);
             if(column1.getValue() == Value.FORMULA) {
@@ -235,8 +314,8 @@ public class readExcelTableBased implements ExcelReader {
      * @param column list of column
      * @param column1 column which the list of formula from
      */
-    private void formulaDependencyCheck(List<Formula> formulas, List<SheetElement> column,
-                                        List<SheetElement> cells,
+    private void formulaDependencyCheck(List<Formula> formulas, List<Column> column,
+                                        List<entity.SheetElement.BasicElement.Cell> cells,
                                         entity.SheetElement.BasicElement.Column column1) {
         for(int i = 0; i<formulas.size(); i++){
             if(formulas.get(i).getFunctionType() == FunctionType.BASIC) {
@@ -297,12 +376,11 @@ public class readExcelTableBased implements ExcelReader {
      * @param columnList list of column
      * @param column column that have a Formula value.
      */
-    private void addAllFormulaColumnDependency(String formula, List<SheetElement> columnList,
-                                               List<SheetElement> cellList,
+    private void addAllFormulaColumnDependency(String formula, List<Column> columnList,
+                                               List<entity.SheetElement.BasicElement.Cell> cellList,
                                                entity.SheetElement.BasicElement.Column column) {
         formula = formula.replaceAll("'", "");
         formula = formula.replaceAll(" ","");
-        formula = formula.replaceAll("\\d", "");
         String regex = "\\(|\\)|,|\\+|-|\\*|/|;";
         String[] temp = formula.split(regex);
 
@@ -310,6 +388,7 @@ public class readExcelTableBased implements ExcelReader {
             if (temp[i].contains("$")) {
                 addFormulaCellDependency(temp[i], cellList, column);
             } else {
+                temp[i] = temp[i].replaceAll("\\d", "");
                 addFormulaColumnDependency(temp[i], columnList, column);
             }
         }
@@ -374,7 +453,7 @@ public class readExcelTableBased implements ExcelReader {
      * @param cellList list of cell
      * @param column cell that have a Formula value.
      */
-    private void addFormulaCellDependency(String formula, List<SheetElement> cellList, entity.SheetElement.BasicElement.Column column) {
+    private void addFormulaCellDependency(String formula, List<entity.SheetElement.BasicElement.Cell> cellList, entity.SheetElement.BasicElement.Column column) {
         formula = formula.replaceAll("\\$", "");
         formula = formula.replaceAll("'", "");
         formula = formula.replaceAll(" ","");
@@ -393,7 +472,7 @@ public class readExcelTableBased implements ExcelReader {
         }
 
          */
-        for(int i = 0;i<temp.length; i++) {;
+        for(int i = 0;i<temp.length; i++) {
             if(temp[i].matches(patternCell)){
                 String check = temp[i];
                 entity.SheetElement.BasicElement.Cell cell1 = (entity.SheetElement.BasicElement.Cell)cellList.stream()
@@ -501,7 +580,7 @@ public class readExcelTableBased implements ExcelReader {
     }
 
 
-    private void addFormulaColumnDependency(String formula, List<SheetElement> columnList, entity.SheetElement.BasicElement.Column column) {
+    private void addFormulaColumnDependency(String formula, List<Column> columnList, entity.SheetElement.BasicElement.Column column) {
         String patternColumn = "[a-zA-Z]+";
         String patternColumnToColumn = patternColumn + ":" + patternColumn;
         String patternColumnFromOtherSheet = "'*[a-zA-Z]+'*![a-zA-Z]+\\s*";

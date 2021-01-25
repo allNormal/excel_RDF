@@ -1,0 +1,829 @@
+@prefix :      <http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyVersion2#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml:   <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+
+:Workbook_Sheet1_Table_Sheet1_Total_Value_Value_For_RowChocolate
+        a             :Value ;
+        rdfs:label    "Total Value_Value_For_RowChocolate" ;
+        :ActualValue  "34.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Total_Value .
+
+:Workbook_Sheet1_Table_Sheet1_Quantity
+        a                   :ColumnHeader ;
+        rdfs:label          "Quantity" ;
+        :ColumnHeaderID     "C" ;
+        :ColumnHeaderTitle  "Quantity" ;
+        :hasValueType       :Workbook_Sheet1_Table_Sheet1_Quantity_NumericValueType ;
+        :isUsedIn           :Workbook_Sheet1_Table_Sheet1_TestIF_FormulaValueType , :Workbook_Sheet1_Table_Sheet1_No_Title_Column_FormulaValueType , :Workbook_Sheet1_Table_Sheet1_Total_Value_FormulaValueType .
+
+:Workbook_Sheet2_Table_Sheet2_Egg
+        a                 :RowHeader ;
+        rdfs:label        "Egg" ;
+        :RowHeaderID      "51" ;
+        :RowHeaderTitle   "Egg" ;
+        :hasColumnHeader  :Workbook_Sheet2_Table_Sheet2_null ;
+        :hasValue         :Workbook_Sheet2_Table_Sheet2_Sell-Price_Value_For_RowCookies .
+
+:Workbook_Sheet2_Table_Sheet2_SomeCalculation_Value_For_RowKetchup
+        a             :Value ;
+        rdfs:label    "SomeCalculation_Value_For_RowKetchup" ;
+        :ActualValue  "0.5"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_SomeCalculation .
+
+:ColumnHeaderTitle  a  owl:DatatypeProperty ;
+        rdfs:domain  :ColumnHeader ;
+        rdfs:range   xsd:string .
+
+:Workbook  a             owl:Class ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :WorkbookName
+                         ] ;
+        rdfs:subClassOf  [ a                            owl:Restriction ;
+                           owl:minQualifiedCardinality  "1"^^xsd:nonNegativeInteger ;
+                           owl:onClass                  :Worksheet ;
+                           owl:onProperty               :hasWorksheet
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  :Worksheet ;
+                           owl:onProperty     :hasWorksheet
+                         ] .
+
+:Workbook_Sheet1_Table_Sheet1_Cookies
+        a                 :RowHeader ;
+        rdfs:label        "Cookies" ;
+        :RowHeaderID      "21" ;
+        :RowHeaderTitle   "Cookies" ;
+        :hasColumnHeader  :Workbook_Sheet1_Table_Sheet1_null ;
+        :hasValue         :Workbook_Sheet1_Table_Sheet1_Total_Value_Value_For_RowBread .
+
+:Workbook_Sheet2_Table_Sheet2_SomeCalculation
+        a                   :ColumnHeader ;
+        rdfs:label          "SomeCalculation" ;
+        :ColumnHeaderID     "F" ;
+        :ColumnHeaderTitle  "SomeCalculation" ;
+        :hasValueType       :Workbook_Sheet2_Table_Sheet2_SomeCalculation_FormulaValueType ;
+        :isUsedIn           :Workbook_Sheet2_Table_Sheet2_Sell-Price_FormulaValueType .
+
+:Workbook_Sheet1_Table_Sheet1_No_Title_Column
+        a                   :ColumnHeader ;
+        rdfs:label          "No_Title_Column" ;
+        :ColumnHeaderID     "E" ;
+        :ColumnHeaderTitle  "No_Title_Column" ;
+        :hasValueType       :Workbook_Sheet1_Table_Sheet1_No_Title_Column_FormulaValueType .
+
+:hasTable  a         owl:ObjectProperty ;
+        rdfs:domain  :Worksheet ;
+        rdfs:range   :Table .
+
+:Workbook_Sheet1_Table_Sheet1_TestIF_Value_For_RowBread
+        a             :Value ;
+        rdfs:label    "TestIF_Value_For_RowBread" ;
+        :ActualValue  "1100.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_TestIF .
+
+:Workbook_Sheet1_Table_Sheet1_Total_Value_Value_For_RowBread
+        a             :Value ;
+        rdfs:label    "Total Value_Value_For_RowBread" ;
+        :ActualValue  "1105.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Total_Value .
+
+:Workbook_Sheet2_Table_Sheet2_Bread
+        a                 :RowHeader ;
+        rdfs:label        "Bread" ;
+        :RowHeaderID      "11" ;
+        :RowHeaderTitle   "Bread" ;
+        :hasColumnHeader  :Workbook_Sheet2_Table_Sheet2_null ;
+        :hasValue         :Workbook_Sheet2_Table_Sheet2_Sell-Price_Value_For_RowBread .
+
+:Workbook_Sheet1_Table_Sheet1_Something
+        a                   :ColumnHeader ;
+        rdfs:label          "Something" ;
+        :ColumnHeaderID     "G" ;
+        :ColumnHeaderTitle  "Something" ;
+        :hasValueType       :Workbook_Sheet1_Table_Sheet1_Something_FormulaValueType .
+
+:Number  a               owl:Class ;
+        rdfs:subClassOf  :ValueType .
+
+:Workbook_Sheet1_Table_Sheet1_Price_Value_For_RowEgg
+        a             :Value ;
+        rdfs:label    "Price_Value_For_RowEgg" ;
+        :ActualValue  "1.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Price .
+
+:Workbook_Sheet2_Table_Sheet2_Inflation_Value_For_RowEgg
+        a             :Value ;
+        rdfs:label    "Inflation_Value_For_RowEgg" ;
+        :ActualValue  "10.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_Inflation .
+
+:Workbook_Sheet1_Table_Sheet1_Price_Value_For_RowCookies
+        a             :Value ;
+        rdfs:label    "Price_Value_For_RowCookies" ;
+        :ActualValue  "7.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Price .
+
+:WorkbookName  a     owl:DatatypeProperty ;
+        rdfs:domain  :Workbook ;
+        rdfs:range   xsd:string .
+
+:Workbook_Sheet2_Table_Sheet2_Sell-Price_Value_For_RowChocolate
+        a             :Value ;
+        rdfs:label    "Sell-Price_Value_For_RowChocolate" ;
+        :ActualValue  "ERROR" ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_Sell-Price .
+
+:Workbook_Sheet1_Table_Sheet1_Something_Value_For_RowCookies
+        a             :Value ;
+        rdfs:label    "Something_Value_For_RowCookies" ;
+        :ActualValue  "5.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Something .
+
+:Workbook_Sheet1_Table_Sheet1_Bread
+        a                 :RowHeader ;
+        rdfs:label        "Bread" ;
+        :RowHeaderID      "11" ;
+        :RowHeaderTitle   "Bread" ;
+        :hasColumnHeader  :Workbook_Sheet1_Table_Sheet1_null ;
+        :hasValue         :Workbook_Sheet1_Table_Sheet1_Quantity_Value_For_RowBread .
+
+:Workbook_Sheet1_Table_Sheet1_Price_Value_For_RowBread
+        a             :Value ;
+        rdfs:label    "Price_Value_For_RowBread" ;
+        :ActualValue  "5.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Price ;
+        :isUsedIn     :Workbook_Sheet1_Table_Sheet1_Something_FormulaValueType .
+
+:Workbook_Sheet2_Table_Sheet2_Sell-Price_Value_For_RowCookies
+        a             :Value ;
+        rdfs:label    "Sell-Price_Value_For_RowCookies" ;
+        :ActualValue  "ERROR" ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_Sell-Price .
+
+:Error  a                owl:Class ;
+        rdfs:subClassOf  :ValueType .
+
+:Workbook_Sheet1_Table_Sheet1
+        a                 :Table ;
+        rdfs:label        "Table_Sheet1" ;
+        :TableName        "Table_Sheet1" ;
+        :hasColumnHeader  :Workbook_Sheet1_Table_Sheet1_Price , :Workbook_Sheet1_Table_Sheet1_Something , :Workbook_Sheet1_Table_Sheet1_TestIF , :Workbook_Sheet1_Table_Sheet1_Total_Value , :Workbook_Sheet1_Table_Sheet1_No_Title_Column , :Workbook_Sheet1_Table_Sheet1_Quantity ;
+        :hasRowHeader     :Workbook_Sheet1_Table_Sheet1_Bread , :Workbook_Sheet1_Table_Sheet1_Cookies , :Workbook_Sheet1_Table_Sheet1_Sugar , :Workbook_Sheet1_Table_Sheet1_Chocolate , :Workbook_Sheet1_Table_Sheet1_Egg , :Workbook_Sheet1_Table_Sheet1_Ketchup , :Workbook_Sheet1_Table_Sheet1_ColumnHeader ;
+        :hasValue         :Workbook_Sheet1_Table_Sheet1_Total_Value_Value_For_RowEgg , :Workbook_Sheet1_Table_Sheet1_Quantity_Value_For_RowCookies , :Workbook_Sheet1_Table_Sheet1_Price_Value_For_RowSugar , :Workbook_Sheet1_Table_Sheet1_Total_Value_Value_For_RowKetchup , :Workbook_Sheet1_Table_Sheet1_Quantity_Value_For_RowBread , :Workbook_Sheet1_Table_Sheet1_Quantity_Value_For_RowChocolate , :Workbook_Sheet1_Table_Sheet1_Total_Value_Value_For_RowSugar , :Workbook_Sheet1_Table_Sheet1_Quantity_Value_For_RowKetchup , :Workbook_Sheet1_Table_Sheet1_TestIF_Value_For_RowCookies , :Workbook_Sheet1_Table_Sheet1_Something_Value_For_RowCookies , :Workbook_Sheet1_Table_Sheet1_Something_Value_For_RowSugar , :Workbook_Sheet1_Table_Sheet1_Something_Value_For_RowKetchup , :Workbook_Sheet1_Table_Sheet1_Something_Value_For_RowEgg , :Workbook_Sheet1_Table_Sheet1_Quantity_Value_For_RowSugar , :Workbook_Sheet1_Table_Sheet1_Total_Value_Value_For_RowBread , :Workbook_Sheet1_Table_Sheet1_Quantity_Value_For_RowEgg , :Workbook_Sheet1_Table_Sheet1_TestIF_Value_For_RowChocolate , :Workbook_Sheet1_Table_Sheet1_No_Title_Column_Value_For_RowCookies , :Workbook_Sheet1_Table_Sheet1_Something_Value_For_RowBread , :Workbook_Sheet1_Table_Sheet1_Something_Value_For_RowChocolate , :Workbook_Sheet1_Table_Sheet1_Price_Value_For_RowChocolate , :Workbook_Sheet1_Table_Sheet1_Price_Value_For_RowBread , :Workbook_Sheet1_Table_Sheet1_Total_Value_Value_For_RowCookies , :Workbook_Sheet1_Table_Sheet1_Price_Value_For_RowKetchup , :Workbook_Sheet1_Table_Sheet1_Total_Value_Value_For_RowChocolate , :Workbook_Sheet1_Table_Sheet1_Price_Value_For_RowCookies , :Workbook_Sheet1_Table_Sheet1_Price_Value_For_RowEgg , :Workbook_Sheet1_Table_Sheet1_TestIF_Value_For_RowBread .
+
+:Workbook_Sheet1_Table_Sheet1_No_Title_Column_FormulaValueType
+        a                 :Formula ;
+        rdfs:label        "Formula" ;
+        :FormulaFunction  "SUM(B2:B4) + SUM(C2:C4) + SUM(SUM(D3:D4),SUM(D5:D6))" ;
+        :hasDependency    :Workbook_Sheet1_Table_Sheet1_Total_Value , :Workbook_Sheet1_Table_Sheet1_Quantity , :Workbook_Sheet1_Table_Sheet1_Price .
+
+:Workbook_test_table.xlsm
+        a              :Workbook ;
+        rdfs:label     "test_table.xlsm" ;
+        :hasWorksheet  :Worksheet_Sheet2 , :Worksheet_Sheet1 .
+
+:Workbook_Sheet1_Table_Sheet1_No_Title_Column_Value_For_RowCookies
+        a             :Value ;
+        rdfs:label    "No_Title_Column_Value_For_RowCookies" ;
+        :ActualValue  "4186.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_No_Title_Column .
+
+:Workbook_Sheet1_Table_Sheet1_Quantity_Value_For_RowCookies
+        a             :Value ;
+        rdfs:label    "Quantity_Value_For_RowCookies" ;
+        :ActualValue  "220.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Quantity .
+
+:Workbook_Sheet1_Table_Sheet1_Something_FormulaValueType
+        a                 :Formula ;
+        rdfs:label        "Formula" ;
+        :FormulaFunction  "$B$2" ;
+        :hasDependency    :Workbook_Sheet1_Table_Sheet1_Price_Value_For_RowBread .
+
+:hasColumnHeader  a  owl:ObjectProperty ;
+        rdfs:domain  :Table ;
+        rdfs:range   :ColumnHeader .
+
+:TableName  a        owl:DatatypeProperty ;
+        rdfs:domain  :Table ;
+        rdfs:range   xsd:string .
+
+:Workbook_Sheet1_Table_Sheet1_Something_Value_For_RowSugar
+        a             :Value ;
+        rdfs:label    "Something_Value_For_RowSugar" ;
+        :ActualValue  "5.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Something .
+
+:Workbook_Sheet2_Table_Sheet2_Cookies
+        a                 :RowHeader ;
+        rdfs:label        "Cookies" ;
+        :RowHeaderID      "21" ;
+        :RowHeaderTitle   "Cookies" ;
+        :hasColumnHeader  :Workbook_Sheet2_Table_Sheet2_null ;
+        :hasValue         :Workbook_Sheet2_Table_Sheet2_Inflation_Value_For_RowBread .
+
+:Workbook_Sheet1_Table_Sheet1_Chocolate
+        a                 :RowHeader ;
+        rdfs:label        "Chocolate" ;
+        :RowHeaderID      "31" ;
+        :RowHeaderTitle   "Chocolate" ;
+        :hasColumnHeader  :Workbook_Sheet1_Table_Sheet1_null ;
+        :hasValue         :Workbook_Sheet1_Table_Sheet1_TestIF_Value_For_RowBread .
+
+:Workbook_Sheet2_Table_Sheet2_Inflation_Value_For_RowBread
+        a             :Value ;
+        rdfs:label    "Inflation_Value_For_RowBread" ;
+        :ActualValue  "50.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_Inflation .
+
+:Workbook_Sheet2_Table_Sheet2_Inflation_Value_For_RowChocolate
+        a             :Value ;
+        rdfs:label    "Inflation_Value_For_RowChocolate" ;
+        :ActualValue  "30.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_Inflation .
+
+:Workbook_Sheet1_Table_Sheet1_Something_Value_For_RowKetchup
+        a             :Value ;
+        rdfs:label    "Something_Value_For_RowKetchup" ;
+        :ActualValue  "5.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Something .
+
+:Workbook_Sheet2_Table_Sheet2_Sell-Price_Value_For_RowKetchup
+        a             :Value ;
+        rdfs:label    "Sell-Price_Value_For_RowKetchup" ;
+        :ActualValue  "ERROR" ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_Sell-Price .
+
+:ValueType  a   owl:Class .
+
+:Workbook_Sheet2_Table_Sheet2_SomeCalculation_Value_For_RowBread
+        a             :Value ;
+        rdfs:label    "SomeCalculation_Value_For_RowBread" ;
+        :ActualValue  "0.5"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_SomeCalculation .
+
+:Workbook_Sheet2_Table_Sheet2_Sell-Price
+        a                   :ColumnHeader ;
+        rdfs:label          "Sell-Price" ;
+        :ColumnHeaderID     "C" ;
+        :ColumnHeaderTitle  "Sell-Price" ;
+        :hasValueType       :Workbook_Sheet2_Table_Sheet2_Sell-Price_FormulaValueType .
+
+:Workbook_Sheet1_Table_Sheet1_Quantity_Value_For_RowKetchup
+        a             :Value ;
+        rdfs:label    "Quantity_Value_For_RowKetchup" ;
+        :ActualValue  "6.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Quantity .
+
+:RowHeaderTitle  a   owl:DatatypeProperty ;
+        rdfs:domain  :RowHeader ;
+        rdfs:range   xsd:string .
+
+:Workbook_Sheet1_Table_Sheet1_Quantity_Value_For_RowEgg
+        a             :Value ;
+        rdfs:label    "Quantity_Value_For_RowEgg" ;
+        :ActualValue  "1.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Quantity .
+
+:Workbook_Sheet1_Table_Sheet1_Total_Value
+        a                   :ColumnHeader ;
+        rdfs:label          "Total_Value" ;
+        :ColumnHeaderID     "D" ;
+        :ColumnHeaderTitle  "Total Value" ;
+        :hasValueType       :Workbook_Sheet1_Table_Sheet1_Total_Value_FormulaValueType ;
+        :isUsedIn           :Workbook_Sheet1_Table_Sheet1_No_Title_Column_FormulaValueType .
+
+:Workbook_Sheet2_Table_Sheet2_Inflation
+        a                   :ColumnHeader ;
+        rdfs:label          "Inflation" ;
+        :ColumnHeaderID     "D" ;
+        :ColumnHeaderTitle  "Inflation" ;
+        :hasValueType       :Workbook_Sheet2_Table_Sheet2_Inflation_FormulaValueType ;
+        :isUsedIn           :Workbook_Sheet2_Table_Sheet2_SomeCalculation_FormulaValueType , :Workbook_Sheet2_Table_Sheet2_Sell-Price_FormulaValueType .
+
+:Workbook_Sheet1_Table_Sheet1_TestIF
+        a                   :ColumnHeader ;
+        rdfs:label          "TestIF" ;
+        :ColumnHeaderID     "F" ;
+        :ColumnHeaderTitle  "TestIF" ;
+        :hasValueType       :Workbook_Sheet1_Table_Sheet1_TestIF_FormulaValueType .
+
+:Workbook_Sheet1_Table_Sheet1_TestIF_Value_For_RowCookies
+        a             :Value ;
+        rdfs:label    "TestIF_Value_For_RowCookies" ;
+        :ActualValue  "2555.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_TestIF .
+
+:Workbook_Sheet1_Table_Sheet1_Quantity_Value_For_RowSugar
+        a             :Value ;
+        rdfs:label    "Quantity_Value_For_RowSugar" ;
+        :ActualValue  "2555.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Quantity .
+
+:Workbook_Sheet2_Table_Sheet2_Inflation_Value_For_RowKetchup
+        a             :Value ;
+        rdfs:label    "Inflation_Value_For_RowKetchup" ;
+        :ActualValue  "50.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_Inflation .
+
+:Workbook_Sheet2_Table_Sheet2_Sell-Price_Value_For_RowBread
+        a             :Value ;
+        rdfs:label    "Sell-Price_Value_For_RowBread" ;
+        :ActualValue  "230.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_Sell-Price .
+
+:Workbook_Sheet2_Table_Sheet2_Buy-Price_Value_For_RowBread
+        a             :Value ;
+        rdfs:label    "Buy-Price_Value_For_RowBread" ;
+        :ActualValue  "ERROR" ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_Buy-Price .
+
+:Workbook_Sheet1_Table_Sheet1_Price_NumericValueType
+        a           :Number ;
+        rdfs:label  "Numeric" .
+
+:hasValue  a         owl:ObjectProperty ;
+        rdfs:domain  :Table , :RowHeader ;
+        rdfs:range   :Value .
+
+:Workbook_Sheet1_Table_Sheet1_Something_Value_For_RowEgg
+        a             :Value ;
+        rdfs:label    "Something_Value_For_RowEgg" ;
+        :ActualValue  "5.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Something .
+
+:Workbook_Sheet1_Table_Sheet1_Egg
+        a                 :RowHeader ;
+        rdfs:label        "Egg" ;
+        :RowHeaderID      "51" ;
+        :RowHeaderTitle   "Egg" ;
+        :hasColumnHeader  :Workbook_Sheet1_Table_Sheet1_null ;
+        :hasValue         :Workbook_Sheet1_Table_Sheet1_Price_Value_For_RowCookies .
+
+:RowHeaderID  a      owl:DatatypeProperty ;
+        rdfs:domain  :RowHeader ;
+        rdfs:range   rdfs:Literal .
+
+:Workbook_Sheet2_Table_Sheet2_Sell-Price_FormulaValueType
+        a                 :Formula ;
+        rdfs:label        "Formula" ;
+        :FormulaFunction  "IF((D2 > F2), SUM(D2:D7), SUM(F2:F7))" ;
+        :hasDependency    :Workbook_Sheet2_Table_Sheet2_SomeCalculation , :Workbook_Sheet2_Table_Sheet2_Inflation .
+
+:Workbook_Sheet1_Table_Sheet1_Total_Value_FormulaValueType
+        a                 :Formula ;
+        rdfs:label        "Formula" ;
+        :FormulaFunction  "SUM(B2:C2)" ;
+        :hasDependency    :Workbook_Sheet1_Table_Sheet1_Quantity , :Workbook_Sheet1_Table_Sheet1_Price .
+
+:RowEnd  a           owl:DatatypeProperty ;
+        rdfs:domain  :Table ;
+        rdfs:range   rdfs:Literal .
+
+:Workbook_Sheet1_Table_Sheet1_Price
+        a                   :ColumnHeader ;
+        rdfs:label          "Price" ;
+        :ColumnHeaderID     "B" ;
+        :ColumnHeaderTitle  "Price" ;
+        :hasValueType       :Workbook_Sheet1_Table_Sheet1_Price_NumericValueType ;
+        :isUsedIn           :Workbook_Sheet1_Table_Sheet1_No_Title_Column_FormulaValueType , :Workbook_Sheet1_Table_Sheet1_Total_Value_FormulaValueType .
+
+:RowStart  a         owl:DatatypeProperty ;
+        rdfs:domain  :Table ;
+        rdfs:range   rdfs:Literal .
+
+<http://www.semanticweb.org/GregorKaefer/ontologies/2020/11/excelOntologyTableBased>
+        a       owl:Ontology .
+
+:SheetName  a        owl:DatatypeProperty ;
+        rdfs:domain  :Worksheet ;
+        rdfs:range   xsd:string .
+
+:ActualValue  a      owl:DatatypeProperty ;
+        rdfs:domain  :Value ;
+        rdfs:range   rdfs:Literal .
+
+:Workbook_Sheet2_Table_Sheet2_Buy-Price
+        a                   :ColumnHeader ;
+        rdfs:label          "Buy-Price" ;
+        :ColumnHeaderID     "B" ;
+        :ColumnHeaderTitle  "Buy-Price" ;
+        :hasValueType       :Workbook_Sheet2_Table_Sheet2_Buy-Price_FormulaValueType .
+
+:hasDependency  a    owl:ObjectProperty ;
+        rdfs:domain  :Formula ;
+        rdfs:range   :Value , :ColumnHeader .
+
+:FormulaFunction  a  owl:DatatypeProperty ;
+        rdfs:domain  :Formula ;
+        rdfs:range   xsd:string .
+
+:Worksheet_Sheet1  a  :Worksheet ;
+        rdfs:label  "Sheet1" ;
+        :SheetName  "Sheet1" ;
+        :hasTable   :Workbook_Sheet1_Table_Sheet1 .
+
+:Workbook_Sheet1_Table_Sheet1_Produkt
+        a                   :ColumnHeader ;
+        rdfs:label          "Produkt" ;
+        :ColumnHeaderID     "A" ;
+        :ColumnHeaderTitle  "Produkt" .
+
+:Workbook_Sheet2_Table_Sheet2_Buy-Price_Value_For_RowChocolate
+        a             :Value ;
+        rdfs:label    "Buy-Price_Value_For_RowChocolate" ;
+        :ActualValue  "ERROR" ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_Buy-Price .
+
+:Workbook_Sheet1_Table_Sheet1_ColumnHeader
+        a                 :RowHeader ;
+        rdfs:label        "ColumnHeader" ;
+        :RowHeaderID      "01" ;
+        :RowHeaderTitle   "ColumnHeader" ;
+        :hasColumnHeader  :Workbook_Sheet1_Table_Sheet1_Produkt .
+
+:Workbook_Sheet1_Table_Sheet1_Quantity_Value_For_RowChocolate
+        a             :Value ;
+        rdfs:label    "Quantity_Value_For_RowChocolate" ;
+        :ActualValue  "31.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Quantity .
+
+:Value  a                owl:Class ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  rdfs:Literal ;
+                           owl:onProperty     :ActualValue
+                         ] ;
+        rdfs:subClassOf  [ a                         owl:Restriction ;
+                           owl:onClass               :ColumnHeader ;
+                           owl:onProperty            :ValueFor ;
+                           owl:qualifiedCardinality  "1"^^xsd:nonNegativeInteger
+                         ] ;
+        rdfs:subClassOf  [ a                            owl:Restriction ;
+                           owl:minQualifiedCardinality  "0"^^xsd:nonNegativeInteger ;
+                           owl:onClass                  :Formula ;
+                           owl:onProperty               :isUsedIn
+                         ] .
+
+:hasWorksheet  a     owl:ObjectProperty ;
+        rdfs:domain  :Workbook ;
+        rdfs:range   :Worksheet .
+
+:Formula  a              owl:Class ;
+        rdfs:subClassOf  :ValueType ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :FormulaFunction
+                         ] ;
+        rdfs:subClassOf  [ a            owl:Class ;
+                           owl:unionOf  ( [ a                   owl:Restriction ;
+                                            owl:onProperty      :hasDependency ;
+                                            owl:someValuesFrom  :ColumnHeader
+                                          ]
+                                          [ a                   owl:Restriction ;
+                                            owl:onProperty      :hasDependency ;
+                                            owl:someValuesFrom  :Value
+                                          ]
+                                        )
+                         ] .
+
+:Workbook_Sheet1_Table_Sheet1_TestIF_FormulaValueType
+        a                 :Formula ;
+        rdfs:label        "Formula" ;
+        :FormulaFunction  "IF(C3>C4,IF(C2>C4,C2,C4),IF(C3 >C4, IF(C2 >C3, C2,C3),C4))" ;
+        :hasDependency    :Workbook_Sheet1_Table_Sheet1_Quantity .
+
+:Workbook_Sheet2_Table_Sheet2_Sell-Price_Value_For_RowEgg
+        a             :Value ;
+        rdfs:label    "Sell-Price_Value_For_RowEgg" ;
+        :ActualValue  "ERROR" ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_Sell-Price .
+
+:Workbook_Sheet2_Table_Sheet2
+        a                 :Table ;
+        rdfs:label        "Table_Sheet2" ;
+        :TableName        "Table_Sheet2" ;
+        :hasColumnHeader  :Workbook_Sheet2_Table_Sheet2_Inflation , :Workbook_Sheet2_Table_Sheet2_Buy-Price , :Workbook_Sheet2_Table_Sheet2_SomeCalculation , :Workbook_Sheet2_Table_Sheet2_Sell-Price ;
+        :hasRowHeader     :Workbook_Sheet2_Table_Sheet2_Sugar , :Workbook_Sheet2_Table_Sheet2_Chocolate , :Workbook_Sheet2_Table_Sheet2_Ketchup , :Workbook_Sheet2_Table_Sheet2_Cookies , :Workbook_Sheet2_Table_Sheet2_ColumnHeader , :Workbook_Sheet2_Table_Sheet2_Egg , :Workbook_Sheet2_Table_Sheet2_Bread ;
+        :hasValue         :Workbook_Sheet2_Table_Sheet2_SomeCalculation_Value_For_RowChocolate , :Workbook_Sheet2_Table_Sheet2_Inflation_Value_For_RowChocolate , :Workbook_Sheet2_Table_Sheet2_Buy-Price_Value_For_RowBread , :Workbook_Sheet2_Table_Sheet2_SomeCalculation_Value_For_RowKetchup , :Workbook_Sheet2_Table_Sheet2_Inflation_Value_For_RowEgg , :Workbook_Sheet2_Table_Sheet2_Sell-Price_Value_For_RowBread , :Workbook_Sheet2_Table_Sheet2_Buy-Price_Value_For_RowChocolate , :Workbook_Sheet2_Table_Sheet2_Inflation_Value_For_RowCookies , :Workbook_Sheet2_Table_Sheet2_SomeCalculation_Value_For_RowBread , :Workbook_Sheet2_Table_Sheet2_SomeCalculation_Value_For_RowSugar , :Workbook_Sheet2_Table_Sheet2_Sell-Price_Value_For_RowCookies , :Workbook_Sheet2_Table_Sheet2_Sell-Price_Value_For_RowKetchup , :Workbook_Sheet2_Table_Sheet2_Inflation_Value_For_RowSugar , :Workbook_Sheet2_Table_Sheet2_Buy-Price_Value_For_RowEgg , :Workbook_Sheet2_Table_Sheet2_Sell-Price_Value_For_RowChocolate , :Workbook_Sheet2_Table_Sheet2_Buy-Price_Value_For_RowKetchup , :Workbook_Sheet2_Table_Sheet2_Sell-Price_Value_For_RowEgg , :Workbook_Sheet2_Table_Sheet2_Inflation_Value_For_RowKetchup , :Workbook_Sheet2_Table_Sheet2_SomeCalculation_Value_For_RowCookies , :Workbook_Sheet2_Table_Sheet2_Buy-Price_Value_For_RowSugar , :Workbook_Sheet2_Table_Sheet2_Inflation_Value_For_RowBread , :Workbook_Sheet2_Table_Sheet2_Sell-Price_Value_For_RowSugar , :Workbook_Sheet2_Table_Sheet2_Buy-Price_Value_For_RowCookies , :Workbook_Sheet2_Table_Sheet2_SomeCalculation_Value_For_RowEgg .
+
+:Workbook_Sheet1_Table_Sheet1_Total_Value_Value_For_RowEgg
+        a             :Value ;
+        rdfs:label    "Total Value_Value_For_RowEgg" ;
+        :ActualValue  "2.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Total_Value .
+
+:Workbook_Sheet1_Table_Sheet1_Quantity_NumericValueType
+        a           :Number ;
+        rdfs:label  "Numeric" .
+
+:Workbook_Sheet1_Table_Sheet1_TestIF_Value_For_RowChocolate
+        a             :Value ;
+        rdfs:label    "TestIF_Value_For_RowChocolate" ;
+        :ActualValue  "31.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_TestIF .
+
+:Workbook_Sheet1_Table_Sheet1_Total_Value_Value_For_RowSugar
+        a             :Value ;
+        rdfs:label    "Total Value_Value_For_RowSugar" ;
+        :ActualValue  "2557.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Total_Value .
+
+:Workbook_Sheet2_Table_Sheet2_Sugar
+        a                 :RowHeader ;
+        rdfs:label        "Sugar" ;
+        :RowHeaderID      "41" ;
+        :RowHeaderTitle   "Sugar" ;
+        :hasColumnHeader  :Workbook_Sheet2_Table_Sheet2_null ;
+        :hasValue         :Workbook_Sheet2_Table_Sheet2_Buy-Price_Value_For_RowCookies .
+
+:Workbook_Sheet1_Table_Sheet1_Total_Value_Value_For_RowCookies
+        a             :Value ;
+        rdfs:label    "Total Value_Value_For_RowCookies" ;
+        :ActualValue  "227.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Total_Value .
+
+:Workbook_Sheet2_Table_Sheet2_Buy-Price_FormulaValueType
+        a                 :Formula ;
+        rdfs:label        "Formula" ;
+        :FormulaFunction  "Sheet" .
+
+:Workbook_Sheet1_Table_Sheet1_Something_Value_For_RowBread
+        a             :Value ;
+        rdfs:label    "Something_Value_For_RowBread" ;
+        :ActualValue  "5.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Something .
+
+:Workbook_Sheet2_Table_Sheet2_Chocolate
+        a                 :RowHeader ;
+        rdfs:label        "Chocolate" ;
+        :RowHeaderID      "31" ;
+        :RowHeaderTitle   "Chocolate" ;
+        :hasColumnHeader  :Workbook_Sheet2_Table_Sheet2_null ;
+        :hasValue         :Workbook_Sheet2_Table_Sheet2_SomeCalculation_Value_For_RowBread .
+
+:Workbook_Sheet1_Table_Sheet1_null
+        a       :ColumnHeader .
+
+:Workbook_Sheet1_Table_Sheet1_Something_Value_For_RowChocolate
+        a             :Value ;
+        rdfs:label    "Something_Value_For_RowChocolate" ;
+        :ActualValue  "5.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Something .
+
+:Workbook_Sheet2_Table_Sheet2_Inflation_Value_For_RowCookies
+        a             :Value ;
+        rdfs:label    "Inflation_Value_For_RowCookies" ;
+        :ActualValue  "70.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_Inflation .
+
+:ColumnHeaderID  a   owl:DatatypeProperty ;
+        rdfs:domain  :ColumnHeader ;
+        rdfs:range   xsd:string .
+
+:Workbook_Sheet1_Table_Sheet1_Sugar
+        a                 :RowHeader ;
+        rdfs:label        "Sugar" ;
+        :RowHeaderID      "41" ;
+        :RowHeaderTitle   "Sugar" ;
+        :hasColumnHeader  :Workbook_Sheet1_Table_Sheet1_null ;
+        :hasValue         :Workbook_Sheet1_Table_Sheet1_Something_Value_For_RowBread .
+
+:isUsedIn  a         owl:ObjectProperty ;
+        rdfs:domain  :Value , :ColumnHeader ;
+        rdfs:range   :Formula .
+
+:Workbook_Sheet1_Table_Sheet1_Price_Value_For_RowSugar
+        a             :Value ;
+        rdfs:label    "Price_Value_For_RowSugar" ;
+        :ActualValue  "2.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Price .
+
+:Workbook_Sheet2_Table_Sheet2_ColumnHeader
+        a                 :RowHeader ;
+        rdfs:label        "ColumnHeader" ;
+        :RowHeaderID      "01" ;
+        :RowHeaderTitle   "ColumnHeader" ;
+        :hasColumnHeader  :Workbook_Sheet2_Table_Sheet2_Produkt .
+
+:Workbook_Sheet1_Table_Sheet1_Price_Value_For_RowChocolate
+        a             :Value ;
+        rdfs:label    "Price_Value_For_RowChocolate" ;
+        :ActualValue  "3.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Price .
+
+:Boolean  a              owl:Class ;
+        rdfs:subClassOf  :ValueType .
+
+:RowHeader  a            owl:Class ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :RowHeaderTitle
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  rdfs:Literal ;
+                           owl:onProperty     :RowHeaderID
+                         ] ;
+        rdfs:subClassOf  [ a                         owl:Restriction ;
+                           owl:onClass               :ColumnHeader ;
+                           owl:onProperty            :hasColumnHeader ;
+                           owl:qualifiedCardinality  "1"^^xsd:nonNegativeInteger
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  :Value ;
+                           owl:onProperty     :hasValue
+                         ] .
+
+:Workbook_Sheet2_Table_Sheet2_Produkt
+        a                   :ColumnHeader ;
+        rdfs:label          "Produkt" ;
+        :ColumnHeaderID     "A" ;
+        :ColumnHeaderTitle  "Produkt" .
+
+:Workbook_Sheet2_Table_Sheet2_SomeCalculation_FormulaValueType
+        a                 :Formula ;
+        rdfs:label        "Formula" ;
+        :FormulaFunction  "D2/100" ;
+        :hasDependency    :Workbook_Sheet2_Table_Sheet2_Inflation .
+
+:Workbook_Sheet1_Table_Sheet1_Ketchup
+        a                 :RowHeader ;
+        rdfs:label        "Ketchup" ;
+        :RowHeaderID      "61" ;
+        :RowHeaderTitle   "Ketchup" ;
+        :hasColumnHeader  :Workbook_Sheet1_Table_Sheet1_null ;
+        :hasValue         :Workbook_Sheet1_Table_Sheet1_Quantity_Value_For_RowCookies .
+
+:ValueFor  a         owl:ObjectProperty ;
+        rdfs:domain  :Value ;
+        rdfs:range   :ColumnHeader .
+
+:Workbook_Sheet2_Table_Sheet2_null
+        a       :ColumnHeader .
+
+:Workbook_Sheet1_Table_Sheet1_Price_Value_For_RowKetchup
+        a             :Value ;
+        rdfs:label    "Price_Value_For_RowKetchup" ;
+        :ActualValue  "5.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Price .
+
+:Workbook_Sheet1_Table_Sheet1_Quantity_Value_For_RowBread
+        a             :Value ;
+        rdfs:label    "Quantity_Value_For_RowBread" ;
+        :ActualValue  "1100.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Quantity .
+
+:Workbook_Sheet1_Table_Sheet1_Total_Value_Value_For_RowKetchup
+        a             :Value ;
+        rdfs:label    "Total Value_Value_For_RowKetchup" ;
+        :ActualValue  "11.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet1_Table_Sheet1_Total_Value .
+
+:ColumnHeader  a         owl:Class ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :ColumnHeaderTitle
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :ColumnHeaderID
+                         ] ;
+        rdfs:subClassOf  [ a                         owl:Restriction ;
+                           owl:onClass               :ValueType ;
+                           owl:onProperty            :hasValueType ;
+                           owl:qualifiedCardinality  "1"^^xsd:nonNegativeInteger
+                         ] ;
+        rdfs:subClassOf  [ a                            owl:Restriction ;
+                           owl:minQualifiedCardinality  "0"^^xsd:nonNegativeInteger ;
+                           owl:onClass                  :Formula ;
+                           owl:onProperty               :isUsedIn
+                         ] ;
+        rdfs:subClassOf  [ a                            owl:Restriction ;
+                           owl:minQualifiedCardinality  "0"^^xsd:nonNegativeInteger ;
+                           owl:onClass                  :RowHeader ;
+                           owl:onProperty               :hasRowHeader
+                         ] .
+
+:Workbook_Sheet2_Table_Sheet2_Buy-Price_Value_For_RowCookies
+        a             :Value ;
+        rdfs:label    "Buy-Price_Value_For_RowCookies" ;
+        :ActualValue  "ERROR" ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_Buy-Price .
+
+:Table  a                owl:Class ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :TableName
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  rdfs:Literal ;
+                           owl:onProperty     :RowStart
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  rdfs:Literal ;
+                           owl:onProperty     :RowEnd
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  :Value ;
+                           owl:onProperty     :hasValue
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  :RowHeader ;
+                           owl:onProperty     :hasRowHeader
+                         ] ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  :ColumnHeader ;
+                           owl:onProperty     :hasColumnHeader
+                         ] .
+
+:Workbook_Sheet2_Table_Sheet2_Inflation_Value_For_RowSugar
+        a             :Value ;
+        rdfs:label    "Inflation_Value_For_RowSugar" ;
+        :ActualValue  "20.0"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_Inflation .
+
+:Workbook_Sheet2_Table_Sheet2_SomeCalculation_Value_For_RowCookies
+        a             :Value ;
+        rdfs:label    "SomeCalculation_Value_For_RowCookies" ;
+        :ActualValue  "0.7"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_SomeCalculation .
+
+:Workbook_Sheet2_Table_Sheet2_Buy-Price_Value_For_RowEgg
+        a             :Value ;
+        rdfs:label    "Buy-Price_Value_For_RowEgg" ;
+        :ActualValue  "ERROR" ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_Buy-Price .
+
+:Workbook_Sheet2_Table_Sheet2_SomeCalculation_Value_For_RowSugar
+        a             :Value ;
+        rdfs:label    "SomeCalculation_Value_For_RowSugar" ;
+        :ActualValue  "0.2"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_SomeCalculation .
+
+:Workbook_Sheet2_Table_Sheet2_SomeCalculation_Value_For_RowChocolate
+        a             :Value ;
+        rdfs:label    "SomeCalculation_Value_For_RowChocolate" ;
+        :ActualValue  "0.3"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_SomeCalculation .
+
+:Workbook_Sheet2_Table_Sheet2_Inflation_FormulaValueType
+        a                 :Formula ;
+        rdfs:label        "Formula" ;
+        :FormulaFunction  "[1]Sheet1!B2 * 10" .
+
+:hasValueType  a     owl:ObjectProperty ;
+        rdfs:domain  :ColumnHeader ;
+        rdfs:range   :ValueType .
+
+:Worksheet_Sheet2  a  :Worksheet ;
+        rdfs:label  "Sheet2" ;
+        :SheetName  "Sheet2" ;
+        :hasTable   :Workbook_Sheet2_Table_Sheet2 .
+
+:String  a               owl:Class ;
+        rdfs:subClassOf  :ValueType .
+
+:hasRowHeader  a     owl:ObjectProperty ;
+        rdfs:domain  :Table ;
+        rdfs:range   :RowHeader .
+
+:Workbook_Sheet2_Table_Sheet2_Ketchup
+        a                 :RowHeader ;
+        rdfs:label        "Ketchup" ;
+        :RowHeaderID      "61" ;
+        :RowHeaderTitle   "Ketchup" ;
+        :hasColumnHeader  :Workbook_Sheet2_Table_Sheet2_null ;
+        :hasValue         :Workbook_Sheet2_Table_Sheet2_Inflation_Value_For_RowCookies .
+
+:Workbook_Sheet2_Table_Sheet2_SomeCalculation_Value_For_RowEgg
+        a             :Value ;
+        rdfs:label    "SomeCalculation_Value_For_RowEgg" ;
+        :ActualValue  "0.1"^^xsd:float ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_SomeCalculation .
+
+:Workbook_Sheet2_Table_Sheet2_Sell-Price_Value_For_RowSugar
+        a             :Value ;
+        rdfs:label    "Sell-Price_Value_For_RowSugar" ;
+        :ActualValue  "ERROR" ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_Sell-Price .
+
+:Workbook_Sheet2_Table_Sheet2_Buy-Price_Value_For_RowSugar
+        a             :Value ;
+        rdfs:label    "Buy-Price_Value_For_RowSugar" ;
+        :ActualValue  "ERROR" ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_Buy-Price .
+
+:Workbook_Sheet2_Table_Sheet2_Buy-Price_Value_For_RowKetchup
+        a             :Value ;
+        rdfs:label    "Buy-Price_Value_For_RowKetchup" ;
+        :ActualValue  "ERROR" ;
+        :ValueFor     :Workbook_Sheet2_Table_Sheet2_Buy-Price .
+
+:Worksheet  a            owl:Class ;
+        rdfs:subClassOf  [ a                  owl:Restriction ;
+                           owl:allValuesFrom  xsd:string ;
+                           owl:onProperty     :SheetName
+                         ] .
