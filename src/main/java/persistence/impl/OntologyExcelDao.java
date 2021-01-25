@@ -21,12 +21,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class OntologyDao implements persistence.OntologyDao {
+public class OntologyExcelDao implements persistence.OntologyDao {
     private OntologyConverter converter;
     private Workbook workbook;
     private mapper.readExcel readExcel;
     private OntModel model;
-    public OntologyDao(){
+    public OntologyExcelDao(){
 
     }
 
@@ -488,8 +488,8 @@ public class OntologyDao implements persistence.OntologyDao {
     private void addTable(List<SheetElement> table, Individual worksheet, Worksheet ws) {
         for(int j = 0;j<table.size();j++){
             if(table.get(j) instanceof Table) {
-                if(table.get(j).title() != null) {
-                    addTableRelation((Table)table.get(j), ws, table.get(j).title(), worksheet);
+                if(table.get(j).id() != null) {
+                    addTableRelation((Table)table.get(j), ws, table.get(j).id(), worksheet);
                 }
                 else{
                     addTableRelation((Table)table.get(j), ws, "Table" + (j+1), worksheet);
@@ -533,8 +533,8 @@ public class OntologyDao implements persistence.OntologyDao {
             if(text.get(j) instanceof Text) {
                 Individual i = this.converter.getText().createIndividual(this.converter.getText().getURI() +
                         "_Worksheet" + ws.getSheetName() +
-                        "_" + text.get(j).title() + (j+1));
-                i.addLiteral(RDFS.label, text.get(j).title() + (j+1));
+                        "_" + text.get(j).id() + (j+1));
+                i.addLiteral(RDFS.label, text.get(j).id() + (j+1));
                 i.addLiteral(this.converter.getHasValue(), ((Text) text.get(j)).getValue());
                 i.addProperty(this.converter.getIsPartOfWorksheet(), worksheet);
             }
@@ -552,8 +552,8 @@ public class OntologyDao implements persistence.OntologyDao {
         for(int j = 0;j<illustrations.size();j++) {
             Individual i = this.converter.getIllustration().createIndividual(this.converter.getIllustration() +
                     "_Worksheet" + ws.getSheetName() +
-                    "_" + illustrations.get(j).title() + (j+1));
-            i.addLiteral(RDFS.label, illustrations.get(j).title() + (j+1));
+                    "_" + illustrations.get(j).id() + (j+1));
+            i.addLiteral(RDFS.label, illustrations.get(j).id() + (j+1));
             i.addProperty(this.converter.getIsPartOfWorksheet(), worksheet);
         }
         //System.out.println("converting " + illustrations.size() +  " illustrations");

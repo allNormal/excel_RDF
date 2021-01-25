@@ -23,7 +23,7 @@ public class Chart extends SheetElement {
     }
 
 
-    public String title(){
+    public String id(){
         return this.title.getString();
     }
 

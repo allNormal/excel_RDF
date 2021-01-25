@@ -1,18 +1,15 @@
 import entity.Operator;
 import entity.SheetElement.ElementType;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import persistence.impl.OntologyDao;
+import persistence.impl.OntologyExcelDao;
 import service.impl.OntologyService;
 
 import java.util.Collection;
-import java.util.List;
 
 public class Test {
 
     public static void main(String[] args) {
 
-        OntologyDao abc = new OntologyDao();
+        OntologyExcelDao abc = new OntologyExcelDao();
         OntologyService test = new OntologyService(abc);
 
         test.create("src/main/resources/simple_test.xlsm");

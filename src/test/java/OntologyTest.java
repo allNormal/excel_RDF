@@ -5,8 +5,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.runner.RunWith;
-import persistence.impl.OntologyDao;
+import persistence.impl.OntologyExcelDao;
 import service.impl.OntologyService;
 
 import java.io.File;
@@ -27,7 +26,7 @@ public class OntologyTest {
                 "src/main/resources/Endangered_Species.xlsx",
                 "src/main/resources/reptile_checklist_2020_08.xlsx"};
 
-        OntologyDao dao = new OntologyDao();
+        OntologyExcelDao dao = new OntologyExcelDao();
         OntologyService ontologyService = new OntologyService(dao);
         for(int i = 0; i<FILEPATH.length; i++) {
             ontologyService.create(FILEPATH[i]);

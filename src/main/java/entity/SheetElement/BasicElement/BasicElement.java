@@ -6,15 +6,15 @@ import entity.Worksheet.Worksheet;
 
 public class BasicElement extends SheetElement {
 
-    private String title;
+    private String id;
 
-    public BasicElement(Worksheet worksheet, String title){
+    public BasicElement(Worksheet worksheet, String id){
         super(worksheet);
-        this.title = title;
+        this.id = id;
     }
 
-    public String title() {
-        return this.title;
+    public String id() {
+        return this.id;
     }
 
 }

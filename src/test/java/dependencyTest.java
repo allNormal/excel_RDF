@@ -1,16 +1,12 @@
-import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.Test;
-import mapper.readExcel;
-import persistence.impl.OntologyDao;
+import persistence.impl.OntologyExcelDao;
 import service.impl.OntologyService;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,12 +16,12 @@ public class dependencyTest {
 
     private mapper.readExcel readExcel;
 
-    private OntologyDao ontologyDao = new OntologyDao();
+    private OntologyExcelDao ontologyExcelDao = new OntologyExcelDao();
     private OntologyService ontologyService;
     @BeforeAll
     void initFile() throws IOException {
         String testFile = "src/main/resources/OBARIS SC2 Alle_Parameter_2007-2013_Basisversion_Erosion.xlsm";
-        ontologyService = new OntologyService(ontologyDao);
+        ontologyService = new OntologyService(ontologyExcelDao);
         ontologyService.create(testFile);
     }
 

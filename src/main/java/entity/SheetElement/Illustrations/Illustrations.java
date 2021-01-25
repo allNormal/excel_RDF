@@ -12,7 +12,7 @@ public class Illustrations extends SheetElement {
         this.title = title;
     }
 
-    public String title() {
+    public String id() {
         return title;
     }
 

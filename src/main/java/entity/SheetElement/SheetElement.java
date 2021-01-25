@@ -15,5 +15,5 @@ public abstract class SheetElement {
         return worksheet;
     }
 
-    public abstract String title();
+    public abstract String id();
 }

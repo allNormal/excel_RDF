@@ -1,5 +1,7 @@
 package entity.SheetElement.Tables;
 
+import entity.SheetElement.BasicElement.Column;
+import entity.SheetElement.BasicElement.Row;
 import entity.SheetElement.SheetElement;
 import entity.Worksheet.Worksheet;
 import entity.SheetElement.BasicElement.Cell;
@@ -13,6 +15,8 @@ public class Table extends SheetElement {
     private String columnStart;
     private String columnEnd;
     private List<Cell> cell = new ArrayList<>();
+    private List<Column> columns = new ArrayList<>();
+    private List<Row> rows = new ArrayList<>();
     private String elementName;
 
 
@@ -27,8 +31,21 @@ public class Table extends SheetElement {
         this.elementName = elementName;
     }
 
+    public Table(Worksheet worksheet, String elementName) {
+        super(worksheet);
+        this.elementName = elementName;
+    }
+
     public void addCell(Cell cell){
         this.cell.add(cell);
+    }
+
+    public void addRowHeader(Row row) {
+        this.rows.add(row);
+    }
+
+    public void addColumnHeader(Column column) {
+        this.columns.add(column);
     }
 
     public String getRowStart() {
@@ -67,11 +84,23 @@ public class Table extends SheetElement {
         return cell;
     }
 
-    public String title() {
+    public String id() {
         return elementName;
     }
 
     public void setElementName(String elementName) {
         this.elementName = elementName;
+    }
+
+    public void setCell(List<Cell> cell) {
+        this.cell = cell;
+    }
+
+    public void setColumns(List<Column> columns) {
+        this.columns = columns;
+    }
+
+    public void setRows(List<Row> rows) {
+        this.rows = rows;
     }
 }

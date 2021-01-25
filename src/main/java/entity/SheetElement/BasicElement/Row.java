@@ -8,6 +8,7 @@ import java.util.List;
 
 public class Row extends BasicElement{
     private String rowId;
+    private String rowTitle;
     private List<Cell> cell = new ArrayList<>();
     private Constraint constraint;
 
@@ -38,5 +39,13 @@ public class Row extends BasicElement{
 
     public void setConstraint(Constraint constraint) {
         this.constraint = constraint;
+    }
+
+    public String getRowTitle() {
+        return rowTitle;
+    }
+
+    public void setRowTitle(String rowTitle) {
+        this.rowTitle = rowTitle;
     }
 }

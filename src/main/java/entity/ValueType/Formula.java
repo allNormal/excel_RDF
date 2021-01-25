@@ -1,6 +1,7 @@
 package entity.ValueType;
 
 import entity.SheetElement.BasicElement.Cell;
+import entity.SheetElement.BasicElement.Column;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,7 @@ public abstract class Formula {
 
     private String formulaFunction;
     private List<Cell> cellDependency =  new ArrayList<>();
+    private List<Column> columnDependency = new ArrayList<>();
     private Value valueType;
     private FunctionType functionType;
     private String stringValue;
@@ -24,6 +26,8 @@ public abstract class Formula {
     public void addDependencies(Cell cell) {
         cellDependency.add(cell);
     }
+
+    public void addColumnDependencies(Column column) { columnDependency.add(column); }
 
     public List<Cell> getCellDependency() {
         return cellDependency;

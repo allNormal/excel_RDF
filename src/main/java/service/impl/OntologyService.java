@@ -4,16 +4,16 @@ import entity.Operator;
 import entity.SheetElement.ElementType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import persistence.impl.OntologyDao;
+import persistence.impl.OntologyExcelDao;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Collection;
 
 public class OntologyService implements service.OntologyService {
     private final static Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    private final OntologyDao dao;
+    private final OntologyExcelDao dao;
 
-    public OntologyService(OntologyDao dao) {
+    public OntologyService(OntologyExcelDao dao) {
         this.dao = dao;
     }
 

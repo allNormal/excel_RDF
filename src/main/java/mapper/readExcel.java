@@ -28,22 +28,19 @@ public class readExcel implements ExcelReader {
 
     private XSSFWorkbook myWorkBook;
     private Workbook workbook;
+    private File file;
 
-
-    public readExcel() {
-
-    }
 
     public readExcel(File file) throws IOException {
-        readExcelConverter(file);
+        this.file = file;
+        readExcelConverter();
     }
 
     /**
      * convert excel file into Workbook Object.
-     * @param file excel file
      * @throws IOException if file not found.
      */
-    public void readExcelConverter(File file) throws IOException {
+    public void readExcelConverter() throws IOException {
 
         FileInputStream fis = null;
         try {
@@ -405,11 +402,11 @@ public class readExcel implements ExcelReader {
             if(temp[i].matches(pattern1) || temp[i].matches(pattern2) || temp[i].matches(pattern3) || temp[i].matches(pattern4)){
                 String[] splitCell = temp[i].split("[>|<|>=|<=|==]{1}");
                 entity.SheetElement.BasicElement.Cell cell1 = (entity.SheetElement.BasicElement.Cell)cellList.stream()
-                        .filter(x -> splitCell[0].equals(x.title()))
+                        .filter(x -> splitCell[0].equals(x.id()))
                         .findAny()
                         .orElse(null);
                 entity.SheetElement.BasicElement.Cell cell2 = (entity.SheetElement.BasicElement.Cell)cellList.stream()
-                        .filter(x -> splitCell[1].equals(x.title()))
+                        .filter(x -> splitCell[1].equals(x.id()))
                         .findAny()
                         .orElse(null);
                 if(cell1 != null && cell2 != null) {
@@ -550,7 +547,7 @@ public class readExcel implements ExcelReader {
             if(temp[i].matches(patternCell)){
                 String check = temp[i];
                 entity.SheetElement.BasicElement.Cell cell1 = (entity.SheetElement.BasicElement.Cell)cellList.stream()
-                        .filter(cellCheck -> check.equals(cellCheck.title()))
+                        .filter(cellCheck -> check.equals(cellCheck.id()))
                         .findAny()
                         .orElse(null);
                 if(cell1 == null) continue;
@@ -575,7 +572,7 @@ public class readExcel implements ExcelReader {
                         List<SheetElement> cells = worksheet.getSheets().getOrDefault(CELL, null);
                         if (cells != null) {
                             entity.SheetElement.BasicElement.Cell cell1 = (entity.SheetElement.BasicElement.Cell) cells.stream()
-                                    .filter(cellTemp -> worksheetCellSplit[1].equals(cellTemp.title()))
+                                    .filter(cellTemp -> worksheetCellSplit[1].equals(cellTemp.id()))
                                     .findAny()
                                     .orElse(null);
                             if (cell1 != null) {
@@ -590,7 +587,7 @@ public class readExcel implements ExcelReader {
                 for(int l = 0; l<cellToCells.size(); l++) {
                     String check1 = cellToCells.get(l);
                     entity.SheetElement.BasicElement.Cell cell2 = (entity.SheetElement.BasicElement.Cell)cellList.stream()
-                            .filter(cellCheck -> check1.equals(cellCheck.title()))
+                            .filter(cellCheck -> check1.equals(cellCheck.id()))
                             .findAny()
                             .orElse(null);
                     if(cell2 == null) continue;
@@ -616,7 +613,7 @@ public class readExcel implements ExcelReader {
                         for(int l = 0; l<cell2.size(); l++) {
                             String workSheetTemp = cell2.get(l);
                             entity.SheetElement.BasicElement.Cell cell1 = (entity.SheetElement.BasicElement.Cell) cells.stream()
-                                    .filter(cellTemp -> workSheetTemp.equals(cellTemp.title()))
+                                    .filter(cellTemp -> workSheetTemp.equals(cellTemp.id()))
                                     .findAny()
                                     .orElse(null);
                             if (cell1 != null) {
@@ -640,7 +637,7 @@ public class readExcel implements ExcelReader {
                         for(int l = 0; l<cell2.size(); l++) {
                             String workSheetTemp = cell2.get(l);
                             entity.SheetElement.BasicElement.Cell cell1 = (entity.SheetElement.BasicElement.Cell) cells.stream()
-                                    .filter(cellTemp -> workSheetTemp.equals(cellTemp.title()))
+                                    .filter(cellTemp -> workSheetTemp.equals(cellTemp.id()))
                                     .findAny()
                                     .orElse(null);
                             if (cell1 != null) {
@@ -715,7 +712,7 @@ public class readExcel implements ExcelReader {
                 for(int l = 0; l<temp.size(); l++) {
                     String str = temp.get(l);
                     entity.SheetElement.BasicElement.Cell cell1 = (entity.SheetElement.BasicElement.Cell)cell.stream()
-                            .filter(x -> str.equals(x.title()))
+                            .filter(x -> str.equals(x.id()))
                             .findAny()
                             .orElse(null);
                     if(cell1 != null) {
