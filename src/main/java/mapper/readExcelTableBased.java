@@ -589,9 +589,8 @@ public class readExcelTableBased implements ExcelReader {
         String patternColumnToColumnFromOtherSheet = patternColumnFromOtherSheet + ":" + patternColumnFromOtherSheet;
         String patternColumnToColumnFromOtherSheet2 = patternColumnFromOtherSheet + ":" + patternColumn;
         if(formula.matches(patternColumn)){
-            formula.replaceAll("\\d", "");
-            String check = formula;
-            entity.SheetElement.BasicElement.Column column1 = (entity.SheetElement.BasicElement.Column)columnList.stream()
+            String check = formula.replaceAll("\\d", "");
+            entity.SheetElement.BasicElement.Column column1 = columnList.stream()
                     .filter(columnCheck -> check.equals(columnCheck.id()))
                     .findAny()
                     .orElse(null);
@@ -628,11 +627,10 @@ public class readExcelTableBased implements ExcelReader {
                 }
         }
         else if(formula.matches(patternColumnToColumn)) {
-            formula.replaceAll("\\d", "");
-            List<String> columnToColumns = columnToColumn(formula);
+            List<String> columnToColumns = columnToColumn(formula.replaceAll("\\d", ""));
             for(int l = 0; l<columnToColumns.size(); l++) {
                 String check1 = columnToColumns.get(l);
-                entity.SheetElement.BasicElement.Column column2 = (entity.SheetElement.BasicElement.Column)columnList.stream()
+                entity.SheetElement.BasicElement.Column column2 = columnList.stream()
                         .filter(columnCheck -> check1.equals(columnCheck.id()))
                         .findAny()
                         .orElse(null);
@@ -653,7 +651,7 @@ public class readExcelTableBased implements ExcelReader {
                     .orElse(null);
 
             if(worksheet!= null){
-                tempSplit.replaceAll("\\d", "");
+                tempSplit = tempSplit.replaceAll("\\d", "");
                 List<String> column2 = columnToColumn(tempSplit);
                 List<SheetElement> tables = worksheet.getSheets().getOrDefault(TABLE, null);
                 if(tables != null) {
