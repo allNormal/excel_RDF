@@ -211,6 +211,7 @@ public class readExcelTableBased implements ExcelReader {
                     emptyCell = false;
                     continue;
                 }
+                cell1.setTableName(table.id());
                 if(!columnTemp.containsKey(convertColumn(Integer.toString(cell.getColumnIndex())))){
                     if(cell.getRowIndex() >= worksheet.getColumnHeaderIndex()) {
                         Column column = new Column(worksheet, convertColumn(Integer.toString(cell.getColumnIndex())));
@@ -263,6 +264,7 @@ public class readExcelTableBased implements ExcelReader {
         table.setColumns(colTemp);
         if(worksheet.getSheets().containsKey(TABLE)) {
             List<SheetElement> temp = worksheet.getSheets().get(TABLE);
+            temp.add(table);
             worksheet.getSheets().replace(TABLE, temp);
         } else {
             List<SheetElement> tables = new ArrayList<>();
@@ -385,10 +387,10 @@ public class readExcelTableBased implements ExcelReader {
         String[] temp = formula.split(regex);
 
         for(int i = 0;i<temp.length; i++) {
+            System.out.println(temp[i]);
             if (temp[i].contains("$")) {
                 addFormulaCellDependency(temp[i], cellList, column);
             } else {
-                temp[i] = temp[i].replaceAll("\\d", "");
                 addFormulaColumnDependency(temp[i], columnList, column);
             }
         }
@@ -581,12 +583,13 @@ public class readExcelTableBased implements ExcelReader {
 
 
     private void addFormulaColumnDependency(String formula, List<Column> columnList, entity.SheetElement.BasicElement.Column column) {
-        String patternColumn = "[a-zA-Z]+";
+        String patternColumn = "[a-zA-Z]+\\d+";
         String patternColumnToColumn = patternColumn + ":" + patternColumn;
-        String patternColumnFromOtherSheet = "'*[a-zA-Z]+'*![a-zA-Z]+\\s*";
+        String patternColumnFromOtherSheet = "'*[a-zA-Z]+\\d*'*![a-zA-Z]+\\d+\\s*";
         String patternColumnToColumnFromOtherSheet = patternColumnFromOtherSheet + ":" + patternColumnFromOtherSheet;
         String patternColumnToColumnFromOtherSheet2 = patternColumnFromOtherSheet + ":" + patternColumn;
         if(formula.matches(patternColumn)){
+            formula.replaceAll("\\d", "");
             String check = formula;
             entity.SheetElement.BasicElement.Column column1 = (entity.SheetElement.BasicElement.Column)columnList.stream()
                     .filter(columnCheck -> check.equals(columnCheck.id()))
@@ -601,25 +604,31 @@ public class readExcelTableBased implements ExcelReader {
         else if(formula.matches(patternColumnFromOtherSheet)) {
             String[] worksheetCellSplit = formula.split("!");
             List<Worksheet> worksheets = this.workbook.getWorksheets();
-                Worksheet worksheet = worksheets.stream()
+            Worksheet worksheet = worksheets.stream()
                         .filter(worksheet1 -> worksheetCellSplit[0].equals(worksheet1.getSheetName()))
                         .findAny()
                         .orElse(null);
 
                 if (worksheet != null) {
-                    List<SheetElement> columns = worksheet.getSheets().getOrDefault(COLUMN, null);
-                    if (columns != null) {
-                        entity.SheetElement.BasicElement.Column column1 = (entity.SheetElement.BasicElement.Column) columns.stream()
-                                .filter(columnTemp -> worksheetCellSplit[1].equals(columnTemp.id()))
-                                .findAny()
-                                .orElse(null);
-                        if (column1 != null) {
-                            column.getFormulaValue().addColumnDependencies(column1);
+                    List<SheetElement> tables = worksheet.getSheets().getOrDefault(TABLE, null);
+                    for(int l = 0; l<tables.size(); l++) {
+                        Table table = (Table) tables.get(l);
+                        List<Column> columns = table.getColumns();
+                        if (columns != null) {
+                            entity.SheetElement.BasicElement.Column column1 = (entity.SheetElement.BasicElement.Column) columns.stream()
+                                    .filter(columnTemp -> worksheetCellSplit[1].replaceAll("\\d", "").equals(columnTemp.id()))
+                                    .findAny()
+                                    .orElse(null);
+                            if (column1 != null) {
+                                column.getFormulaValue().addColumnDependencies(column1);
+                                break;
+                            }
                         }
                     }
                 }
         }
         else if(formula.matches(patternColumnToColumn)) {
+            formula.replaceAll("\\d", "");
             List<String> columnToColumns = columnToColumn(formula);
             for(int l = 0; l<columnToColumns.size(); l++) {
                 String check1 = columnToColumns.get(l);
@@ -644,22 +653,29 @@ public class readExcelTableBased implements ExcelReader {
                     .orElse(null);
 
             if(worksheet!= null){
+                tempSplit.replaceAll("\\d", "");
                 List<String> column2 = columnToColumn(tempSplit);
-                List<SheetElement> columns = worksheet.getSheets().getOrDefault(COLUMN, null);
-                if(columns != null) {
+                List<SheetElement> tables = worksheet.getSheets().getOrDefault(TABLE, null);
+                if(tables != null) {
                     for(int l = 0; l<column2.size(); l++) {
                         String workSheetTemp = column2.get(l);
-                        entity.SheetElement.BasicElement.Column column1 = (entity.SheetElement.BasicElement.Column) columns.stream()
-                                .filter(columnTemp -> workSheetTemp.equals(columnTemp.id()))
-                                .findAny()
-                                .orElse(null);
-                        if (column1 != null) {
-                            column.getFormulaValue().addColumnDependencies(column);
+                        for(int p = 0; p<tables.size();p++) {
+                            Table table = (Table) tables.get(p);
+                            List<Column> columns = table.getColumns();
+                            entity.SheetElement.BasicElement.Column column1 = (entity.SheetElement.BasicElement.Column) columns.stream()
+                                    .filter(columnTemp -> workSheetTemp.equals(columnTemp.id()))
+                                    .findAny()
+                                    .orElse(null);
+                            if (column1 != null) {
+                                column.getFormulaValue().addColumnDependencies(column);
+                                break;
+                            }
                         }
                     }
                 }
             }
         } else if(formula.matches(patternColumnToColumnFromOtherSheet2)) {
+            System.out.println("im hereee");
             String[] worksheetColumnSplit = formula.split("!");
             List<Worksheet> worksheets = this.workbook.getWorksheets();
             Worksheet worksheet = worksheets.stream()
@@ -668,17 +684,21 @@ public class readExcelTableBased implements ExcelReader {
                     .orElse(null);
 
             if(worksheet!= null){
-                List<String> column2 = columnToColumn(worksheetColumnSplit[1]);
-                List<SheetElement> columns = worksheet.getSheets().getOrDefault(COLUMN, null);
-                if(columns != null) {
+                List<String> column2 = columnToColumn(worksheetColumnSplit[1].replaceAll("\\d", ""));
+                List<SheetElement> tables = worksheet.getSheets().getOrDefault(TABLE, null);
+                if(tables != null) {
                     for(int l = 0; l<column2.size(); l++) {
                         String workSheetTemp = column2.get(l);
-                        entity.SheetElement.BasicElement.Column column1 = (entity.SheetElement.BasicElement.Column) columns.stream()
-                                .filter(columnTemp -> workSheetTemp.equals(columnTemp.id()))
-                                .findAny()
-                                .orElse(null);
-                        if (column1 != null) {
-                            column.getFormulaValue().addColumnDependencies(column1);
+                        for(int p = 0; p<tables.size(); p++) {
+                            Table table = (Table) tables.get(p);
+                            List<Column> columns = table.getColumns();
+                            entity.SheetElement.BasicElement.Column column1 = (entity.SheetElement.BasicElement.Column) columns.stream()
+                                    .filter(columnTemp -> workSheetTemp.equals(columnTemp.id()))
+                                    .findAny()
+                                    .orElse(null);
+                            if (column1 != null) {
+                                column.getFormulaValue().addColumnDependencies(column1);
+                            }
                         }
                     }
                 }

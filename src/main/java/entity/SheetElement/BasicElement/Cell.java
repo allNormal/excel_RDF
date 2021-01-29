@@ -23,6 +23,7 @@ public class Cell extends BasicElement {
     private Constraint constraint;
     private Value value;
     private XSSFComment comment;
+    private String tableName;
 
     public Cell(Worksheet worksheet, String column, int row){
         super(worksheet, column+(row+1));
@@ -150,5 +151,13 @@ public class Cell extends BasicElement {
 
     public void setColumnTitle(String columnTitle) {
         this.columnTitle = columnTitle;
+    }
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    public void setTableName(String tableName) {
+        this.tableName = tableName;
     }
 }
