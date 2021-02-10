@@ -3,7 +3,7 @@ package com.java.fto.endpoint.impl;
 import com.java.fto.endpoint.EtoRestController;
 import com.java.fto.entity.EndpointEntity.FileUploadEntity;
 import com.java.fto.entity.EndpointEntity.WorkbookEndpoint;
-import com.java.fto.entity.EndpointEntity.WorksheetEndpoint;
+import com.java.fto.entity.EndpointEntity.Receiver.WorksheetTableReceiver;
 import com.java.fto.entity.Workbook.Workbook;
 import com.java.fto.service.impl.OntologyService;
 import com.java.fto.service.impl.OntologyServiceTableBased;
@@ -97,7 +97,7 @@ public class EtoController implements EtoRestController {
     @Override
     @CrossOrigin
     @RequestMapping(method = RequestMethod.POST, value = "custom/initialize/crheader", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void initializeRowColumnHeader(@RequestBody List<WorksheetEndpoint> ws) {
+    public void initializeRowColumnHeader(@RequestBody List<WorksheetTableReceiver> ws) {
         this.ontologyServiceTableBased.initializeColumnAndRow(ws);
     }
 

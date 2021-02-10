@@ -4,7 +4,6 @@ import {CheckboxItem} from './checkbox-item';
 
 export class WorkbookEndpoint {
   workbookName: string;
-
   @Type(() => Worksheet)
   worksheets: Worksheet[]
 }

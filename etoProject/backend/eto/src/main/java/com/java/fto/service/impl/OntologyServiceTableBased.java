@@ -1,7 +1,7 @@
 package com.java.fto.service.impl;
 
 import com.java.fto.entity.EndpointEntity.WorkbookEndpoint;
-import com.java.fto.entity.EndpointEntity.WorksheetEndpoint;
+import com.java.fto.entity.EndpointEntity.Receiver.WorksheetTableReceiver;
 import com.java.fto.entity.Operator;
 import com.java.fto.entity.Restriction.Restriction;
 import com.java.fto.entity.SheetElement.ElementType;
@@ -50,7 +50,7 @@ public class OntologyServiceTableBased implements OntologyService {
         }
     }
 
-    public void initializeColumnAndRow(List<WorksheetEndpoint> ws){
+    public void initializeColumnAndRow(List<WorksheetTableReceiver> ws){
         try {
             this.readExcelTableBased.initializeColumnAndRow(ws);
             this.readExcelTableBased.readExcelConverter();
