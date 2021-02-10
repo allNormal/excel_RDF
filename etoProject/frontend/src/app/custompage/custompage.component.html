@@ -1,0 +1,13 @@
+<head>
+  <script src="node_modules/reflect-metadata/Reflect.js"></script>
+</head>
+
+<body>
+<app-navbar></app-navbar>
+  <div *ngIf="format == 'FileFormat' else elseBlock">
+    <app-filepage></app-filepage>
+  </div>
+  <ng-template #elseBlock>
+    <app-tablepage></app-tablepage>
+  </ng-template>
+</body>

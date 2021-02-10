@@ -1,0 +1,152 @@
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #fefefe;
+  margin: 10% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 500px; /* Could be more or less, depending on screen size */
+}
+
+.cardList {
+  padding-left: 135px;
+  padding-right: 135px;
+  display: grid;
+  grid-column-gap: 10px;
+  grid-row-gap: 10px;
+  grid-template-columns: 500px 500px;
+}
+
+.spanEdit {
+  margin-right: 10px;
+}
+
+#buttonRC {
+  display: block;
+  width: 100px;
+  margin-top: 10px;
+}
+
+#buttonCustom {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+}
+
+.close {
+  cursor: pointer;
+}
+
+.sidebar .nav-link:focus {
+  color: white;
+  background-color: #006699;
+}
+
+.sidebar .nav-link {
+  text-align: center;
+  color: #006699;
+  width: 213px;
+  height: 50px;
+}
+
+.sidebar .nav-link:hover {
+  color: white;
+  background-color: #006699;
+}
+
+a:hover {
+  cursor: pointer;
+}
+
+.sidebar .nav-link:hover .feather,
+.sidebar .nav-link.active .feather {
+  color: inherit;
+}
+
+.sidebar-heading {
+  font-size: .75rem;
+  text-transform: uppercase;
+}
+
+/*
+ * Navbar
+ */
+
+.navbar-brand {
+  padding-top: .75rem;
+  padding-bottom: .75rem;
+  font-size: 1rem;
+  background-color: rgba(0, 0, 0, .25);
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
+}
+
+.navbar .form-control {
+  padding: .75rem 1rem;
+  border-width: 0;
+  border-radius: 0;
+}
+
+.form-control-dark {
+  color: #fff;
+  background-color: rgba(255, 255, 255, .1);
+  border-color: rgba(255, 255, 255, .1);
+}
+
+.form-control-dark:focus {
+  border-color: transparent;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
+}
+
+/*
+ * Utilities
+ */
+
+.border-top { border-top: 1px solid #e5e5e5; }
+.border-bottom { border-bottom: 1px solid #e5e5e5; }
+
+/*
+ * Sidebar
+ */
+
+.sidebar {
+  position: fixed;
+  background-color: #f5f5f5;
+  top: 0px;
+  bottom: 0;
+  left: 0;
+  z-index: 100; /* Behind the navbar */
+  padding: 0;
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+
+
+.sidebar-sticky {
+  position: fixed;
+  top: 60px; /* Height of navbar */
+  left: 0;
+  height: calc(100vh - 60px);
+  padding-top: 1rem;
+  overflow-x: hidden;
+  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+}
+
+
+hr {
+  width: 100%;
+  margin: 30px -20px 20px;
+  border: 0;
+  border-top: 1px solid #c9c7c7;
+}

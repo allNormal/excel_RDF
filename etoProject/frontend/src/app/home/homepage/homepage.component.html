@@ -1,0 +1,136 @@
+<main>
+  <header>
+    <app-navbar></app-navbar>
+  </header>
+
+  <body>
+    <div class = "jumbotron jumbotron-fluid" id="jumboHomepage">
+      <h1 class ="display-4 font-weight-bold textEditor">File into RDF converter</h1>
+      <hr class="my-4">
+      <p class="lead font-weight-bold textEditor">
+        Currently Supports .xls, .xlsm, .xlsx file
+      </p>
+    </div>
+
+    <div class="container-fluid" id="availableFormat">
+      <div class="card cardFormat">
+        <div class="card-header font-weight-bold textEditor">
+          File Format
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">File Format will convert the file into the file rdf</h5>
+          <p class="card-text">For more information see <a class = "textEditor" href="#">documentation</a> </p>
+          <a (click)="openForm('FileFormat')" class="btn btn-primary font-weight-bold buttons">Convert File</a>
+        </div>
+      </div>
+
+      <div class="card cardFormat">
+        <div class="card-header font-weight-bold textEditor">
+          Table Format
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">Table Format will convert the file into table like rdf</h5>
+          <p class="card-text">For more information see <a class = "textEditor" href="#">documentation</a> </p>
+          <a (click)="openForm('TableFormat')" class="btn btn-primary font-weight-bold buttons">Convert File</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert alert-success" id="alertSuccess" *ngIf="hideSuccessMessage">
+      <strong>Success!</strong> File can be found in OntologyOut.
+    </div>
+
+    <!-- The Modal -->
+    <div id="FileFormatModal" class="modal">
+
+      <!-- Modal content -->
+      <div class="modal-content" >
+        <span class="close" (click)="closeForm('FileFormat')">&times;</span>
+        <form>
+          <fieldset>
+            <legend class="text-center textEditor font-weight-bold">
+              File Format
+            </legend>
+
+            <div>
+              <form method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                  <label for="file_uploads">Choose Files to upload (.XLS, .XLSM, .XLSX)</label>
+                  <input type="file" id="file_uploads" name="file_uploads" accept=".xls, .xlsm, .xlsx" multiple #file1
+                  (change)="handleFileInput(file1.files)">
+                </div>
+
+                <div class="form-group">
+                  <label for="SelectOptionFileFormat">Select type</label>
+                  <select class="form-control" id="SelectOptionFileFormat" #s>
+                    <option value="automated">Automated</option>
+                    <option value="custom">Custom</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <p class="lead text-center">
+                    <a class="btn btn-primary btn-lg buttons" disabled="" *ngIf="!loader" role="button" id="buttonFileFormat"
+                       (click)="convertFile('FileFormat',s.value)">Ok</a>
+                  </p>
+                  <app-loading *ngIf="loader"></app-loading>
+                </div>
+              </form>
+            </div>
+
+          </fieldset>
+        </form>
+      </div>
+    </div>
+
+
+      <!-- The Modal -->
+      <div id="TableFormatModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content" >
+          <span class="close" (click)="closeForm('TableFormat')">&times;</span>
+          <form>
+            <fieldset>
+              <legend class="text-center textEditor font-weight-bold">
+                Table Format
+              </legend>
+
+              <div>
+                <form method="post" enctype="multipart/form-data">
+                  <div class="form-group">
+                    <label for="file_uploads2">Choose Files to upload (.XLS, .XLSM, .XLSX)</label>
+                    <input type="file" id="file_uploads2" name="file_uploads2" accept=".xls, .xlsm, .xlsx" multiple #file
+                           (change)="handleFileInput(file.files)">
+                  </div>
+
+                  <div class="form-group">
+                    <label for="SelectOptionFileFormat2">Select type</label>
+                    <select class="form-control" id="SelectOptionFileFormat2" #t (change)="
+                    changeType(t.value)">
+                      <option value="automated">Automated</option>
+                      <option value="custom">Custom</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <p class="lead text-center">
+                      <a class="btn btn-primary btn-lg buttons" *ngIf="!loader" role="button" id="buttonTableFormat"
+                         (click)="convertFile('TableFormat',t.value)">Ok</a>
+                    </p>
+                    <app-loading *ngIf="loader"></app-loading>
+                  </div>
+                </form>
+              </div>
+
+            </fieldset>
+          </form>
+        </div>
+      </div>
+  </body>
+
+  <footer>
+    <app-footer></app-footer>
+  </footer>
+
+</main>

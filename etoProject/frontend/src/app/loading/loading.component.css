@@ -1,0 +1,29 @@
+#firstPoint {
+  font-size: 5px;
+  display: none;
+  animation-name: fade;
+  animation-iteration-count: infinite;
+  animation-delay: 3s;
+}
+
+@keyframes fade {
+  0% {display: block;}
+  100% {display: none;}
+
+}
+
+#secondPoint {
+  font-size: 5px;
+  display: none;
+  animation-name: fade;
+  animation-iteration-count: infinite;
+  animation-delay: 3s;
+}
+
+#thirdPoint {
+  font-size: 5px;
+  display: none;
+  animation-name: fade;
+  animation-iteration-count: infinite;
+  animation-delay: 3s;
+}
