@@ -1,7 +1,7 @@
 package com.java.fto.persistence.impl;
 
-import com.java.fto.entity.EndpointEntity.WorkbookExcel;
 import com.java.fto.entity.Operator;
+import com.java.fto.entity.Restriction.Excel;
 import com.java.fto.entity.Restriction.Restriction;
 import com.java.fto.entity.SheetElement.BasicElement.Cell;
 import com.java.fto.entity.SheetElement.Charts.Chart;
@@ -11,14 +11,12 @@ import com.java.fto.entity.SheetElement.Tables.Table;
 import com.java.fto.entity.SheetElement.Texts.Text;
 import com.java.fto.entity.Workbook.Workbook;
 import com.java.fto.entity.Worksheet.Worksheet;
-import com.java.fto.mapper.readExcel;
 import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.query.*;
 import org.apache.jena.vocabulary.RDFS;
 import org.springframework.stereotype.Repository;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,7 +29,7 @@ public class OntologyExcelDao implements com.java.fto.persistence.OntologyDao {
 
     private OntologyConverter converter;
     private Workbook workbook;
-    //private com.java.fto.mapper.readExcel readExcel;
+    //private com.java.fto.mapper.ExcelMapper.readExcel readExcel;
     private OntModel model;
     //private WorkbookExcel workbookExcel;
     private Restriction restriction;
@@ -56,7 +54,7 @@ public class OntologyExcelDao implements com.java.fto.persistence.OntologyDao {
         this.restriction = restriction;
         this.converter = new OntologyConverter(workbook.getFileName());
         this.model = this.converter.getModel();
-        convertExcelToOntology();
+        convertCustomExcelToOntology(restriction);
         saveModel(this.workbook.getFileName());
     }
 
@@ -290,6 +288,72 @@ public class OntologyExcelDao implements com.java.fto.persistence.OntologyDao {
     }
 
 
+    private void convertCustomExcelToOntology(Restriction restriction) {
+        //System.out.println("converting 1 workbook");
+        Individual workbook = addWorkbook();
+        //System.out.println("converting " + this.workbook.getWorksheets().size() + " worksheet");
+        for(int i = 0;i<this.workbook.getWorksheets().size();i++){
+            //  System.out.println("worksheet " + (i+1));
+            if(!restriction.getExcelRestrictions().containsKey(this.workbook.getWorksheets().get(i).getSheetName())) {
+                continue;
+            }
+            Individual worksheet = addWorksheet(this.workbook.getWorksheets().get(i));
+            workbook.addProperty(this.converter.getHasWorksheet(), worksheet);
+            worksheet.addProperty(this.converter.getIsInWorkbook(), workbook);
+
+            List<SheetElement> chart = new ArrayList<>();
+            List<SheetElement> illustration = new ArrayList<>();
+            List<SheetElement> table =  new ArrayList<>();
+            List<SheetElement> text = new ArrayList<>();
+            List<SheetElement> cell = new ArrayList<>();
+            List<SheetElement> row = new ArrayList<>();
+            List<SheetElement> column = new ArrayList<>();
+
+            //initialize list with the saved data in map.
+            for(Map.Entry<ElementType, List<SheetElement>> m : this.workbook.getWorksheets().get(i).getSheets().entrySet()) {
+                switch (m.getKey()){
+                    case TABLE:
+                        table = m.getValue();
+                        break;
+                    case COLUMN:
+                        column = m.getValue();
+                        break;
+                    case CELL:
+                        cell = m.getValue();
+                        break;
+                    case ROW:
+                        row = m.getValue();
+                        break;
+                    case CHART:
+                        chart = m.getValue();
+                        break;
+                    case ILLUSTRATION:
+                        illustration = m.getValue();
+                        break;
+                    case TEXT:
+                        text = m.getValue();
+                        break;
+                    default: break;
+                }
+            }
+
+            //check if worksheet contain basic + sheet element or not
+            if(chart.size() != 0 || illustration.size() != 0 || table.size() != 0 || cell.size() != 0 ||
+                    row.size() != 0 || column.size() != 0 || text.size() != 0) {
+
+                Individual sheetElement = this.converter.getSheetElement().createIndividual();
+                worksheet.addProperty(this.converter.getHasSheetElement(), sheetElement);
+                sheetElement.addProperty(this.converter.getIsPartOfWorksheet(), worksheet);
+                addCustomBasicElement(cell, worksheet, this.workbook.getWorksheets().get(i),
+                        restriction.getExcelRestrictions().get(this.workbook.getWorksheets().get(i).getSheetName()));
+                addChart(chart, worksheet, this.workbook.getWorksheets().get(i));
+                addTable(table, worksheet, this.workbook.getWorksheets().get(i));
+                addText(text, worksheet, this.workbook.getWorksheets().get(i));
+                addIllustration(illustration, worksheet, this.workbook.getWorksheets().get(i));
+            }
+        }
+    }
+
     /**
      * save model into file with turtle format
      * @param fileName file name that want to be converted into file
@@ -351,6 +415,17 @@ public class OntologyExcelDao implements com.java.fto.persistence.OntologyDao {
         }
 
         //System.out.println("converting " + cell.size() + " cells");
+    }
+
+    private void addCustomBasicElement(List<SheetElement> cell, Individual worksheet, Worksheet ws, Excel excel) {
+        for(int i = 0; i<cell.size(); i++) {
+            if(cell.get(i) instanceof Cell) {
+                if(excel.getColumns().contains(((Cell) cell.get(i)).getColumn()) &&
+                excel.getRows().contains(((Cell) cell.get(i)).getRowID())) {
+                    addCell((Cell)cell.get(i), worksheet, ws);
+                }
+            }
+        }
     }
 
     /**
@@ -572,7 +647,4 @@ public class OntologyExcelDao implements com.java.fto.persistence.OntologyDao {
         //System.out.println("converting " + illustrations.size() +  " illustrations");
     }
 
-    public void setRestriction(Restriction restriction) {
-        this.restriction = restriction;
-    }
 }

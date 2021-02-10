@@ -1,11 +1,11 @@
 package com.java.fto.service.impl;
 
+import com.java.fto.entity.EndpointEntity.Receiver.WorksheetReceiver;
 import com.java.fto.entity.EndpointEntity.WorkbookEndpoint;
-import com.java.fto.entity.EndpointEntity.Receiver.WorksheetTableReceiver;
 import com.java.fto.entity.Operator;
 import com.java.fto.entity.Restriction.Restriction;
 import com.java.fto.entity.SheetElement.ElementType;
-import com.java.fto.mapper.readExcelTableBased;
+import com.java.fto.mapper.ExcelMapper.readExcelTableBased;
 import com.java.fto.persistence.impl.OntologyTableDao;
 import com.java.fto.service.OntologyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class OntologyServiceTableBased implements OntologyService {
 
     @Autowired
     private OntologyTableDao ontologyTableDao;
-    private com.java.fto.mapper.readExcelTableBased readExcelTableBased;
+    private com.java.fto.mapper.ExcelMapper.readExcelTableBased readExcelTableBased;
 
     public OntologyServiceTableBased() {
     }
@@ -50,7 +50,7 @@ public class OntologyServiceTableBased implements OntologyService {
         }
     }
 
-    public void initializeColumnAndRow(List<WorksheetTableReceiver> ws){
+    public void initializeColumnAndRow(List<WorksheetReceiver> ws){
         try {
             this.readExcelTableBased.initializeColumnAndRow(ws);
             this.readExcelTableBased.readExcelConverter();
@@ -63,6 +63,7 @@ public class OntologyServiceTableBased implements OntologyService {
     @Override
     public void createCustom(Restriction restriction) {
         this.ontologyTableDao.createCustom(this.readExcelTableBased.getWorkbook(), restriction);
+        readExcelTableBased = null;
     }
 
     @Override

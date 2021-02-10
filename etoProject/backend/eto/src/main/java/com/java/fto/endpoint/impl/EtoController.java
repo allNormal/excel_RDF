@@ -2,9 +2,12 @@ package com.java.fto.endpoint.impl;
 
 import com.java.fto.endpoint.EtoRestController;
 import com.java.fto.entity.EndpointEntity.FileUploadEntity;
+import com.java.fto.entity.EndpointEntity.Receiver.WorksheetReceiver;
 import com.java.fto.entity.EndpointEntity.WorkbookEndpoint;
 import com.java.fto.entity.EndpointEntity.Receiver.WorksheetTableReceiver;
+import com.java.fto.entity.Restriction.Restriction;
 import com.java.fto.entity.Workbook.Workbook;
+import com.java.fto.mapper.RestrictionMapper.restrictionMapper;
 import com.java.fto.service.impl.OntologyService;
 import com.java.fto.service.impl.OntologyServiceTableBased;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,23 +56,18 @@ public class EtoController implements EtoRestController {
 
     @Override
     @CrossOrigin
-    @RequestMapping(method = RequestMethod.POST, value = "custom", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void createCustom(FileUploadEntity fileUploadEntity, ModelMap map) {
-        map.addAttribute("fileUploadEntity", fileUploadEntity);
-        Workbook result;
-        try {
-            File file = new File(System.getProperty("java.io.tmpdir")+"/" + fileUploadEntity.getFile().getOriginalFilename());
-            fileUploadEntity.getFile().transferTo(file);
-            System.out.println(fileUploadEntity.getFile().getOriginalFilename());
-
-            if(fileUploadEntity.getFormat().toLowerCase().contains("table")) {
-                //ontologyServiceTableBased.createCustom(file.getPath());
-            } else {
-                //ontologyService.createCustom(file.getPath());
-            }
-        } catch (IOException e) {
-            System.out.println("exception " + e.getMessage());
+    @RequestMapping(method = RequestMethod.POST, value = "custom/{formatType}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void createCustom(@RequestBody List<WorksheetReceiver> ws, @PathVariable("formatType") String formatType) {
+        if(formatType.equals("table")) {
+            restrictionMapper mapper = new restrictionMapper();
+            Restriction restriction = mapper.payloadToRestriction(ws, formatType);
+            this.ontologyServiceTableBased.createCustom(restriction);
+        } else {
+            restrictionMapper mapper = new restrictionMapper();
+            Restriction restriction = mapper.payloadToRestriction(ws, formatType);
+            this.ontologyService.createCustom(restriction);
         }
+
     }
 
     @Override
@@ -97,7 +95,7 @@ public class EtoController implements EtoRestController {
     @Override
     @CrossOrigin
     @RequestMapping(method = RequestMethod.POST, value = "custom/initialize/crheader", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void initializeRowColumnHeader(@RequestBody List<WorksheetTableReceiver> ws) {
+    public void initializeRowColumnHeader(@RequestBody List<WorksheetReceiver> ws) {
         this.ontologyServiceTableBased.initializeColumnAndRow(ws);
     }
 

@@ -1,9 +1,9 @@
-package com.java.fto.mapper;
+package com.java.fto.mapper.ExcelMapper;
 
 import com.java.fto.entity.EndpointEntity.FileItem;
+import com.java.fto.entity.EndpointEntity.Receiver.WorksheetReceiver;
 import com.java.fto.entity.EndpointEntity.WorkbookEndpoint;
 import com.java.fto.entity.EndpointEntity.WorkbookTable;
-import com.java.fto.entity.EndpointEntity.Receiver.WorksheetTableReceiver;
 import com.java.fto.entity.SheetElement.BasicElement.Column;
 import com.java.fto.entity.SheetElement.SheetElement;
 import com.java.fto.entity.SheetElement.Tables.Table;
@@ -163,7 +163,7 @@ public class readExcelTableBased implements ExcelReader {
                         convertColumn(Integer.toString(cell.getColumnIndex())),cell.getRowIndex());
                 cell1.setRowID(row1.getRowId());
                 if(row1.getRowTitle() == null && cell.getColumnIndex() > worksheet.getRowHeaderIndex()) {
-                    row1.setRowTitle("NO_TITLE_ROW");
+                    row1.setRowTitle("NO_TITLE_ROW_" + cell.getRowIndex());
                     rowHeader.add(row1.getRowTitle());
                 }
                 switch (cell.getCellType()){
@@ -219,9 +219,9 @@ public class readExcelTableBased implements ExcelReader {
                     if(cell.getRowIndex() >= worksheet.getColumnHeaderIndex()) {
                         Column column = new Column(worksheet, convertColumn(Integer.toString(cell.getColumnIndex())));
                             if (cell1.getStringValue() == null) {
-                                column.setColumnTitle("No_Title_Column");
+                                column.setColumnTitle("No_Title_Column_" + convertColumn(Integer.toString(cell.getColumnIndex())));
                                 if(row1.getColumnTitle() == null && worksheet.getRowHeaderIndex() == cell.getColumnIndex()) {
-                                    row1.setColumnTitle("No_Title_Column");
+                                    row1.setColumnTitle("No_Title_Column_" + convertColumn(Integer.toString(cell.getColumnIndex())));
                                 }
                             } else {
                                 column.setColumnTitle(cell1.getStringValue());
@@ -311,9 +311,9 @@ public class readExcelTableBased implements ExcelReader {
         workbookEndpoint.setWorksheets(worksheets);
     }
 
-    public void initializeColumnAndRow(List<WorksheetTableReceiver> ws) {
+    public void initializeColumnAndRow(List<WorksheetReceiver> ws) {
         for(int i = 0; i<ws.size(); i++){
-            WorksheetTableReceiver sheet = ws.get(i);
+            WorksheetReceiver sheet = ws.get(i);
             Worksheet temp = workbook.getWorksheets().stream()
                     .filter(worksheet -> sheet.getWorksheetName().equals(worksheet.getSheetName()))
                     .findAny()

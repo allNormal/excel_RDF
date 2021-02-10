@@ -9,34 +9,34 @@ import java.util.Map;
 
 public class Restriction {
 
-    List<String> worksheets = new ArrayList<>();
-    Map<String, List<String>> columnsInWorksheet = new HashMap<>();
+
+    private Map<String, List<Table>> tablesInWorksheet = new HashMap<>();
+    private Map<String, Excel> excelRestrictions = new HashMap<>();
 
     public Restriction() {
     }
 
-    public void addWorksheet(String name) {
-        worksheets.add(name);
+    public void addTablesInWorksheet(String worksheetName, List<Table> table) throws RestrictionException{
+        if(!tablesInWorksheet.containsKey(worksheetName)) {
+            tablesInWorksheet.put(worksheetName, table);
+        } else {
+            throw new RestrictionException("duplicate worksheetName");
+        }
     }
 
-    public void addColumnsInWorksheet(String worksheetName, List<String> columnList) throws RestrictionException {
-        if(columnsInWorksheet.get(worksheetName) == null) columnsInWorksheet.put(worksheetName, columnList);
-        else throw new RestrictionException("you can only have 1 list of column per worksheet");
+    public void addExcelRestrictions(String worksheetName, Excel excels) throws RestrictionException {
+        if(!excelRestrictions.containsKey(worksheetName)){
+            excelRestrictions.put(worksheetName, excels);
+        } else {
+            throw new RestrictionException("duplicate worksheetName");
+        }
     }
 
-    public List<String> getWorksheets() {
-        return worksheets;
+    public Map<String, List<Table>> getTablesInWorksheet() {
+        return tablesInWorksheet;
     }
 
-    public void setWorksheets(List<String> worksheets) {
-        this.worksheets = worksheets;
-    }
-
-    public Map<String, List<String>> getColumnsInWorksheet() {
-        return columnsInWorksheet;
-    }
-
-    public void setColumnsInWorksheet(Map<String, List<String>> columnsInWorksheet) {
-        this.columnsInWorksheet = columnsInWorksheet;
+    public Map<String, Excel> getExcelRestrictions() {
+        return excelRestrictions;
     }
 }

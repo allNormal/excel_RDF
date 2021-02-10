@@ -1,9 +1,8 @@
-package com.java.fto.mapper;
+package com.java.fto.mapper.ExcelMapper;
 
 import com.java.fto.entity.EndpointEntity.FileItem;
 import com.java.fto.entity.EndpointEntity.WorkbookEndpoint;
 import com.java.fto.entity.EndpointEntity.WorkbookExcel;
-import com.java.fto.entity.Restriction.Restriction;
 import com.java.fto.entity.SheetElement.BasicElement.Column;
 import com.java.fto.entity.SheetElement.Charts.Chart;
 import com.java.fto.entity.SheetElement.Illustrations.Illustrations;

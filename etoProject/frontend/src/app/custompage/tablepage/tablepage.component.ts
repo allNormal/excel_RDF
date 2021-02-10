@@ -228,8 +228,16 @@ export class TablepageComponent implements OnInit {
     this.getTable(worksheetName)
   }
 
-  Convert() {
+  async Convert() {
+    for(let worksheet of this.worksheetTemp) {
+      for(let table of worksheet.table) {
+        table.columns = table.columns.filter(column => column.isChecked);
+        table.rows =  table.rows.filter(row => row.isChecked);
+      }
+    }
+
     console.log(this.worksheetTemp)
+    await this.endpoint.createCustom(this.worksheetTemp, 'table');
   }
 
 }

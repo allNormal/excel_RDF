@@ -46,8 +46,10 @@ export class EndpointComponent {
   }
 
   // tslint:disable-next-line:typedef
-  public async createCustom(restriction){
+  public async createCustom(worksheets: Array<WorksheetTable>, format: string){
 
+    const headers = { 'content-type': 'application/json'}
+    return await this.http.post(this.baseURL + 'custom/'+format, JSON.stringify(worksheets), {'headers':headers}).toPromise();
   }
 
   // tslint:disable-next-line:typedef

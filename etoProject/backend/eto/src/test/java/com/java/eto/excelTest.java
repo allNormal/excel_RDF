@@ -8,7 +8,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import com.java.fto.mapper.readExcel;
+import com.java.fto.mapper.ExcelMapper.readExcel;
 
 import java.io.File;
 import java.io.IOException;

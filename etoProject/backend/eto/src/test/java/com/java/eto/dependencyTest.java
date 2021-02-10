@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class dependencyTest {
 
-    private com.java.fto.mapper.readExcel readExcel;
+    private com.java.fto.mapper.ExcelMapper.readExcel readExcel;
 
     private OntologyExcelDao ontologyExcelDao = new OntologyExcelDao();
     private OntologyService etoService;

@@ -84,10 +84,6 @@ export class HomepageComponent implements OnInit {
     this.FadeOutLink();
   }
 
-  // tslint:disable-next-line:typedef
-  async convertFileCustom(format: string) {
-    await this.Endpoint.createCustom(this.fileUpload);
-  }
 
   // tslint:disable-next-line:typedef
   FadeOutLink() {
