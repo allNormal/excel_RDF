@@ -4,14 +4,15 @@ import com.java.fto.entity.Operator;
 import com.java.fto.entity.Restriction.Restriction;
 import com.java.fto.entity.SheetElement.ElementType;
 import com.java.fto.entity.Workbook.Workbook;
+import com.java.fto.exception.IncorrectTypeException;
 
 import java.util.Collection;
 
 public interface OntologyDao {
 
-    void createAuto(Workbook workbook);
+    void createAuto(Workbook workbook) throws IncorrectTypeException;
 
-    void createCustom(Workbook workbook, Restriction restriction);
+    void createCustom(Workbook workbook, Restriction restriction) throws IncorrectTypeException;
 
 
     Collection<String> getCellDependencies(String cellID, String worksheetName);

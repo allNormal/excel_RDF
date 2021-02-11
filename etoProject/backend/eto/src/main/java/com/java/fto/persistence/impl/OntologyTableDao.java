@@ -10,6 +10,7 @@ import com.java.fto.entity.SheetElement.SheetElement;
 import com.java.fto.entity.SheetElement.Tables.Table;
 import com.java.fto.entity.Workbook.Workbook;
 import com.java.fto.entity.Worksheet.Worksheet;
+import com.java.fto.exception.IncorrectTypeException;
 import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.vocabulary.RDFS;
@@ -35,7 +36,7 @@ public class OntologyTableDao implements OntologyDao {
     }
 
     @Override
-    public void createAuto(Workbook workbook) {
+    public void createAuto(Workbook workbook) throws IncorrectTypeException {
         this.workbook = workbook;
         this.converter = new OntologyTableBasedConverter(this.workbook.getFileName());
         this.model = this.converter.getModel();
@@ -45,7 +46,7 @@ public class OntologyTableDao implements OntologyDao {
     }
 
     @Override
-    public void createCustom(Workbook workbook, Restriction restriction) {
+    public void createCustom(Workbook workbook, Restriction restriction) throws IncorrectTypeException {
         this.workbook = workbook;
         this.restriction = restriction;
         this.converter = new OntologyTableBasedConverter(this.workbook.getFileName());
@@ -72,7 +73,7 @@ public class OntologyTableDao implements OntologyDao {
     /**
      * add com.java.eto.entity.excel data into the rdf-graph
      */
-    private void convertExcelToOntology(){
+    private void convertExcelToOntology() throws IncorrectTypeException {
         //System.out.println("converting 1 workbook");
         Individual workbook = addWorkbook();
         //System.out.println("converting " + this.workbook.getWorksheets().size() + " worksheet");
@@ -101,7 +102,7 @@ public class OntologyTableDao implements OntologyDao {
         }
     }
 
-    private void convertCustomExcelToOntology(Restriction restriction) {
+    private void convertCustomExcelToOntology(Restriction restriction) throws IncorrectTypeException {
         //System.out.println("converting 1 workbook");
         Individual workbook = addWorkbook();
         //System.out.println("converting " + this.workbook.getWorksheets().size() + " worksheet");
@@ -134,7 +135,7 @@ public class OntologyTableDao implements OntologyDao {
         }
     }
 
-    private void addCustomTable(Table table, Individual worksheet, Worksheet ws, List<com.java.fto.entity.Restriction.Table> tables) {
+    private void addCustomTable(Table table, Individual worksheet, Worksheet ws, List<com.java.fto.entity.Restriction.Table> tables) throws IncorrectTypeException {
         for(int x = 0; x<tables.size(); x++) {
             Individual table1 = this.converter.getTable().createIndividual(this.converter.getWorkbook().getURI() + "_" +
                     ws.getSheetName() + "_" + tables.get(x).getName());
@@ -144,7 +145,6 @@ public class OntologyTableDao implements OntologyDao {
                 Column column = table.getColumns().get(i);
                 System.out.println(column.getColumnTitle());
                 if(!tables.get(x).getColumnHeader().contains(column.getColumnTitle())){
-                    System.out.println("skip");
                     continue;
                 }
                 Individual columnHeader = this.converter.getColumnHeader().createIndividual(this.converter.getWorkbook().getURI() + "_" +
@@ -241,6 +241,9 @@ public class OntologyTableDao implements OntologyDao {
                 if(!tables.get(x).getColumnHeader().contains(cell.getColumnTitle())) {
                     continue;
                 }
+                if(!cell.isSameValueAsColumnHeader()) {
+                    throw new IncorrectTypeException(cell.getCellId() + "doesnt have the same datatype as " + cell.getColumn());
+                }
                 Individual cell1 = this.converter.getValue().createIndividual(table1.getURI()+"_"+
                         cell.getColumnTitle().replaceAll(" ", "_")+"_Value_For_Row"+
                         cell.getRowID().replaceAll(" ", "_"));
@@ -311,7 +314,7 @@ public class OntologyTableDao implements OntologyDao {
         }
     }
 
-    private void addTable(Table table, Individual worksheet, Worksheet ws) {
+    private void addTable(Table table, Individual worksheet, Worksheet ws) throws IncorrectTypeException {
         Individual table1 = this.converter.getTable().createIndividual(this.converter.getWorkbook().getURI() + "_" +
                 ws.getSheetName() + "_" + table.id());
         table1.addLiteral(RDFS.label, table.id());
@@ -411,6 +414,9 @@ public class OntologyTableDao implements OntologyDao {
         }
         for(int i = 0; i<table.getCell().size();i++) {
             Cell cell = table.getCell().get(i);
+            if(!cell.isSameValueAsColumnHeader()) {
+                throw new IncorrectTypeException(cell.getCellId() + "doesnt have the same datatype as " + cell.getColumn());
+            }
             Individual cell1 = this.converter.getValue().createIndividual(table1.getURI()+"_"+
                     cell.getColumnTitle().replaceAll(" ", "_")+"_Value_For_Row"+
                     cell.getRowID().replaceAll(" ", "_"));

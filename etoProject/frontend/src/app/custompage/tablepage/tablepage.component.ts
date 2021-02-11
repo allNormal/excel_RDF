@@ -4,6 +4,7 @@ import {plainToClass} from 'class-transformer';
 import {Table, WorkbookEndpoint, WorksheetTable} from '../../entity/workbook-endpoint';
 import {ChangeDetectorRef} from '@angular/core';
 import {CheckboxItem} from '../../entity/checkbox-item';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-tablepage',
@@ -24,7 +25,8 @@ export class TablepageComponent implements OnInit {
   tableNameTemp: string = "";
   modalCustom: CheckboxItem[] = [];
   type: string = "";
-  constructor(private endpoint: EndpointComponent, private cdrf: ChangeDetectorRef) { }
+  constructor(private endpoint: EndpointComponent, private cdrf: ChangeDetectorRef,
+              private _router: Router) { }
 
   async ngOnInit(): Promise<void> {
 
@@ -238,6 +240,7 @@ export class TablepageComponent implements OnInit {
 
     console.log(this.worksheetTemp)
     await this.endpoint.createCustom(this.worksheetTemp, 'table');
+    this._router.navigate(['/home']);
   }
 
 }

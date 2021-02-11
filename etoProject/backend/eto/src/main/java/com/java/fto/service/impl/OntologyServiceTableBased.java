@@ -5,6 +5,7 @@ import com.java.fto.entity.EndpointEntity.WorkbookEndpoint;
 import com.java.fto.entity.Operator;
 import com.java.fto.entity.Restriction.Restriction;
 import com.java.fto.entity.SheetElement.ElementType;
+import com.java.fto.exception.IncorrectTypeException;
 import com.java.fto.mapper.ExcelMapper.readExcelTableBased;
 import com.java.fto.persistence.impl.OntologyTableDao;
 import com.java.fto.service.OntologyService;
@@ -34,7 +35,7 @@ public class OntologyServiceTableBased implements OntologyService {
             this.readExcelTableBased.initializeWorkbook();
             this.readExcelTableBased.readExcelConverter();
             this.ontologyTableDao.createAuto(this.readExcelTableBased.getWorkbook());
-        } catch (IOException e) {
+        } catch (IOException | IncorrectTypeException e) {
             System.out.println(e.getMessage());
         }
     }
@@ -62,7 +63,11 @@ public class OntologyServiceTableBased implements OntologyService {
 
     @Override
     public void createCustom(Restriction restriction) {
-        this.ontologyTableDao.createCustom(this.readExcelTableBased.getWorkbook(), restriction);
+        try {
+            this.ontologyTableDao.createCustom(this.readExcelTableBased.getWorkbook(), restriction);
+        } catch (IncorrectTypeException e) {
+            System.out.println(e.getMessage());
+        }
         readExcelTableBased = null;
     }
 

@@ -8,6 +8,7 @@ import com.java.fto.entity.Worksheet.Worksheet;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 
 public class Cell extends BasicElement {
+
     private String cellId;
     private int row;
     private String rowID;
@@ -23,6 +24,7 @@ public class Cell extends BasicElement {
     private Value value;
     private XSSFComment comment;
     private String tableName;
+    private boolean sameValueAsColumnHeader = true;
 
     public Cell(Worksheet worksheet, String column, int row){
         super(worksheet, column+(row+1));
@@ -158,5 +160,13 @@ public class Cell extends BasicElement {
 
     public void setTableName(String tableName) {
         this.tableName = tableName;
+    }
+
+    public boolean isSameValueAsColumnHeader() {
+        return sameValueAsColumnHeader;
+    }
+
+    public void setSameValueAsColumnHeader(boolean sameValueAsColumnHeader) {
+        this.sameValueAsColumnHeader = sameValueAsColumnHeader;
     }
 }

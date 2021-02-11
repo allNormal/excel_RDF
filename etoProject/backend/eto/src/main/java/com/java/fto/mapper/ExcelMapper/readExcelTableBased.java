@@ -147,11 +147,13 @@ public class readExcelTableBased implements ExcelReader {
                                             rowHeader.add(row1.getRowTitle());
                                             break;
                                         default:
-                                            throw new IncorrectTypeException("row header must be a type of string");
+                                            throw new IncorrectTypeException(worksheet.getSheetName() + " row header "+ row.getRowNum() + " must be a type of string");
                                     }
                                     break;
+                                case BLANK:
+                                    continue;
                                 default:
-                                    throw new IncorrectTypeException("row header must be a type of string");
+                                    throw new IncorrectTypeException(worksheet.getSheetName() + " row header "+ row.getRowNum() + " must be a type of string");
                             }
                         } catch (IncorrectTypeException e) {
                             System.out.println(e.getMessage());
@@ -236,20 +238,15 @@ public class readExcelTableBased implements ExcelReader {
                 }
                 else{
                     Column column = columnTemp.get(convertColumn(Integer.toString(cell.getColumnIndex())));
-                    try {
-                        if (column.getValue() == null) {
-                            column.setValue(cell1.getValue());
-                            if(cell1.getValue() == Value.FORMULA) {
-                                column.setFormulaValue(cell1.getFormulaValue());
-                            }
-                        } else if (column.getValue() != cell1.getValue()) {
-                            throw new IncorrectTypeException("not all cell in column have the same value type");
+                    if (column.getValue() == null) {
+                        column.setValue(cell1.getValue());
+                        if(cell1.getValue() == Value.FORMULA) {
+                            column.setFormulaValue(cell1.getFormulaValue());
                         }
-                        cell1.setColumnTitle(column.getColumnTitle());
-                    } catch (IncorrectTypeException e) {
-                        System.out.println(e.getMessage());
-                        return;
+                    } else if(column.getValue() != cell1.getValue()) {
+                        cell1.setSameValueAsColumnHeader(false);
                     }
+                    cell1.setColumnTitle(column.getColumnTitle());
                     if(row1.getColumnTitle() == null && worksheet.getRowHeaderIndex() == cell.getColumnIndex()) {
                         row1.setColumnTitle(cell1.getStringValue());
                     }
