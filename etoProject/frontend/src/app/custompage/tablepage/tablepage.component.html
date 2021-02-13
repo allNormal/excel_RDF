@@ -8,7 +8,10 @@
       <div class="card-body">
         <h5 class="card-title">Add row and column header</h5>
         <span class="spanEdit">ColumnHeader: {{worksheets.columnHeader}}</span>
-        <span class="spanEdit">RowHeader:  {{worksheets.rowHeader}}</span>
+        <span *ngIf="worksheets.columnsRowsFrom == null else elseRowHeader" class="spanEdit">RowHeader:  {{worksheets.rowHeader}}</span>
+        <ng-template #elseRowHeader>
+          <span class="spanEdit">RowHeader:  {{worksheets.columnsRowsFrom}}</span>
+        </ng-template>
         <a (click)="openForm(worksheets.worksheetName, 'CustomModal')" class="btn btn-primary" id="buttonRC">Edit</a>
       </div>
     </div>
@@ -97,10 +100,18 @@
       </div>
 
       <div class="form-group">
+        <label for="SelectOptionFileFormat">Select row header from another worksheet</label>
+        <select class="form-control" id="SelectOptionFileFormat" #s (change)="dissapearingRowInput(s.value)">
+          <option value=""></option>
+          <option *ngFor="let worksheet of getWorksheetsWithoutTheActualOne()" value="{{worksheet.worksheetName}}">{{worksheet.worksheetName}}</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="rowHeaderInput">
         <label for="RowHeader">Rowheader</label>
         <input type="text" class="form-control" id="RowHeader" placeholder="" [(ngModel)]="rowHeaderTemp">
       </div>
-      <button (click)="saveForm(worksheetsNameTemp)" type="submit" class="btn btn-primary">Submit</button>
+      <button (click)="saveForm(worksheetsNameTemp, s.value)" type="submit" class="btn btn-primary">Submit</button>
 
     </fieldset>
   </div>
@@ -132,7 +143,7 @@
     <span class="close" (click)="closeForm('CustomModalRowColumn')">&times;</span>
     <fieldset>
       <legend class="text-center textEditor font-weight-bold">
-        File Format
+        Edit Row/Column Header
       </legend>
 
       <div class="form-group form-check" *ngFor="let item of modalCustom">

@@ -25,6 +25,7 @@ export class TablepageComponent implements OnInit {
   tableNameTemp: string = "";
   modalCustom: CheckboxItem[] = [];
   type: string = "";
+
   constructor(private endpoint: EndpointComponent, private cdrf: ChangeDetectorRef,
               private _router: Router) { }
 
@@ -50,13 +51,21 @@ export class TablepageComponent implements OnInit {
   closeForm(modalId: string) {
     document.getElementById(modalId).style.display = 'none';
   }
-  saveForm(worksheetName: string) {
+  saveForm(worksheetName: string, rowHeaderFromAnotherWs: string) {
+    console.log(rowHeaderFromAnotherWs)
     for(let item of this.worksheetTemp) {
       if(item.worksheetName === worksheetName) {
-        console.log(item.worksheetName)
-        console.log(worksheetName)
-        item.rowHeader = this.rowHeaderTemp;
-        item.columnHeader = this.columnHeaderTemp;
+        if(rowHeaderFromAnotherWs === '') {
+          item.rowHeader = this.rowHeaderTemp;
+        } else {
+          item.columnsRowsFrom = rowHeaderFromAnotherWs;
+          item.rowHeader = '-1';
+        }
+        if(this.columnHeaderTemp === '') {
+          item.columnHeader = '0';
+        } else {
+          item.columnHeader = this.columnHeaderTemp;
+        }
         break;
       }
     }
@@ -65,6 +74,18 @@ export class TablepageComponent implements OnInit {
     this.rowHeaderTemp = "";
     this.worksheetsNameTemp = "";
     document.getElementById('CustomModal').style.display = 'none';
+  }
+
+  getWorksheetsWithoutTheActualOne() {
+    return this.worksheetTemp.filter(x => x.worksheetName != this.worksheetsNameTemp);
+  }
+
+  dissapearingRowInput(worksheetName: string) {
+    if(worksheetName === ''){
+      document.getElementById('rowHeaderInput').style.display = 'block';
+    } else {
+      document.getElementById('rowHeaderInput').style.display = 'none';
+    }
   }
 
   async initializeColumnRowHeader() {

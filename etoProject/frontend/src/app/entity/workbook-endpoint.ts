@@ -21,7 +21,7 @@ export class WorksheetTable {
   worksheetName: string;
   table: Array<Table> = [];
   active: boolean = true;
-
+  columnsRowsFrom: string;
 }
 
 export class Table {

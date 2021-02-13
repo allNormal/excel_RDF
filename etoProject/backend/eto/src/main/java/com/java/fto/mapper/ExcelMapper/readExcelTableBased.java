@@ -16,6 +16,7 @@ import com.java.fto.entity.Worksheet.Worksheet;
 import com.java.fto.exception.IncorrectTypeException;
 import com.java.fto.entity.SheetElement.ElementType;
 import org.apache.logging.log4j.core.util.FileUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -41,19 +42,18 @@ public class readExcelTableBased implements ExcelReader {
         this.file = file;
     }
 
-
-    public void setColumnRowHeader(String worksheetName, String columnHeader, String rowHeader){
-        int index = this.workbook.getWorksheets().indexOf(worksheetName);
-        Worksheet ws = this.workbook.getWorksheets().get(index);
-        ws.setRowHeaderIndex(Integer.parseInt(rowHeader));
-        ws.setColumnHeaderIndex(Integer.parseInt(columnHeader));
-    }
-
     @Override
     public void readExcelConverter() throws IOException {
         int count = 0;
+
+        //read each element in worksheet in a table format
         for(Sheet sheet : myWorkBook) {
+                //if its not null, thats mean the row header is from another worksheet
                 if(workbook.getWorksheets().get(count).getSheetName().equals(sheet.getSheetName().replaceAll(" ", ""))) {
+                    if(workbook.getWorksheets().get(count).getRowHeaderFrom() != null) {
+                        count++;
+                        continue;
+                    }
                     Table table = new Table(workbook.getWorksheets().get(count),
                             "Table_"+workbook.getWorksheets().get(count).getSheetName());
                     readTable(table, sheet, workbook.getWorksheets().get(count),
@@ -61,6 +61,45 @@ public class readExcelTableBased implements ExcelReader {
                     count++;
                 }
         }
+
+        count = 0;
+
+        //if there is a worksheet that want to use rowheader from another worksheet
+        //will be assigned here
+        for(int i = 0; i<workbook.getWorksheets().size(); i++){
+            if(workbook.getWorksheets().get(i).getRowHeaderFrom() == null) {
+                continue;
+            } else {
+                Worksheet worksheetTo =  workbook.getWorksheets().get(i);
+                Worksheet worksheetFrom = workbook.getWorksheets().stream()
+                        .filter(worksheet -> worksheet.getSheetName().equals(worksheetTo.getRowHeaderFrom()))
+                        .findAny()
+                        .orElse(null);
+                System.out.println(worksheetFrom.getSheetName());
+                if(worksheetFrom != null) {
+                    assignRowHeaderFromAnotherWorksheet(worksheetFrom, worksheetTo,
+                            (WorkbookTable) workbookEndpoint.getWorksheets().get(i));
+                }
+            }
+
+        }
+
+        //assign all value to the custom worksheet;
+        for(Sheet sheet : myWorkBook) {
+            //if its not null, thats mean the row header is from another worksheet
+            if(workbook.getWorksheets().get(count).getSheetName().equals(sheet.getSheetName().replaceAll(" ", ""))) {
+                if(workbook.getWorksheets().get(count).getRowHeaderFrom() != null) {
+                    Table table = (Table) workbook.getWorksheets().get(count).getSheets()
+                            .get(ElementType.TABLE).get(0);
+
+                    readTableCustom(table, sheet, workbook.getWorksheets().get(count),
+                            (WorkbookTable) workbookEndpoint.getWorksheets().get(count));
+                }
+                count++;
+            }
+        }
+
+        //assign formula dependency
         for(int i = 0; i< this.workbook.getWorksheets().size(); i++) {
             Worksheet ws = this.workbook.getWorksheets().get(i);
             List<SheetElement> table = ws.getSheets().get(ElementType.TABLE);
@@ -69,6 +108,33 @@ public class readExcelTableBased implements ExcelReader {
                 formulaColumnDependencyCheck(table1.getColumns(), table1.getCell());
             }
         }
+    }
+
+    private void assignRowHeaderFromAnotherWorksheet(Worksheet worksheetFrom, Worksheet worksheetTo,
+                                                     WorkbookTable workbookTable) {
+        List<com.java.fto.entity.SheetElement.BasicElement.Row> rows = new ArrayList<>();
+        System.out.println(worksheetFrom.getSheetName());
+        System.out.println(worksheetFrom.getSheets().get(ElementType.TABLE).size());
+        Table table =  (Table) worksheetFrom.getSheets().get(ElementType.TABLE).get(0);
+        Table table1 = new Table(worksheetTo,
+                "Table_" + worksheetTo.getSheetName());
+        List<String> rowTemp =  new ArrayList<>();
+
+        for(int i = 0; i<table.getRows().size(); i++) {
+            com.java.fto.entity.SheetElement.BasicElement.Row row = new com.java.fto.entity.SheetElement.BasicElement.Row(
+                    worksheetFrom, table.getRows().get(i).getRowTitle()
+            );
+            row.setColumnTitle(table.getRows().get(i).getColumnTitle());
+            row.setRowTitle(table.getRows().get(i).getRowTitle());
+            rows.add(row);
+            System.out.println(row);
+            rowTemp.add(row.getRowTitle());
+        }
+        table1.setRows(rows);
+        List<SheetElement> sheetElements = new ArrayList<>();
+        sheetElements.add(table1);
+        worksheetTo.addElement(ElementType.TABLE, sheetElements);
+        workbookTable.setRows(rowTemp);
     }
 /*
     @Override
@@ -112,7 +178,7 @@ public class readExcelTableBased implements ExcelReader {
 
 
  */
-    public void readTable(Table table, Sheet sheet, Worksheet worksheet, WorkbookTable workbookTable) {
+    private void readTable(Table table, Sheet sheet, Worksheet worksheet, WorkbookTable workbookTable) {
         List<com.java.fto.entity.SheetElement.BasicElement.Cell> cellTemp = new ArrayList<>();
         Map<String, Column> columnTemp = new HashMap<>();
         List<com.java.fto.entity.SheetElement.BasicElement.Row> rowTemp = new ArrayList<>();
@@ -152,6 +218,10 @@ public class readExcelTableBased implements ExcelReader {
                                     break;
                                 case BLANK:
                                     continue;
+                                case NUMERIC:
+                                    row1.setRowTitle(cell.getNumericCellValue() + "");
+                                    rowHeader.add(row1.getRowTitle());
+                                    break;
                                 default:
                                     throw new IncorrectTypeException(worksheet.getSheetName() + " row header "+ row.getRowNum() + " must be a type of string");
                             }
@@ -273,6 +343,193 @@ public class readExcelTableBased implements ExcelReader {
         }
         table.setColumns(colTemp);
         if(worksheet.getSheets().containsKey(ElementType.TABLE)) {
+            System.out.println("wtf");
+            List<SheetElement> temp = worksheet.getSheets().get(ElementType.TABLE);
+            temp.add(table);
+            worksheet.getSheets().replace(ElementType.TABLE, temp);
+        } else {
+            List<SheetElement> tables = new ArrayList<>();
+            tables.add(table);
+            worksheet.addElement(ElementType.TABLE, tables);
+            System.out.println("adding 1 table to " + worksheet.getSheetName());
+        }
+    }
+
+    private void readTableCustom(Table table, Sheet sheet, Worksheet worksheet, WorkbookTable workbookTable) {
+        List<com.java.fto.entity.SheetElement.BasicElement.Cell> cellTemp = new ArrayList<>();
+        Map<String, Column> columnTemp = new HashMap<>();
+        List<com.java.fto.entity.SheetElement.BasicElement.Row> rowTemp = table.getRows();
+        List<String> columnHeader = new ArrayList<>();
+        List<String> rowHeader = new ArrayList<>();
+        int count = 0;
+        boolean emptyCell = false;
+        for(Row row : sheet){
+            com.java.fto.entity.SheetElement.BasicElement.Row row1;
+            if(count > rowTemp.size()-1 ) {
+                row1 = new com.java.fto.entity.SheetElement.BasicElement.Row(worksheet,
+                        Integer.toString(row.getRowNum()));
+            } else {
+                row1 = rowTemp.get(count);
+                rowHeader.add(row1.getRowTitle());
+            }
+            for(Cell cell : row) {
+                if(row1.getRowTitle() == null &&
+                        (cell.getColumnIndex() == worksheet.getRowHeaderIndex() || worksheet.getRowHeaderIndex() == -1)
+                        && count > rowTemp.size()-1) {
+                    if(cell.getRowIndex() == worksheet.getColumnHeaderIndex()){
+                        row1.setRowTitle("ColumnHeader");
+                        rowHeader.add(row1.getRowTitle());
+                    } else if(worksheet.getColumnHeaderIndex() == -1) {
+                        worksheet.setColumnHeaderIndex(cell.getColumnIndex());
+                        worksheet.setRowHeaderIndex(cell.getRowIndex());
+                        row1.setRowTitle("ColumnHeader");
+                        rowHeader.add(row1.getRowTitle());
+                    } else {
+                        try {
+                            switch (cell.getCellType()) {
+                                case STRING:
+                                    row1.setRowTitle(cell.getRichStringCellValue().getString());
+                                    rowHeader.add(row1.getRowTitle());
+                                    break;
+                                case FORMULA:
+                                    switch (cell.getCachedFormulaResultType()){
+                                        case STRING:
+                                            row1.setRowTitle(cell.getStringCellValue());
+                                            rowHeader.add(row1.getRowTitle());
+                                            break;
+                                        default:
+                                            throw new IncorrectTypeException(worksheet.getSheetName() + " row header "+ row.getRowNum() + " must be a type of string");
+                                    }
+                                    break;
+                                case BLANK:
+                                    continue;
+                                case NUMERIC:
+                                    row1.setRowTitle(cell.getNumericCellValue() + "");
+                                    rowHeader.add(row1.getRowTitle());
+                                    break;
+                                default:
+                                    throw new IncorrectTypeException(worksheet.getSheetName() + " row header "+ row.getRowNum() + " must be a type of string");
+                            }
+                        } catch (IncorrectTypeException e) {
+                            System.out.println(e.getMessage());
+                            return;
+                        }
+                    }
+                }
+                com.java.fto.entity.SheetElement.BasicElement.Cell cell1 = new com.java.fto.entity.SheetElement.BasicElement.Cell(worksheet,
+                        convertColumn(Integer.toString(cell.getColumnIndex())),cell.getRowIndex());
+                cell1.setRowID(row1.getRowId());
+                if(row1.getRowTitle() == null && cell.getColumnIndex() > worksheet.getRowHeaderIndex()) {
+                    row1.setRowTitle("NO_TITLE_ROW_" + cell.getRowIndex());
+                    rowHeader.add(row1.getRowTitle());
+                }
+                switch (cell.getCellType()){
+                    case STRING:
+                        cell1.setValue(Value.STRING);
+                        cell1.setStringValue(cell.getRichStringCellValue().getString());
+                        break;
+                    case BLANK:
+                        emptyCell = true;
+                        break;
+                    case ERROR:
+                        cell1.setValue(Value.ERROR);
+                        cell1.SetErrorValue(String.valueOf(cell.getErrorCellValue()));
+                        break;
+                    case BOOLEAN:
+                        cell1.setValue(Value.BOOLEAN);
+                        cell1.setBooleanValue(cell.getBooleanCellValue());
+                        break;
+                    case FORMULA:
+                        cell1.setValue(Value.FORMULA);
+                        FormulaConverter formulaConverter =  new FormulaConverter(cell.getCellFormula());
+                        Formula formula = formulaConverter.getFormula();
+                        switch (cell.getCachedFormulaResultType()){
+                            case BOOLEAN:
+                                formula.setBooleanValue(cell.getBooleanCellValue());
+                                formula.setValueType(Value.BOOLEAN);
+                                break;
+                            case STRING:
+                                formula.setStringValue(cell.getStringCellValue());
+                                formula.setValueType(Value.STRING);
+                                break;
+                            case NUMERIC:
+                                formula.setNumericValue((float)cell.getNumericCellValue());
+                                formula.setValueType(Value.NUMERIC);
+                                break;
+                            case ERROR:
+                                formula.setErrorValue(cell.getErrorCellValue());
+                                formula.setValueType(Value.ERROR);
+                        }
+                        cell1.setFormulaValue(formula);
+                        break;
+                    case NUMERIC:
+                        cell1.setValue(Value.NUMERIC);
+                        cell1.setNumericValue((float)cell.getNumericCellValue());
+                        break;
+                }
+                if(emptyCell) {
+                    emptyCell = false;
+                    continue;
+                }
+                cell1.setTableName(table.id());
+                if(!columnTemp.containsKey(convertColumn(Integer.toString(cell.getColumnIndex())))){
+                    if(cell.getRowIndex() >= worksheet.getColumnHeaderIndex()) {
+                        Column column = new Column(worksheet, convertColumn(Integer.toString(cell.getColumnIndex())));
+                        if (cell1.getStringValue() == null) {
+                            column.setColumnTitle("No_Title_Column_" + convertColumn(Integer.toString(cell.getColumnIndex())));
+                            if(row1.getColumnTitle() == null && worksheet.getRowHeaderIndex() == cell.getColumnIndex()) {
+                                row1.setColumnTitle("No_Title_Column_" + convertColumn(Integer.toString(cell.getColumnIndex())));
+                            }
+                        } else {
+                            column.setColumnTitle(cell1.getStringValue());
+                            if(row1.getColumnTitle() == null && worksheet.getRowHeaderIndex() == cell.getColumnIndex()) {
+                                row1.setColumnTitle(cell1.getStringValue());
+                            }
+                        }
+                        columnHeader.add(column.getColumnTitle());
+                        columnTemp.put(convertColumn(Integer.toString(cell.getColumnIndex())), column);
+                    }
+                    continue;
+                }
+                else{
+                    Column column = columnTemp.get(convertColumn(Integer.toString(cell.getColumnIndex())));
+                    if (column.getValue() == null) {
+                        column.setValue(cell1.getValue());
+                        if(cell1.getValue() == Value.FORMULA) {
+                            column.setFormulaValue(cell1.getFormulaValue());
+                        }
+                    } else if(column.getValue() != cell1.getValue()) {
+                        cell1.setSameValueAsColumnHeader(false);
+                    }
+                    cell1.setColumnTitle(column.getColumnTitle());
+                    if(row1.getColumnTitle() == null && worksheet.getRowHeaderIndex() == cell.getColumnIndex()) {
+                        row1.setColumnTitle(cell1.getStringValue());
+                    }
+                    column.addCell(cell1);
+                }
+                cellTemp.add(cell1);
+                row1.addCell(cell1);
+            }
+            if(count > rowTemp.size()-1) {
+                rowTemp.add(row1);
+            }
+            count++;
+        }
+
+        for(int i = 1; i<rowTemp.size(); i++){
+            rowTemp.get(i).setColumnTitle(rowTemp.get(0).getColumnTitle());
+        }
+
+        table.setCell(cellTemp);
+        //formulaCellDependencyCheck(cellTemp);
+        List<Column> colTemp = new ArrayList<>();
+        workbookTable.setColumns(columnHeader);
+        workbookTable.setRows(rowHeader);
+        for(Map.Entry<String, Column> temp : columnTemp.entrySet()) {
+            colTemp.add(temp.getValue());
+        }
+        table.setColumns(colTemp);
+        if(worksheet.getSheets().containsKey(ElementType.TABLE)) {
             List<SheetElement> temp = worksheet.getSheets().get(ElementType.TABLE);
             temp.add(table);
             worksheet.getSheets().replace(ElementType.TABLE, temp);
@@ -316,6 +573,12 @@ public class readExcelTableBased implements ExcelReader {
                     .findAny()
                     .orElse(null);
             if(temp != null) {
+                if(sheet.getColumnsRowsFrom() != null) {
+                    temp.setRowHeaderFrom(sheet.getColumnsRowsFrom());
+                    temp.setColumnHeaderIndex(Integer.parseInt(sheet.getColumnHeader()));
+                    temp.setRowHeaderIndex(-1);
+                    continue;
+                }
                 temp.setColumnHeaderIndex(Integer.parseInt(sheet.getColumnHeader()));
                 temp.setRowHeaderIndex(Integer.parseInt(sheet.getRowHeader()));
             }

@@ -14,6 +14,7 @@ public class Worksheet {
     private Workbook workbook;
     private int columnHeaderIndex = -1;
     private int rowHeaderIndex = -1;
+    private String rowHeaderFrom;
 
     public Worksheet(String sheetName, Workbook workbook) {
         this.sheetName = sheetName;
@@ -67,4 +68,11 @@ public class Worksheet {
         this.rowHeaderIndex = rowHeaderIndex;
     }
 
+    public String getRowHeaderFrom() {
+        return rowHeaderFrom;
+    }
+
+    public void setRowHeaderFrom(String rowHeaderFrom) {
+        this.rowHeaderFrom = rowHeaderFrom;
+    }
 }

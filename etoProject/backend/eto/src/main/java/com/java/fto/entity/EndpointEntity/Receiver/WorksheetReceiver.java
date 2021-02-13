@@ -11,7 +11,7 @@ public class WorksheetReceiver {
     private List<TableReceiver> table;
     private List<CheckboxItem> columns;
     private List<CheckboxItem> rows;
-
+    private String columnsRowsFrom;
 
     public String getColumnHeader() {
         return columnHeader;
@@ -84,5 +84,13 @@ public class WorksheetReceiver {
             rows.add(this.rows.get(i).get_value());
         }
         return rows;
+    }
+
+    public String getColumnsRowsFrom() {
+        return columnsRowsFrom;
+    }
+
+    public void setColumnsRowsFrom(String columnsRowsFrom) {
+        this.columnsRowsFrom = columnsRowsFrom;
     }
 }
