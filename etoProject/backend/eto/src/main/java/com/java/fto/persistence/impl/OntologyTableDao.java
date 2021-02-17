@@ -150,7 +150,6 @@ public class OntologyTableDao implements OntologyDao {
             table1.addLiteral(this.converter.getTableName(), tables.get(x).getName());
             for(int i = 0; i< table.getColumns().size(); i++) {
                 Column column = table.getColumns().get(i);
-                System.out.println(column.getColumnTitle());
                 if(!tables.get(x).getColumnHeader().contains(column.getColumnTitle())){
                     continue;
                 }
@@ -193,8 +192,11 @@ public class OntologyTableDao implements OntologyDao {
                             val.addLiteral(this.converter.getFormulaFunction(), column.getFormulaValue().getFormulaFunction());
                             for (int k = 0; k < column.getFormulaValue().getCellDependency().size(); k++) {
                                 Cell cell = column.getFormulaValue().getCellDependency().get(k);
+                                if(!tables.get(x).getColumnHeader().contains(cell.getColumnTitle()) || !tables.get(x).getRowHeader().contains(cell.getRowID())) {
+                                    continue;
+                                }
                                 Individual cell1 = this.converter.getValue().createIndividual(this.converter.getWorkbook().getURI() + "_" +
-                                        cell.getWorksheet().getSheetName() + "_" + cell.getTableName() + "_" +
+                                        cell.getWorksheet().getSheetName() + "_" + tables.get(x).getName() + "_" +
                                         cell.getColumnTitle().replaceAll(" ", "_") + "_Value_For_Row" + cell.getRowID());
                                 cell1.addProperty(this.converter.getIsUsedIn(), val);
                                 switch (cell.getValue()) {
@@ -245,15 +247,22 @@ public class OntologyTableDao implements OntologyDao {
             }
             for(int i = 0; i<table.getCell().size();i++) {
                 Cell cell = table.getCell().get(i);
-                if(!tables.get(x).getColumnHeader().contains(cell.getColumnTitle())) {
+                for(int v = 0; v<tables.get(x).getColumnHeader().size(); v++) {
+                    System.out.println(tables.get(x).getColumnHeader().get(v));
+                }
+
+                for(int v = 0; v<tables.get(x).getRowHeader().size(); v++) {
+                    System.out.println(tables.get(x).getRowHeader().get(v));
+                }
+                if(!tables.get(x).getColumnHeader().contains(cell.getColumnTitle()) || !tables.get(x).getRowHeader().contains(cell.getRowID())) {
                     continue;
                 }
                 if(!cell.isSameValueAsColumnHeader()) {
                     throw new IncorrectTypeException(cell.getCellId() + "doesnt have the same datatype as " + cell.getColumn());
                 }
-                Individual cell1 = this.converter.getValue().createIndividual(table1.getURI()+"_"+
-                        cell.getColumnTitle().replaceAll(" ", "_")+"_Value_For_Row"+
-                        cell.getRowID().replaceAll(" ", "_"));
+                Individual cell1 = this.converter.getValue().createIndividual(this.converter.getWorkbook().getURI() + "_" +
+                        cell.getWorksheet().getSheetName() + "_" + tables.get(x).getName() + "_" +
+                        cell.getColumnTitle().replaceAll(" ", "_") + "_Value_For_Row" + cell.getRowID());
                 cell1.addLiteral(RDFS.label, cell.getColumnTitle()+"_Value_For_Row"+cell.getRowID());
                 switch (cell.getValue()) {
                     case STRING:
@@ -306,9 +315,12 @@ public class OntologyTableDao implements OntologyDao {
                 rowHeader.addProperty(this.converter.getHasColumnHeader(), colHeader);
                 for(int j = 0; j<row.getCell().size();j++) {
                     Cell cell = table.getCell().get(j);
-                    Individual cell1 = this.converter.getValue().createIndividual(table1.getURI()+"_"+
-                            cell.getColumnTitle().replaceAll(" ", "_")+"_Value_For_Row"+
-                            cell.getRowID().replaceAll(" ","_"));
+                    if(!tables.get(x).getColumnHeader().contains(cell.getColumnTitle()) || !tables.get(x).getRowHeader().contains(cell.getRowID())) {
+                        continue;
+                    }
+                    Individual cell1 = this.converter.getValue().createIndividual(this.converter.getWorkbook().getURI() + "_" +
+                            cell.getWorksheet().getSheetName() + "_" + tables.get(x).getName() + "_" +
+                            cell.getColumnTitle().replaceAll(" ", "_") + "_Value_For_Row" + cell.getRowID());
                     rowHeader.addProperty(this.converter.getHasValue(), cell1);
                 }
                 rowHeader.addLiteral(this.converter.getRowHeaderID(), row.getRowId());
@@ -422,7 +434,7 @@ public class OntologyTableDao implements OntologyDao {
         for(int i = 0; i<table.getCell().size();i++) {
             Cell cell = table.getCell().get(i);
             if(!cell.isSameValueAsColumnHeader()) {
-                throw new IncorrectTypeException(cell.getCellId() + "doesnt have the same datatype as " + cell.getColumn());
+                throw new IncorrectTypeException(cell.getCellId() + " doesnt have the same datatype as " + cell.getColumn());
             }
             Individual cell1 = this.converter.getValue().createIndividual(table1.getURI()+"_"+
                     cell.getColumnTitle().replaceAll(" ", "_")+"_Value_For_Row"+
@@ -500,8 +512,8 @@ public class OntologyTableDao implements OntologyDao {
     private void saveModel(String fileName) {
         FileOutputStream out = null;
         try {
-            Path path = Paths.get("./OntologyOut/");
-            out = new FileOutputStream(path.toString() + fileName +".ttl");
+            Path path = Paths.get("./OntologyOut/" + fileName + ".ttl");
+            out = new FileOutputStream(path.toString());
         } catch (IOException e) {
             System.out.println(e);
         }

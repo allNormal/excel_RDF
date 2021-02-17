@@ -234,11 +234,11 @@ public class readExcelTableBased implements ExcelReader {
                 }
                 com.java.fto.entity.SheetElement.BasicElement.Cell cell1 = new com.java.fto.entity.SheetElement.BasicElement.Cell(worksheet,
                         convertColumn(Integer.toString(cell.getColumnIndex())),cell.getRowIndex());
-                cell1.setRowID(row1.getRowId());
                 if(row1.getRowTitle() == null && cell.getColumnIndex() > worksheet.getRowHeaderIndex()) {
                     row1.setRowTitle("NO_TITLE_ROW_" + cell.getRowIndex());
                     rowHeader.add(row1.getRowTitle());
                 }
+                cell1.setRowID(row1.getRowTitle());
                 switch (cell.getCellType()){
                     case STRING:
                         cell1.setValue(Value.STRING);
@@ -417,11 +417,11 @@ public class readExcelTableBased implements ExcelReader {
                 }
                 com.java.fto.entity.SheetElement.BasicElement.Cell cell1 = new com.java.fto.entity.SheetElement.BasicElement.Cell(worksheet,
                         convertColumn(Integer.toString(cell.getColumnIndex())),cell.getRowIndex());
-                cell1.setRowID(row1.getRowId());
                 if(row1.getRowTitle() == null && cell.getColumnIndex() > worksheet.getRowHeaderIndex()) {
                     row1.setRowTitle("NO_TITLE_ROW_" + cell.getRowIndex());
                     rowHeader.add(row1.getRowTitle());
                 }
+                cell1.setRowID(row1.getRowTitle());
                 switch (cell.getCellType()){
                     case STRING:
                         cell1.setValue(Value.STRING);
