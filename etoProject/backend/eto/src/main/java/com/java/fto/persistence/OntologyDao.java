@@ -21,4 +21,6 @@ public interface OntologyDao {
                                      Operator operator, String value);
 
     Collection<String> getReverseDependencies(String cellID, String worksheetName);
+
+    String getFileName();
 }

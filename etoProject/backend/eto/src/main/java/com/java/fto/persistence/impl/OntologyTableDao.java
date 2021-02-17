@@ -19,6 +19,8 @@ import org.springframework.stereotype.Repository;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -68,6 +70,11 @@ public class OntologyTableDao implements OntologyDao {
     @Override
     public Collection<String> getReverseDependencies(String cellID, String worksheetName) {
         return null;
+    }
+
+    @Override
+    public String getFileName() {
+        return this.workbook.getFileName();
     }
 
     /**
@@ -465,6 +472,8 @@ public class OntologyTableDao implements OntologyDao {
             if(row.getRowTitle() != null) {
                 rowHeader.addLiteral(RDFS.label, row.getRowTitle());
             }
+            System.out.println(ws.getSheetName());
+            System.out.println(row.getColumnTitle());
             Individual colHeader = this.converter.getColumnHeader().createIndividual(this.converter.getWorkbook().getURI() + "_" +
                     ws.getSheetName()  + "_" +  row.getColumnTitle().replaceAll(" ", ""));
             rowHeader.addProperty(this.converter.getHasColumnHeader(), colHeader);
@@ -491,7 +500,8 @@ public class OntologyTableDao implements OntologyDao {
     private void saveModel(String fileName) {
         FileOutputStream out = null;
         try {
-            out = new FileOutputStream("./OntologyOut/" + fileName +".ttl");
+            Path path = Paths.get("./OntologyOut/");
+            out = new FileOutputStream(path.toString() + fileName +".ttl");
         } catch (IOException e) {
             System.out.println(e);
         }

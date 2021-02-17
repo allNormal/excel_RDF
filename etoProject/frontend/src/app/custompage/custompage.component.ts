@@ -10,13 +10,13 @@ import {Subscription} from 'rxjs';
 export class CustompageComponent implements OnInit {
 
   format: string;
-  subscibe: Subscription
+  subscribe: Subscription
   constructor(private Endpoint: EndpointComponent) {
   }
 
   ngOnInit(): void {
-    this.subscibe = this.Endpoint._formatSubs.subscribe(format => this.format = format);
-    console.log(this.format)
+    this.subscribe = this.Endpoint._formatSubs.subscribe(format => this.format = format);
   }
+
 
 }

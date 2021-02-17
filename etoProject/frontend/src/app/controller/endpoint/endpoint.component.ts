@@ -13,6 +13,9 @@ export class EndpointComponent {
   // tslint:disable-next-line:variable-name
   private _format = new BehaviorSubject("TableFormat")
   _formatSubs = this._format.asObservable();
+
+  workbookName: string = "";
+
   constructor(private http: HttpClient) { }
 
   // tslint:disable-next-line:typedef
@@ -52,6 +55,19 @@ export class EndpointComponent {
     return await this.http.post(this.baseURL + 'custom/'+format, JSON.stringify(worksheets), {'headers':headers}).toPromise();
   }
 
+  public getAllRepositories(format: string) {
+    return this.http.get(this.baseURL + format + '/repositories');
+  }
+
+  public async addGraphIntoRepo(format: string, repoName: string) {
+    const headers = { 'content-type': 'application/json'}
+    return await this.http.post(this.baseURL + +format+'/add', JSON.stringify(repoName), {'headers':headers}).toPromise();
+  }
+
+  public async createRepoAndAddGraph(format: string, repoName: string) {
+    const headers = { 'content-type': 'application/json'}
+    return await this.http.post(this.baseURL + +format+'/create', JSON.stringify(repoName), {'headers':headers}).toPromise();
+  }
   // tslint:disable-next-line:typedef
   public getInitializeWorkbook(format: string) {
     return this.http.get(this.baseURL + format + '/workbook')

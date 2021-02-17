@@ -222,6 +222,11 @@ public class OntologyExcelDao implements com.java.fto.persistence.OntologyDao {
         return dependencyListIsUsedIn;
     }
 
+    @Override
+    public String getFileName() {
+        return this.workbook.getFileName();
+    }
+
     /**
      * add com.java.eto.entity.excel data into the rdf-graph
      */

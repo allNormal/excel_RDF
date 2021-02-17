@@ -25,6 +25,7 @@ export class FilepageComponent implements OnInit {
     let resp = await this.endpoint.getInitializeWorkbook('file');
     resp.subscribe(data => {
       this.response = plainToClass(WorkbookEndpoint, data);
+      this.endpoint.workbookName = this.response[0].workbookName;
       for(let i = 0; i<this.response[0].worksheets.length; i++) {
         let temp =  new Worksheet();
         temp.worksheetName = this.response[0].worksheets[i].worksheetName;

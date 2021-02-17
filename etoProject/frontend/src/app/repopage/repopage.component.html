@@ -1,0 +1,37 @@
+<body>
+  <app-navbar></app-navbar>
+  <div class="card text-center">
+    <div class="card-header">
+      <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" (click)="changeRepoType('add')">Add</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" (click)="changeRepoType('create')">Create</a>
+        </li>
+      </ul>
+    </div>
+    <div class="card-body" id="addBody">
+      <h5 class="card-title">Import RDF into existing repository</h5>
+      <div class="form-group">
+        <label for="repoNameList">Select a Repository</label>
+        <select class="form-control" id="repoNameList" #t [(ngModel)]="repoName">
+          <option value="{{repo}}" *ngFor="let repo of response">{{repo}}</option>
+        </select>
+      </div>
+      <a (click)="addGraphIntoRepo()" class="btn btn-primary">Import</a>
+    </div>
+
+
+    <div class="card-body" id="createBody" style="display: none">
+      <h5 class="card-title">Create new repository and add RDF into it</h5>
+      <div class="form-group">
+        <label for="repoName">Repository name: </label>
+        <input type="text" class="form-control" id="repoName" [(ngModel)]="repoName" placeholder="Enter Namex">
+      </div>
+      <a (click)="createRepoAndAddGraph()" class="btn btn-primary">Create & import</a>
+    </div>
+  </div>
+</body>
+
+<app-footer></app-footer>

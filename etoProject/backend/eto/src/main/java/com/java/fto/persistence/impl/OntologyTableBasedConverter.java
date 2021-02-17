@@ -6,6 +6,9 @@ import org.apache.jena.ontology.OntClass;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.rdf.model.ModelFactory;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import static org.apache.jena.ontology.OntModelSpec.OWL_MEM;
 
 public class OntologyTableBasedConverter {
@@ -109,7 +112,8 @@ public class OntologyTableBasedConverter {
      */
     private void loadModels(){
         this.model = ModelFactory.createOntologyModel(OWL_MEM);
-        this.model.read("src/main/resources/excel_owl/excel_ontology_version2.ttl");
+        Path path = Paths.get("excel_owl/excel_ontology_version2.ttl");
+        this.model.read(path.toString());
 
     }
 

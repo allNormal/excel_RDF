@@ -5,19 +5,24 @@ import com.java.fto.entity.Operator;
 import com.java.fto.entity.Restriction.Restriction;
 import com.java.fto.entity.SheetElement.ElementType;;
 import com.java.fto.mapper.ExcelMapper.readExcel;
+import com.java.fto.persistence.GraphDB.GraphDBDao;
 import com.java.fto.persistence.impl.OntologyExcelDao;
+import org.eclipse.rdf4j.repository.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 
 @Service
 public class OntologyService implements com.java.fto.service.OntologyService {
 
     @Autowired
     private OntologyExcelDao dao;
+    @Autowired
+    private GraphDBDao graphDBDao;
     private com.java.fto.mapper.ExcelMapper.readExcel readExcel;
 
     public OntologyService() {
@@ -75,6 +80,29 @@ public class OntologyService implements com.java.fto.service.OntologyService {
     @Override
     public Collection<String> getReverseDependency(String cellID, String worksheetName) {
         return dao.getReverseDependencies(cellID, worksheetName);
+    }
+
+    @Override
+    public List<String> getAllRepository() {
+        return graphDBDao.getAllRepoName();
+    }
+
+    @Override
+    public void addGraphIntoRepo(String repoName) {
+        try {
+            this.graphDBDao.addGraphIntoRepo(this.dao.getFileName(), repoName);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
+    public void createRepoAndAddGraph(String repoName) {
+        try {
+            this.graphDBDao.createRepoAndAddGraphIntoIt(this.dao.getFileName(), repoName);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
 }

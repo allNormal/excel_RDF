@@ -15,6 +15,7 @@ import { LoadingComponent } from './loading/loading.component';
 import { CustompageComponent } from './custompage/custompage.component';
 import { FilepageComponent } from './custompage/filepage/filepage.component';
 import { TablepageComponent } from './custompage/tablepage/tablepage.component';
+import { RepopageComponent } from './repopage/repopage.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { TablepageComponent } from './custompage/tablepage/tablepage.component';
     LoadingComponent,
     CustompageComponent,
     FilepageComponent,
-    TablepageComponent
+    TablepageComponent,
+    RepopageComponent
   ],
     imports: [
         BrowserModule,

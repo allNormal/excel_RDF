@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 @CrossOrigin
@@ -114,6 +115,42 @@ public class EtoController implements EtoRestController {
             return null;
         }
         return result;
+    }
+
+    @Override
+    @CrossOrigin
+    @RequestMapping(method = RequestMethod.GET, value = "{formatType}/repositories")
+    public List<String> getAllRepo(@PathVariable("formatType") String formatType) {
+        System.out.println("sending repos");
+        if(formatType.toLowerCase().contains("table")) {
+            return this.ontologyServiceTableBased.getAllRepository();
+        } else if(formatType.toLowerCase().contains("file")) {
+            return this.ontologyService.getAllRepository();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    @CrossOrigin
+    @RequestMapping(method = RequestMethod.POST, value = "{formatType}/add", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void addGraphIntoRepo(@PathVariable("formatType") String formatType, @RequestBody String repoName) {
+        if(formatType.toLowerCase().contains("table")) {
+            this.ontologyServiceTableBased.addGraphIntoRepo(repoName);
+        } else if(formatType.toLowerCase().contains("file")) {
+            this.ontologyService.addGraphIntoRepo(repoName);
+        }
+    }
+
+    @Override
+    @CrossOrigin
+    @RequestMapping(method = RequestMethod.POST, value = "{formatType}/create", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void createRepoAndAddGraph(@PathVariable("formatType") String formatType, @RequestBody String repoName) {
+        if(formatType.toLowerCase().contains("table")) {
+            this.ontologyServiceTableBased.createRepoAndAddGraph(repoName);
+        } else if(formatType.toLowerCase().contains("file")) {
+            this.ontologyService.createRepoAndAddGraph(repoName);
+        }
     }
 
 

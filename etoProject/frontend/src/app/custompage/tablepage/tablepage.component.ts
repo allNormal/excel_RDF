@@ -261,7 +261,7 @@ export class TablepageComponent implements OnInit {
 
     console.log(this.worksheetTemp)
     await this.endpoint.createCustom(this.worksheetTemp, 'table');
-    this._router.navigate(['/home']);
+    this._router.navigate(['/repository']);
   }
 
 }

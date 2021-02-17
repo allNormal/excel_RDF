@@ -186,6 +186,7 @@ public class readExcelTableBased implements ExcelReader {
         List<String> rowHeader = new ArrayList<>();
         boolean emptyCell = false;
         for(Row row : sheet){
+            System.out.println(worksheet.getSheetName() + " row " + row.getRowNum());
             com.java.fto.entity.SheetElement.BasicElement.Row row1 = new com.java.fto.entity.SheetElement.BasicElement.Row(worksheet,
                     Integer.toString(row.getRowNum()));
             for(Cell cell : row) {
@@ -213,7 +214,8 @@ public class readExcelTableBased implements ExcelReader {
                                             rowHeader.add(row1.getRowTitle());
                                             break;
                                         default:
-                                            throw new IncorrectTypeException(worksheet.getSheetName() + " row header "+ row.getRowNum() + " must be a type of string");
+                                            break;
+                                            //throw new IncorrectTypeException(worksheet.getSheetName() + " row header "+ row.getRowNum() + " must be a type of string");
                                     }
                                     break;
                                 case BLANK:
@@ -227,7 +229,6 @@ public class readExcelTableBased implements ExcelReader {
                             }
                         } catch (IncorrectTypeException e) {
                             System.out.println(e.getMessage());
-                            return;
                         }
                     }
                 }
@@ -343,7 +344,6 @@ public class readExcelTableBased implements ExcelReader {
         }
         table.setColumns(colTemp);
         if(worksheet.getSheets().containsKey(ElementType.TABLE)) {
-            System.out.println("wtf");
             List<SheetElement> temp = worksheet.getSheets().get(ElementType.TABLE);
             temp.add(table);
             worksheet.getSheets().replace(ElementType.TABLE, temp);
@@ -351,7 +351,6 @@ public class readExcelTableBased implements ExcelReader {
             List<SheetElement> tables = new ArrayList<>();
             tables.add(table);
             worksheet.addElement(ElementType.TABLE, tables);
-            System.out.println("adding 1 table to " + worksheet.getSheetName());
         }
     }
 
@@ -398,7 +397,8 @@ public class readExcelTableBased implements ExcelReader {
                                             rowHeader.add(row1.getRowTitle());
                                             break;
                                         default:
-                                            throw new IncorrectTypeException(worksheet.getSheetName() + " row header "+ row.getRowNum() + " must be a type of string");
+                                            break;
+                                            //throw new IncorrectTypeException(worksheet.getSheetName() + " row header "+ row.getRowNum() + " must be a type of string");
                                     }
                                     break;
                                 case BLANK:
@@ -412,7 +412,6 @@ public class readExcelTableBased implements ExcelReader {
                             }
                         } catch (IncorrectTypeException e) {
                             System.out.println(e.getMessage());
-                            return;
                         }
                     }
                 }
