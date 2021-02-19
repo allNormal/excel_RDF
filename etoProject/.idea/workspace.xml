@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="d2c52b05-a878-4f11-aa1b-cfe9febf28eb" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/backend/eto/src/main/java/com/java/fto/persistence/GraphDB/GraphDBDao.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/eto/src/main/java/com/java/fto/persistence/GraphDBDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/eto/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/eto/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/eto/src/main/java/com/java/fto/endpoint/EtoRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/eto/src/main/java/com/java/fto/endpoint/EtoRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/eto/src/main/java/com/java/fto/endpoint/impl/EtoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/eto/src/main/java/com/java/fto/endpoint/impl/EtoController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/eto/src/main/java/com/java/fto/persistence/OntologyDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/eto/src/main/java/com/java/fto/persistence/OntologyDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/eto/src/main/java/com/java/fto/persistence/impl/OntologyExcelDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/eto/src/main/java/com/java/fto/persistence/impl/OntologyExcelDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/eto/src/main/java/com/java/fto/persistence/impl/OntologyTableBasedConverter.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/eto/src/main/java/com/java/fto/persistence/impl/OntologyTableBasedConverter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/eto/src/main/java/com/java/fto/persistence/impl/OntologyTableDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/eto/src/main/java/com/java/fto/persistence/impl/OntologyTableDao.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/eto/src/main/java/com/java/fto/service/OntologyService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/eto/src/main/java/com/java/fto/service/OntologyService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/eto/src/main/java/com/java/fto/service/impl/OntologyService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/eto/src/main/java/com/java/fto/service/impl/OntologyService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/eto/src/main/java/com/java/fto/service/impl/OntologyServiceTableBased.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/eto/src/main/java/com/java/fto/service/impl/OntologyServiceTableBased.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/app-routing.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app-routing.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/app.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/app.module.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/controller/endpoint/endpoint.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/controller/endpoint/endpoint.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/custompage/custompage.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/custompage/custompage.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/custompage/filepage/filepage.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/custompage/filepage/filepage.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/app/custompage/tablepage/tablepage.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/app/custompage/tablepage/tablepage.component.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="1obi6v9T7ejZiX0JaAsf3TQOM7A" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+      <option name="arquillianRunConfiguration">
+        <value>
+          <option name="containerStateName" value="" />
+        </value>
+      </option>
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d2c52b05-a878-4f11-aa1b-cfe9febf28eb" name="Default Changelist" comment="" />
+      <created>1613561518914</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1613561518914</updated>
+      <workItem from="1613561520156" duration="59000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

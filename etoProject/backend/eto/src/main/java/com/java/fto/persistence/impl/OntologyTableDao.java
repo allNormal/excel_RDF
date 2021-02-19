@@ -247,13 +247,6 @@ public class OntologyTableDao implements OntologyDao {
             }
             for(int i = 0; i<table.getCell().size();i++) {
                 Cell cell = table.getCell().get(i);
-                for(int v = 0; v<tables.get(x).getColumnHeader().size(); v++) {
-                    System.out.println(tables.get(x).getColumnHeader().get(v));
-                }
-
-                for(int v = 0; v<tables.get(x).getRowHeader().size(); v++) {
-                    System.out.println(tables.get(x).getRowHeader().get(v));
-                }
                 if(!tables.get(x).getColumnHeader().contains(cell.getColumnTitle()) || !tables.get(x).getRowHeader().contains(cell.getRowID())) {
                     continue;
                 }
@@ -478,14 +471,14 @@ public class OntologyTableDao implements OntologyDao {
 
         for(int i = 0; i<table.getRows().size();i++) {
             Row row = table.getRows().get(i);
+            System.out.println(ws.getSheetName());
+            System.out.println(row.getRowTitle() + " " + row.getRowId());
             Individual rowHeader = this.converter.getRowHeader().createIndividual(this.converter.getWorkbook().getURI() + "_" +
                     ws.getSheetName() + "_"+
                     row.getRowTitle().replaceAll(" ", "_"));
             if(row.getRowTitle() != null) {
                 rowHeader.addLiteral(RDFS.label, row.getRowTitle());
             }
-            System.out.println(ws.getSheetName());
-            System.out.println(row.getColumnTitle());
             Individual colHeader = this.converter.getColumnHeader().createIndividual(this.converter.getWorkbook().getURI() + "_" +
                     ws.getSheetName()  + "_" +  row.getColumnTitle().replaceAll(" ", ""));
             rowHeader.addProperty(this.converter.getHasColumnHeader(), colHeader);

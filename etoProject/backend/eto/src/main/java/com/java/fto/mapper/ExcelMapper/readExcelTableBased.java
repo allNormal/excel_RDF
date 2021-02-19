@@ -21,6 +21,8 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -37,6 +39,8 @@ public class readExcelTableBased implements ExcelReader {
     private Workbook workbook;
     private File file;
     private WorkbookEndpoint workbookEndpoint;
+    private final Logger log = LoggerFactory.getLogger(readExcelTableBased.class);
+
 
     public readExcelTableBased(File file) {
         this.file = file;
@@ -47,6 +51,7 @@ public class readExcelTableBased implements ExcelReader {
         int count = 0;
 
         //read each element in worksheet in a table format
+        log.info("initializing each worksheet found in the file into an entity");
         for(Sheet sheet : myWorkBook) {
                 //if its not null, thats mean the row header is from another worksheet
                 if(workbook.getWorksheets().get(count).getSheetName().equals(sheet.getSheetName().replaceAll(" ", ""))) {
@@ -54,6 +59,7 @@ public class readExcelTableBased implements ExcelReader {
                         count++;
                         continue;
                     }
+                    log.info(sheet.getSheetName() + " converting the worksheet into a table format entity");
                     Table table = new Table(workbook.getWorksheets().get(count),
                             "Table_"+workbook.getWorksheets().get(count).getSheetName());
                     readTable(table, sheet, workbook.getWorksheets().get(count),
@@ -66,19 +72,23 @@ public class readExcelTableBased implements ExcelReader {
 
         //if there is a worksheet that want to use rowheader from another worksheet
         //will be assigned here
+        log.info("checking if there are worksheet that want to use rowheader from another worksheet");
         for(int i = 0; i<workbook.getWorksheets().size(); i++){
             if(workbook.getWorksheets().get(i).getRowHeaderFrom() == null) {
                 continue;
             } else {
+                log.info(workbook.getWorksheets().get(i).getSheetName() + " assign rowheader using rowheader from " +
+                        workbook.getWorksheets().get(i).getRowHeaderFrom());
                 Worksheet worksheetTo =  workbook.getWorksheets().get(i);
                 Worksheet worksheetFrom = workbook.getWorksheets().stream()
                         .filter(worksheet -> worksheet.getSheetName().equals(worksheetTo.getRowHeaderFrom()))
                         .findAny()
                         .orElse(null);
-                System.out.println(worksheetFrom.getSheetName());
                 if(worksheetFrom != null) {
                     assignRowHeaderFromAnotherWorksheet(worksheetFrom, worksheetTo,
                             (WorkbookTable) workbookEndpoint.getWorksheets().get(i));
+                } else {
+                    log.info("cannot found worksheet with name " + workbook.getWorksheets().get(i).getRowHeaderFrom());
                 }
             }
 
@@ -89,6 +99,8 @@ public class readExcelTableBased implements ExcelReader {
             //if its not null, thats mean the row header is from another worksheet
             if(workbook.getWorksheets().get(count).getSheetName().equals(sheet.getSheetName().replaceAll(" ", ""))) {
                 if(workbook.getWorksheets().get(count).getRowHeaderFrom() != null) {
+                    log.info(workbook.getWorksheets().get(count).getSheetName() + " converting the data into a table like format using rowheader from " +
+                            workbook.getWorksheets().get(count).getRowHeaderFrom());
                     Table table = (Table) workbook.getWorksheets().get(count).getSheets()
                             .get(ElementType.TABLE).get(0);
 
@@ -100,6 +112,7 @@ public class readExcelTableBased implements ExcelReader {
         }
 
         //assign formula dependency
+        log.info("converting all the formula value found into a cell dependency like entity");
         for(int i = 0; i< this.workbook.getWorksheets().size(); i++) {
             Worksheet ws = this.workbook.getWorksheets().get(i);
             List<SheetElement> table = ws.getSheets().get(ElementType.TABLE);
@@ -113,8 +126,6 @@ public class readExcelTableBased implements ExcelReader {
     private void assignRowHeaderFromAnotherWorksheet(Worksheet worksheetFrom, Worksheet worksheetTo,
                                                      WorkbookTable workbookTable) {
         List<com.java.fto.entity.SheetElement.BasicElement.Row> rows = new ArrayList<>();
-        System.out.println(worksheetFrom.getSheetName());
-        System.out.println(worksheetFrom.getSheets().get(ElementType.TABLE).size());
         Table table =  (Table) worksheetFrom.getSheets().get(ElementType.TABLE).get(0);
         Table table1 = new Table(worksheetTo,
                 "Table_" + worksheetTo.getSheetName());
@@ -127,7 +138,6 @@ public class readExcelTableBased implements ExcelReader {
             row.setColumnTitle(table.getRows().get(i).getColumnTitle());
             row.setRowTitle(table.getRows().get(i).getRowTitle());
             rows.add(row);
-            System.out.println(row);
             rowTemp.add(row.getRowTitle());
         }
         table1.setRows(rows);
@@ -186,9 +196,9 @@ public class readExcelTableBased implements ExcelReader {
         List<String> rowHeader = new ArrayList<>();
         boolean emptyCell = false;
         for(Row row : sheet){
-            System.out.println(worksheet.getSheetName() + " row " + row.getRowNum());
             com.java.fto.entity.SheetElement.BasicElement.Row row1 = new com.java.fto.entity.SheetElement.BasicElement.Row(worksheet,
                     Integer.toString(row.getRowNum()));
+            log.info("creating a row " + row1.getRowId());
             for(Cell cell : row) {
                 if(row1.getRowTitle() == null &&
                         (cell.getColumnIndex() == worksheet.getRowHeaderIndex() || worksheet.getRowHeaderIndex() == -1)) {
@@ -196,8 +206,8 @@ public class readExcelTableBased implements ExcelReader {
                         row1.setRowTitle("ColumnHeader");
                         rowHeader.add(row1.getRowTitle());
                     } else if(worksheet.getColumnHeaderIndex() == -1) {
-                        worksheet.setColumnHeaderIndex(cell.getColumnIndex());
-                        worksheet.setRowHeaderIndex(cell.getRowIndex());
+                        worksheet.setColumnHeaderIndex(cell.getRowIndex());
+                        worksheet.setRowHeaderIndex(cell.getColumnIndex());
                         row1.setRowTitle("ColumnHeader");
                         rowHeader.add(row1.getRowTitle());
                     } else {
@@ -214,6 +224,7 @@ public class readExcelTableBased implements ExcelReader {
                                             rowHeader.add(row1.getRowTitle());
                                             break;
                                         default:
+                                            //log.info("formula value in a rowheader are not a type of string");
                                             break;
                                             //throw new IncorrectTypeException(worksheet.getSheetName() + " row header "+ row.getRowNum() + " must be a type of string");
                                     }
@@ -225,20 +236,26 @@ public class readExcelTableBased implements ExcelReader {
                                     rowHeader.add(row1.getRowTitle());
                                     break;
                                 default:
+                                    log.error("found row header with datatype other than string,numeric, and formula");
                                     throw new IncorrectTypeException(worksheet.getSheetName() + " row header "+ row.getRowNum() + " must be a type of string");
                             }
                         } catch (IncorrectTypeException e) {
-                            System.out.println(e.getMessage());
+                            log.error(e.getMessage(), e);
                         }
                     }
+                    //log.info("adding row title " + row1.getRowTitle());
                 }
                 com.java.fto.entity.SheetElement.BasicElement.Cell cell1 = new com.java.fto.entity.SheetElement.BasicElement.Cell(worksheet,
                         convertColumn(Integer.toString(cell.getColumnIndex())),cell.getRowIndex());
-                if(row1.getRowTitle() == null && cell.getColumnIndex() > worksheet.getRowHeaderIndex()) {
+                //&& cell.getColumnIndex() > worksheet.getRowHeaderIndex()
+                if(row1.getRowTitle() == null) {
                     row1.setRowTitle("NO_TITLE_ROW_" + cell.getRowIndex());
                     rowHeader.add(row1.getRowTitle());
+                    //log.info("adding row title " + row1.getRowTitle());
                 }
+                //log.info("creating a cell " + cell1.getCellId());
                 cell1.setRowID(row1.getRowTitle());
+                //log.info("adding row title to the cell " + row1.getRowTitle());
                 switch (cell.getCellType()){
                     case STRING:
                         cell1.setValue(Value.STRING);
@@ -283,12 +300,13 @@ public class readExcelTableBased implements ExcelReader {
                         cell1.setNumericValue((float)cell.getNumericCellValue());
                         break;
                 }
+                //log.info("adding datatype to cell " + cell1.getValue());
                 if(emptyCell) {
                     emptyCell = false;
                     continue;
                 }
-                cell1.setTableName(table.id());
                 if(!columnTemp.containsKey(convertColumn(Integer.toString(cell.getColumnIndex())))){
+                    //log.info(cell.getRowIndex() + " " + worksheet.getColumnHeaderIndex());
                     if(cell.getRowIndex() >= worksheet.getColumnHeaderIndex()) {
                         Column column = new Column(worksheet, convertColumn(Integer.toString(cell.getColumnIndex())));
                             if (cell1.getStringValue() == null) {
@@ -304,6 +322,7 @@ public class readExcelTableBased implements ExcelReader {
                             }
                             columnHeader.add(column.getColumnTitle());
                         columnTemp.put(convertColumn(Integer.toString(cell.getColumnIndex())), column);
+                        //log.info("creating column " + column.getColumnTitle());
                     }
                     continue;
                 }
@@ -321,10 +340,13 @@ public class readExcelTableBased implements ExcelReader {
                     if(row1.getColumnTitle() == null && worksheet.getRowHeaderIndex() == cell.getColumnIndex()) {
                         row1.setColumnTitle(cell1.getStringValue());
                     }
+                    //log.info("creating column " + column.getColumnTitle());
                     column.addCell(cell1);
+                    //log.info("adding cell to column " + cell1.getCellId());
                 }
                 cellTemp.add(cell1);
                 row1.addCell(cell1);
+                //log.info("adding cell to row " + cell1.getCellId());
             }
             rowTemp.add(row1);
         }
@@ -367,9 +389,11 @@ public class readExcelTableBased implements ExcelReader {
             if(count > rowTemp.size()-1 ) {
                 row1 = new com.java.fto.entity.SheetElement.BasicElement.Row(worksheet,
                         Integer.toString(row.getRowNum()));
+                log.info("creating row " + row1.getRowId());
             } else {
                 row1 = rowTemp.get(count);
                 rowHeader.add(row1.getRowTitle());
+                log.info("using row from another worksheet " + row1.getWorksheet().getSheetName() + " and title " + row1.getRowTitle());
             }
             for(Cell cell : row) {
                 if(row1.getRowTitle() == null &&
@@ -397,6 +421,7 @@ public class readExcelTableBased implements ExcelReader {
                                             rowHeader.add(row1.getRowTitle());
                                             break;
                                         default:
+                                            log.info("found a formula in rowheader with datatype other than string");
                                             break;
                                             //throw new IncorrectTypeException(worksheet.getSheetName() + " row header "+ row.getRowNum() + " must be a type of string");
                                     }
@@ -408,12 +433,14 @@ public class readExcelTableBased implements ExcelReader {
                                     rowHeader.add(row1.getRowTitle());
                                     break;
                                 default:
+                                    log.error("found a rowheader with datatype other than string, numeric, and formula");
                                     throw new IncorrectTypeException(worksheet.getSheetName() + " row header "+ row.getRowNum() + " must be a type of string");
                             }
                         } catch (IncorrectTypeException e) {
-                            System.out.println(e.getMessage());
+                            log.error(e.getMessage(), e);
                         }
                     }
+                    log.info("adding title to row " + row1.getRowTitle());
                 }
                 com.java.fto.entity.SheetElement.BasicElement.Cell cell1 = new com.java.fto.entity.SheetElement.BasicElement.Cell(worksheet,
                         convertColumn(Integer.toString(cell.getColumnIndex())),cell.getRowIndex());
@@ -421,7 +448,9 @@ public class readExcelTableBased implements ExcelReader {
                     row1.setRowTitle("NO_TITLE_ROW_" + cell.getRowIndex());
                     rowHeader.add(row1.getRowTitle());
                 }
+                log.info("creating a cell " + cell1.getCellId());
                 cell1.setRowID(row1.getRowTitle());
+                log.info("adding row to a cell " + cell1.getRowID());
                 switch (cell.getCellType()){
                     case STRING:
                         cell1.setValue(Value.STRING);
@@ -466,6 +495,7 @@ public class readExcelTableBased implements ExcelReader {
                         cell1.setNumericValue((float)cell.getNumericCellValue());
                         break;
                 }
+                log.info("cell have datatype " + cell1.getValue());
                 if(emptyCell) {
                     emptyCell = false;
                     continue;
@@ -487,6 +517,7 @@ public class readExcelTableBased implements ExcelReader {
                         }
                         columnHeader.add(column.getColumnTitle());
                         columnTemp.put(convertColumn(Integer.toString(cell.getColumnIndex())), column);
+                        log.info("creating column with title " + column.getColumnTitle());
                     }
                     continue;
                 }
@@ -505,6 +536,7 @@ public class readExcelTableBased implements ExcelReader {
                         row1.setColumnTitle(cell1.getStringValue());
                     }
                     column.addCell(cell1);
+                    log.info("adding cell with id " + cell1.getCellId() + " to column " + column.getColumnTitle());
                 }
                 cellTemp.add(cell1);
                 row1.addCell(cell1);
@@ -544,7 +576,7 @@ public class readExcelTableBased implements ExcelReader {
         try {
             fis = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage(), e);
         }
 
         // Finds the workbook instance for XLSX file
@@ -580,6 +612,8 @@ public class readExcelTableBased implements ExcelReader {
                 }
                 temp.setColumnHeaderIndex(Integer.parseInt(sheet.getColumnHeader()));
                 temp.setRowHeaderIndex(Integer.parseInt(sheet.getRowHeader()));
+            } else {
+                log.info("cannot find worksheet with name " + sheet.getWorksheetName());
             }
         }
     }
@@ -592,6 +626,7 @@ public class readExcelTableBased implements ExcelReader {
         for(int i = 0; i<column.size(); i++){
             Column column1 = (Column) column.get(i);
             if(column1.getValue() == Value.FORMULA) {
+                //log.info("initializing column dependency for column " + column1.getColumnTitle() + " with formula " + column1.getFormulaValue());
                 if(column1.getFormulaValue().getFunctionType() == FunctionType.BASIC) {
                     addAllFormulaColumnDependency(column1.getFormulaValue().getFormulaFunction(),
                             column, cells, column1);
@@ -680,10 +715,11 @@ public class readExcelTableBased implements ExcelReader {
         String[] temp = formula.split(regex);
 
         for(int i = 0;i<temp.length; i++) {
-            System.out.println(temp[i]);
             if (temp[i].contains("$")) {
+                //log.info("initializing formula cell dependency to column " + column.getColumnTitle());
                 addFormulaCellDependency(temp[i], cellList, column);
             } else {
+                //log.info("initializing formula column dependency to column " + column.getColumnTitle());
                 addFormulaColumnDependency(temp[i], columnList, column);
             }
         }
@@ -696,7 +732,7 @@ public class readExcelTableBased implements ExcelReader {
      * @param text cell to cell that wanted to be converted
      * @return list of cell id
      */
-    public List<String> cellToCell(String text) {
+    private List<String> cellToCell(String text) {
         List<String> result = new ArrayList<>();
         String[] temp = text.split(":");
         String fromColumn = temp[0].replaceAll("\\d","");
@@ -768,19 +804,25 @@ public class readExcelTableBased implements ExcelReader {
 
          */
         for(int i = 0;i<temp.length; i++) {
+            //log.info("receiving part of formula " + temp[i]);
             if(temp[i].matches(patternCell)){
+                //log.info("it matches cell pattern");
                 String check = temp[i];
                 com.java.fto.entity.SheetElement.BasicElement.Cell cell1 = (com.java.fto.entity.SheetElement.BasicElement.Cell)cellList.stream()
                         .filter(cellCheck -> check.equals(cellCheck.id()))
                         .findAny()
                         .orElse(null);
-                if(cell1 == null) continue;
+                if(cell1 == null) {
+                    log.info("matches cell pattern but cannot find cell with id " + check + " for formula " +formula);
+                    continue;
+                }
                 else{
                     Formula basicFormula1 = column.getFormulaValue();
                     basicFormula1.addDependencies(cell1);
                 }
             }
             else if(temp[i].matches(patternCellFromOtherSheet)) {
+                //log.info("matches pattern cell from another worksheet");
                 String[] worksheetCellSplit = temp[i].split("!");
                 List<Worksheet> worksheets = this.workbook.getWorksheets();
                 if(worksheetCellSplit[0].toLowerCase().equals("tabelle")) {
@@ -801,8 +843,12 @@ public class readExcelTableBased implements ExcelReader {
                                     .orElse(null);
                             if (cell1 != null) {
                                 column.getFormulaValue().addDependencies(cell1);
+                            } else {
+                                log.info("matches cell from another sheet pattern but cannot find cell with cell id "+ worksheetCellSplit[1] + " for formula " + formula);
                             }
                         }
+                    } else {
+                        log.info("matches cell from another sheet pattern but cannot find worksheet with name " + worksheetCellSplit[0] + " for formula " + formula);
                     }
                 }
             }
@@ -814,7 +860,10 @@ public class readExcelTableBased implements ExcelReader {
                             .filter(cellCheck -> check1.equals(cellCheck.id()))
                             .findAny()
                             .orElse(null);
-                    if(cell2 == null) continue;
+                    if(cell2 == null) {
+                        log.info("matches cell to cell pattern but cannot find cell with cell id " + check1 + " for formula " + formula);
+                        continue;
+                    }
                     else{
                         Formula basicFormula1 = column.getFormulaValue();
                         basicFormula1.addDependencies(cell2);
@@ -842,9 +891,15 @@ public class readExcelTableBased implements ExcelReader {
                                     .orElse(null);
                             if (cell1 != null) {
                                 column.getFormulaValue().addDependencies(cell1);
+                            } else {
+                                log.info("matches cell to cell from another sheet " +
+                                        " pattern but cannot find cell with cell id " + workSheetTemp + " for formula " + formula);
                             }
                         }
                     }
+                } else {
+                    log.info("matches cell to cell from another sheet " +
+                            " pattern but cannot find worksheet with worksheet name " +  worksheetCellSplit[0] + " for formula " + formula);
                 }
             } else if(temp[i].matches(patternCellToCellFromOtherSheet2)) {
                 String[] worksheetCellSplit = temp[i].split("!");
@@ -866,9 +921,15 @@ public class readExcelTableBased implements ExcelReader {
                                     .orElse(null);
                             if (cell1 != null) {
                                 column.getFormulaValue().addDependencies(cell1);
+                            } else {
+                                log.info("matches cell to cell from another sheet second" +
+                                        " pattern but cannot find cell with cell id " + workSheetTemp + " for formula " + formula);
                             }
                         }
                     }
+                } else {
+                    log.info("matches cell to cell from another sheet second" +
+                            " pattern but cannot find worksheet with worksheet name " + worksheetCellSplit[0] + " for formula " + formula);
                 }
             }
         }
@@ -887,7 +948,10 @@ public class readExcelTableBased implements ExcelReader {
                     .filter(columnCheck -> check.equals(columnCheck.id()))
                     .findAny()
                     .orElse(null);
-            if(column1 == null) return;
+            if(column1 == null) {
+                log.info("matches column pattern but cannot find column with column id " + check + " for formula " + formula);
+                return;
+            }
             else{
                 Formula basicFormula1 = column.getFormulaValue();
                 basicFormula1.addColumnDependencies(column1);
@@ -914,9 +978,13 @@ public class readExcelTableBased implements ExcelReader {
                             if (column1 != null) {
                                 column.getFormulaValue().addColumnDependencies(column1);
                                 break;
+                            } else {
+                                log.info("matches column from another sheet pattern but cannot find column with column id " + worksheetCellSplit[1] + " for formula " + formula);
                             }
                         }
                     }
+                } else {
+                    log.info("matches column from another sheet pattern but cannot find worksheet with worksheet name " + worksheetCellSplit[0] + " for formula " + formula);
                 }
         }
         else if(formula.matches(patternColumnToColumn)) {
@@ -927,7 +995,10 @@ public class readExcelTableBased implements ExcelReader {
                         .filter(columnCheck -> check1.equals(columnCheck.id()))
                         .findAny()
                         .orElse(null);
-                if(column2 == null) return;
+                if(column2 == null) {
+                    log.info("matches column to column pattern but cannot find column with column id " + check1 + " for formula " + formula);
+                    continue;
+                }
                 else{
                     Formula basicFormula1 = column.getFormulaValue();
                     basicFormula1.addColumnDependencies(column2);
@@ -960,13 +1031,18 @@ public class readExcelTableBased implements ExcelReader {
                             if (column1 != null) {
                                 column.getFormulaValue().addColumnDependencies(column);
                                 break;
+                            } else {
+                                log.info("matches column to column from another sheet pattern but " +
+                                        "cannot find column with column id " + workSheetTemp + " for formula " + formula);
                             }
                         }
                     }
                 }
+            } else {
+                log.info("matches column to column from another sheet pattern but " +
+                        "cannot find worksheet with worksheet name " + worksheetCellSplit[0] + " for formula " + formula);
             }
         } else if(formula.matches(patternColumnToColumnFromOtherSheet2)) {
-            System.out.println("im hereee");
             String[] worksheetColumnSplit = formula.split("!");
             List<Worksheet> worksheets = this.workbook.getWorksheets();
             Worksheet worksheet = worksheets.stream()
@@ -989,10 +1065,16 @@ public class readExcelTableBased implements ExcelReader {
                                     .orElse(null);
                             if (column1 != null) {
                                 column.getFormulaValue().addColumnDependencies(column1);
+                            } else {
+                                log.info("matches column to column from another sheet second pattern but " +
+                                        "cannot find column with column id " + workSheetTemp + " for formula " + formula);
                             }
                         }
                     }
                 }
+            } else {
+                log.info("matches column to column pattern from another sheet second pattern but " +
+                        "cannot find worksheet with worksheet name " + worksheetColumnSplit[0] + " for formula " + formula);
             }
         }
     }

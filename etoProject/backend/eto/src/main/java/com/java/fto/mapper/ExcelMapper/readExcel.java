@@ -17,6 +17,7 @@ import com.java.fto.entity.Workbook.Macro;
 import com.java.fto.entity.Workbook.Workbook;
 import com.java.fto.entity.Worksheet.Worksheet;
 import com.java.fto.entity.SheetElement.ElementType;
+import com.java.fto.service.impl.OntologyServiceTableBased;
 import org.apache.logging.log4j.core.util.FileUtils;
 import org.apache.poi.poifs.macros.VBAMacroReader;
 import org.apache.poi.ss.usermodel.Cell;
@@ -24,6 +25,8 @@ import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,6 +44,7 @@ public class readExcel implements ExcelReader {
     private Workbook workbook;
     private File file;
     private WorkbookEndpoint workbookEndpoint;
+    private final Logger log = LoggerFactory.getLogger(readExcel.class);
 
 
     public readExcel(File file) throws IOException {
@@ -84,7 +88,7 @@ public class readExcel implements ExcelReader {
         try {
             fis = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage());
         }
 
         // Finds the workbook instance for XLSX file
@@ -94,20 +98,27 @@ public class readExcel implements ExcelReader {
         this.workbookEndpoint.setWorkbookName(this.workbook.getFileName());
         List<FileItem> worksheets = new ArrayList<>();
         //iterate through sheet in workbook
+        log.info("iterating through the worksheet in workbook and convert all the data found into entity");
         for(Sheet sheet : myWorkBook){
             Worksheet worksheet = new Worksheet(sheet.getSheetName().replaceAll(" ", ""), workbook);
             WorkbookExcel workbookExcel = new WorkbookExcel();
             workbookExcel.setWorksheetName(worksheet.getSheetName());
             worksheets.add(workbookExcel);
+            log.info(sheet.getSheetName() + " converting basic element if found into entity");
             readBasicElement(sheet, worksheet, workbookExcel);
+            log.info(sheet.getSheetName() + " converting table if found into entity");
             readTable(myWorkBook, sheet.getSheetName(), worksheet);
+            log.info(sheet.getSheetName() + " converting chart if found into entity");
             readChart(myWorkBook, sheet.getSheetName(), worksheet);
+            log.info(sheet.getSheetName() + " converting illustration if found into entity");
             readIllustration(myWorkBook, sheet.getSheetName(), worksheet);
+            log.info(sheet.getSheetName() + " converting text if found into entity");
             readText(myWorkBook, sheet.getSheetName(), worksheet);
             this.workbook.addWorksheet(worksheet);
         }
         this.workbookEndpoint.setWorksheets(worksheets);
 
+        log.info("converting all the formula value found into a formula dependecy like entity");
         for(int i = 0; i< this.workbook.getWorksheets().size(); i++) {
             Worksheet ws = this.workbook.getWorksheets().get(i);
             List<SheetElement> cell = ws.getSheets().get(ElementType.CELL);
@@ -145,7 +156,7 @@ public class readExcel implements ExcelReader {
                 this.workbook.setMacro(m);
             }
         } catch (IOException err) {
-            System.out.println(err);
+            log.error(err.getMessage());
         }
 
     }
@@ -176,7 +187,7 @@ public class readExcel implements ExcelReader {
                 worksheet.addElement(ElementType.TEXT, texts);
             }
         } catch (FileNotFoundException err) {
-            System.out.println(err);
+            log.error(err.getMessage());
         }
     }
 
@@ -206,7 +217,7 @@ public class readExcel implements ExcelReader {
                 worksheet.addElement(ElementType.ILLUSTRATION, sheetElements);
             }
         } catch (FileNotFoundException err) {
-            System.out.println(err);
+            log.error(err.getMessage());
         }
     }
 
@@ -235,7 +246,7 @@ public class readExcel implements ExcelReader {
                 worksheet.addElement(ElementType.CHART, sheetElements);
             }
         } catch (FileNotFoundException err) {
-            System.out.println(err);
+            log.error(err.getMessage());
         }
     }
 
@@ -255,10 +266,12 @@ public class readExcel implements ExcelReader {
         for(Row row : sheet){
             com.java.fto.entity.SheetElement.BasicElement.Row row1 = new com.java.fto.entity.SheetElement.BasicElement.Row(worksheet,
                     Integer.toString(row.getRowNum()));
+            //log.info("creating row with id " + row1.getRowId());
             rows.add(""+row.getRowNum());
             for(Cell cell : row) {
                 com.java.fto.entity.SheetElement.BasicElement.Cell cell1 = new com.java.fto.entity.SheetElement.BasicElement.Cell(worksheet,
                         convertColumn(Integer.toString(cell.getColumnIndex())),cell.getRowIndex());
+                //log.info("creating cell with id " + cell1.getCellId());
                 switch (cell.getCellType()){
                     case STRING:
                         cell1.setValue(Value.STRING);
@@ -303,6 +316,7 @@ public class readExcel implements ExcelReader {
                         cell1.setNumericValue((float)cell.getNumericCellValue());
                         break;
                 }
+                //log.info("cell got datatype " + cell1.getValue());
 
                 XSSFComment comment = (XSSFComment)cell.getCellComment();
                 if(comment!= null) cell1.setComment(comment);
@@ -312,6 +326,7 @@ public class readExcel implements ExcelReader {
                     column.addCell(cell1);
                     columnTemp.put(convertColumn(Integer.toString(cell.getColumnIndex())), column);
                     colums.add(column.getColumnID());
+                    //log.info("creating column with id " + column.getColumnID());
                 }
                 else{
                     Column column = columnTemp.get(convertColumn(Integer.toString(cell.getColumnIndex())));
@@ -347,6 +362,7 @@ public class readExcel implements ExcelReader {
         for(int i = 0; i<cell.size(); i++){
             com.java.fto.entity.SheetElement.BasicElement.Cell cell1 = (com.java.fto.entity.SheetElement.BasicElement.Cell)cell.get(i);
             if(cell1.getValue() == Value.FORMULA) {
+                //log.info("initializing cell with formula value " + cell1.getFormulaValue());
                 if(cell1.getFormulaValue().getFunctionType() == FunctionType.BASIC) {
                     addFormulaCellDependency(cell1.getFormulaValue().getFormulaFunction(), cell, cell1);
                 } else if(cell1.getFormulaValue().getFunctionType() == FunctionType.NESTED) {
@@ -604,14 +620,17 @@ public class readExcel implements ExcelReader {
         }
 
          */
-        for(int i = 0;i<temp.length; i++) {;
+        for(int i = 0;i<temp.length; i++) {
             if(temp[i].matches(patternCell)){
                 String check = temp[i];
                 com.java.fto.entity.SheetElement.BasicElement.Cell cell1 = (com.java.fto.entity.SheetElement.BasicElement.Cell)cellList.stream()
                         .filter(cellCheck -> check.equals(cellCheck.id()))
                         .findAny()
                         .orElse(null);
-                if(cell1 == null) continue;
+                if(cell1 == null) {
+                    log.info(cell.getWorksheet().getSheetName() + " matches cell pattern but cannot find cell with cell id " + check + " for formula " + formula);
+                    continue;
+                }
                 else{
                     Formula basicFormula1 = cell.getFormulaValue();
                     basicFormula1.addDependencies(cell1);
@@ -638,8 +657,14 @@ public class readExcel implements ExcelReader {
                                     .orElse(null);
                             if (cell1 != null) {
                                 cell.getFormulaValue().addDependencies(cell1);
+                            } else {
+                                log.info(cell.getWorksheet().getSheetName() + " matches cell from another sheet pattern but " +
+                                        "cannot find cell with cell id " + worksheetCellSplit[1] + " for formula " + formula);
                             }
                         }
+                    } else {
+                        log.info(cell.getWorksheet().getSheetName() + " matches cell from another sheet pattern but " +
+                                "cannot find worksheet with name " + worksheetCellSplit[0] + " for formula " + formula);
                     }
                 }
             }
@@ -651,7 +676,10 @@ public class readExcel implements ExcelReader {
                             .filter(cellCheck -> check1.equals(cellCheck.id()))
                             .findAny()
                             .orElse(null);
-                    if(cell2 == null) continue;
+                    if(cell2 == null) {
+                        log.info(cell.getWorksheet().getSheetName() + " matches cell to cell pattern but cannot find cell with id " + check1 + " for formula " + formula);
+                        continue;
+                    }
                     else{
                         Formula basicFormula1 = cell.getFormulaValue();
                         basicFormula1.addDependencies(cell2);
@@ -679,9 +707,15 @@ public class readExcel implements ExcelReader {
                                     .orElse(null);
                             if (cell1 != null) {
                                 cell.getFormulaValue().addDependencies(cell1);
+                            } else {
+                                log.info(cell.getWorksheet().getSheetName() + " matches cell to cell from another sheet pattern but " +
+                                        "cannot find cell with id " + workSheetTemp + " for formula " + formula);
                             }
                         }
                     }
+                } else {
+                    log.info(cell.getWorksheet().getSheetName() + " matches cell to cell from another sheet pattern but " +
+                            "cannot find worksheet with name " + worksheetCellSplit[0] + " for formula " + formula);
                 }
             } else if(temp[i].matches(patternCellToCellFromOtherSheet2)) {
                 String[] worksheetCellSplit = temp[i].split("!");
@@ -703,9 +737,15 @@ public class readExcel implements ExcelReader {
                                     .orElse(null);
                             if (cell1 != null) {
                                 cell.getFormulaValue().addDependencies(cell1);
+                            } else {
+                                log.info(cell.getWorksheet().getSheetName() + " matches cell to cell from another sheet second pattern but " +
+                                        "cannot find with id " + workSheetTemp + " for formula " + formula);
                             }
                         }
                     }
+                } else {
+                    log.info(cell.getWorksheet().getSheetName() + " matches cell to cell from another sheet second pattern but " +
+                            "cannot find worksheet with name " + worksheetCellSplit[0] + " for formula " + formula);
                 }
             }
         }
@@ -785,7 +825,7 @@ public class readExcel implements ExcelReader {
             worksheet.addElement(ElementType.TABLE, sheetElements);
 
         } catch (FileNotFoundException err) {
-            System.out.println(err);
+            log.error(err.getMessage());
         }
 
     }

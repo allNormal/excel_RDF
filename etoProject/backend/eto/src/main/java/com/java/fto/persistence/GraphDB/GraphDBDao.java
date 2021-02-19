@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -64,9 +66,11 @@ public class GraphDBDao implements com.java.fto.persistence.GraphDBDao {
     public void addGraphIntoRepo(String fileName, String repoName) throws IOException {
         Repository repository = repositoryManager.getRepository(repoName);
 
-        File file =  new File(FILELOCATION + fileName + ".ttl");
+
+        Path path = Paths.get(FILELOCATION + fileName + ".ttl");
+        File file =  new File(path.toString());
         RepositoryConnection repositoryConnection = repository.getConnection();
-        IRI iri = repository.getValueFactory().createIRI(FILELOCATION + fileName + ".ttl");
+        IRI iri = repository.getValueFactory().createIRI(path.toString());
         repositoryConnection.add(file, null, RDFFormat.TURTLE, iri);
         repositoryConnection.close();
     }
