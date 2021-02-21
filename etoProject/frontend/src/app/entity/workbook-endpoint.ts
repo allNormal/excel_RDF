@@ -8,19 +8,22 @@ export class WorkbookEndpoint {
   worksheets: Worksheet[]
 }
 
-export class Worksheet {
-  columns: Array<string>;
-  rows:Array<string>;
+export class WorksheetEndpoint {
+  worksheetName: string;
+  active: boolean = true;
+}
+
+export class Worksheet extends WorksheetEndpoint{
+  columns: Array<CheckboxItem>;
+  rows:Array<CheckboxItem>;
   worksheetName: string;
   active: boolean;
 }
 
-export class WorksheetTable {
+export class WorksheetTable extends WorksheetEndpoint{
   rowHeader: string;
   columnHeader: string;
-  worksheetName: string;
   table: Array<Table> = [];
-  active: boolean = true;
   columnsRowsFrom: string;
 }
 

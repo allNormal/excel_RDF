@@ -160,6 +160,7 @@ public class EtoController implements EtoRestController {
     public void addGraphIntoRepo(@PathVariable("formatType") String formatType, @RequestBody String repoName) {
         log.info("POST request to add graph into a repository received");
         log.info("sending request to the service");
+        repoName = repoName.replaceAll("\"","");
         if(formatType.toLowerCase().contains("table")) {
             this.ontologyServiceTableBased.addGraphIntoRepo(repoName);
         } else if(formatType.toLowerCase().contains("file")) {
@@ -174,6 +175,7 @@ public class EtoController implements EtoRestController {
     public void createRepoAndAddGraph(@PathVariable("formatType") String formatType, @RequestBody String repoName) {
         log.info("Post request to create a new repository and add graph into it received");
         log.info("sending request to the service");
+        repoName = repoName.replaceAll("\"","");
         if(formatType.toLowerCase().contains("table")) {
             this.ontologyServiceTableBased.createRepoAndAddGraph(repoName);
         } else if(formatType.toLowerCase().contains("file")) {

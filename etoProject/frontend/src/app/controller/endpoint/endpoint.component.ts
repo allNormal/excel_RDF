@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpRequest} from '@angular/common/http';
 import {BehaviorSubject} from 'rxjs';
-import {WorksheetTable} from '../../entity/workbook-endpoint';
+import {Worksheet, WorksheetEndpoint, WorksheetTable} from '../../entity/workbook-endpoint';
 @Injectable(
   {
     providedIn: 'root',
@@ -49,7 +49,7 @@ export class EndpointComponent {
   }
 
   // tslint:disable-next-line:typedef
-  public async createCustom(worksheets: Array<WorksheetTable>, format: string){
+  public async createCustom(worksheets: Array<WorksheetEndpoint>, format: string){
 
     const headers = { 'content-type': 'application/json'}
     return await this.http.post(this.baseURL + 'custom/'+format, JSON.stringify(worksheets), {'headers':headers}).toPromise();
@@ -61,12 +61,12 @@ export class EndpointComponent {
 
   public async addGraphIntoRepo(format: string, repoName: string) {
     const headers = { 'content-type': 'application/json'}
-    return await this.http.post(this.baseURL + +format+'/add', JSON.stringify(repoName), {'headers':headers}).toPromise();
+    return await this.http.post(this.baseURL + format+'/add', JSON.stringify(repoName), {'headers':headers}).toPromise();
   }
 
   public async createRepoAndAddGraph(format: string, repoName: string) {
     const headers = { 'content-type': 'application/json'}
-    return await this.http.post(this.baseURL + +format+'/create', JSON.stringify(repoName), {'headers':headers}).toPromise();
+    return await this.http.post(this.baseURL +format+'/create', JSON.stringify(repoName), {'headers':headers}).toPromise();
   }
   // tslint:disable-next-line:typedef
   public getInitializeWorkbook(format: string) {

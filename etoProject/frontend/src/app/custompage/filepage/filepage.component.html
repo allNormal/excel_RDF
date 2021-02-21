@@ -10,7 +10,7 @@
             </a>
           </li>
           <li class="nav-item text-center" id="buttonConvert">
-            <button class="btn-lg btn-primary">Convert</button>
+            <button (click)="convert()" class="btn-lg btn-primary">Convert</button>
           </li>
         </ul>
 
@@ -38,7 +38,7 @@
                 <h3 class="textEditor">Columns</h3>
                 <div class="btn-toolbar">
                   <div class="btn-group mr-2">
-                    <button (click)="modalCustomFunction('columns', worksheet.worksheetName)" class="btn btn-sm btn-outline-secondary buttonCustom">Edit</button>
+                    <button (click)="modalCustomFunction('columns', changeCustom)" class="btn btn-sm btn-outline-secondary buttonCustom">Edit</button>
                   </div>
                 </div>
               </div>
@@ -46,7 +46,7 @@
                 <h3 class="textEditor">Rows</h3>
                 <div class="btn-toolbar">
                   <div class="btn-group mr-2">
-                    <button (click)="modalCustomFunction('rows', worksheet.worksheetName)" class="btn btn-sm btn-outline-secondary buttonCustom">Edit</button>
+                    <button (click)="modalCustomFunction('rows', changeCustom)" class="btn btn-sm btn-outline-secondary buttonCustom">Edit</button>
                   </div>
                 </div>
               </div>

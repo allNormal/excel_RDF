@@ -4,6 +4,7 @@ import {WorkbookEndpoint, Worksheet} from '../../entity/workbook-endpoint';
 import {plainToClass} from 'class-transformer';
 import {CheckboxItem} from '../../entity/checkbox-item';
 import {ChangeDetectorRef} from '@angular/core';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-filepage',
@@ -15,11 +16,10 @@ export class FilepageComponent implements OnInit {
   response: any
   changeCustom: string;
   modalCustom: CheckboxItem[] = [];
-  tempColumn = new Map<string, CheckboxItem[]>();
-  tempRow = new Map<string, CheckboxItem[]>();
   type: string;
   worksheetTemp: Array<Worksheet> = [];
-  constructor(private endpoint: EndpointComponent, private cdrf:ChangeDetectorRef) { }
+  constructor(private endpoint: EndpointComponent, private cdrf:ChangeDetectorRef,
+              private _router: Router) { }
 
   async ngOnInit(): Promise<void> {
     let resp = await this.endpoint.getInitializeWorkbook('file');
@@ -30,46 +30,48 @@ export class FilepageComponent implements OnInit {
         let temp =  new Worksheet();
         temp.worksheetName = this.response[0].worksheets[i].worksheetName;
         temp.active = true;
-        this.worksheetTemp.push(temp);
+        let columns: Array<CheckboxItem> = [];
         for(let column of this.response[0].worksheets[i].columns) {
           let column1 =  new CheckboxItem();
           column1.value = column
           column1.isChecked = true;
-          this.modalCustom.push(column1);
+          columns.push(column1)
+          //this.modalCustom.push(column1);
         }
-        this.tempColumn.set(this.response[0].worksheets[i].worksheetName, this.modalCustom);
-        this.modalCustom = [];
-
+        temp.columns = columns;
+        //this.tempColumn.set(this.response[0].worksheets[i].worksheetName, this.modalCustom);
+        //this.modalCustom = [];
+        let rows: Array<CheckboxItem> = [];
         for(let row of this.response[0].worksheets[i].rows) {
           let row1 =  new CheckboxItem();
           row1.value = row
           row1.isChecked = true;
-          this.modalCustom.push(row1);
+          rows.push(row1);
+          //this.modalCustom.push(row1);
         }
-        this.tempRow.set(this.response[0].worksheets[i].worksheetName, this.modalCustom);
-        this.modalCustom = [];
+        temp.rows = rows;
+        this.worksheetTemp.push(temp);
+        //this.tempRow.set(this.response[0].worksheets[i].worksheetName, this.modalCustom);
+        //this.modalCustom = [];
         //this.tempRow.set(this.response[0].worksheets[i].worksheetName, this.response[0].worksheets[i].rows);
       }
-      console.log(this.response[0].worksheets)
-      console.log(this.response[0].worksheets[0].worksheetName)
-      console.log(this.tempColumn);
+      console.log(this.worksheetTemp)
     });
   }
 
   checkActive(worksheetName: string) {
-    console.log(this.worksheetTemp.find(x => x.worksheetName == worksheetName).active)
     return this.worksheetTemp.find(x => x.worksheetName == worksheetName).active;
   }
 
   modalCustomFunction(type: string, worksheetName: string) {
+    console.log(worksheetName)
     this.type = type;
     if (type === "columns") {
-      console.log(worksheetName)
-      this.modalCustom = this.tempColumn.get(worksheetName);
+      this.modalCustom = this.worksheetTemp.find(x => x.worksheetName === worksheetName).columns;
     } else if (type === "rows") {
-
-      this.modalCustom = this.tempRow.get(worksheetName);
+      this.modalCustom = this.worksheetTemp.find(x => x.worksheetName === worksheetName).rows;
     }
+    console.log(this.modalCustom);
     document.getElementById('CustomModal').style.display = 'block';
   }
 
@@ -79,8 +81,9 @@ export class FilepageComponent implements OnInit {
   }
 
   saveForm(worksheetName: string) {
-    document.getElementById('CustomModal').style.display = 'none';
-    let temp: string[] = [];
+    this.closeForm();
+    /*
+    let temp: Array<CheckboxItem> = [];
     if(this.type === 'columns') {
       for(let i = 0 ; i<this.modalCustom.length; i++) {
         if(this.modalCustom[i].isChecked) {
@@ -102,18 +105,26 @@ export class FilepageComponent implements OnInit {
     }
     console.log(this.worksheetTemp)
     this.modalCustom = []
+
+     */
   }
 
   changeStatus(status: string, worksheetName: string) {
-    console.log(worksheetName)
-    console.log(this.worksheetTemp)
     if(status === "disabled") {
       this.worksheetTemp.find(x => x.worksheetName == worksheetName).active = true;
     } else {
       this.worksheetTemp.find(x => x.worksheetName == worksheetName).active = false;
     }
-    console.log(this.worksheetTemp.find(x => x.worksheetName == worksheetName).active)
     this.cdrf.detectChanges();
+  }
+
+  async convert() {
+    for(let worksheets of this.worksheetTemp) {
+      worksheets.columns = worksheets.columns.filter(x => x.isChecked);
+      worksheets.rows = worksheets.rows.filter(x => x.isChecked);
+    }
+    await this.endpoint.createCustom(this.worksheetTemp, 'file');
+    this._router.navigate(['/repository']);
   }
 
 }

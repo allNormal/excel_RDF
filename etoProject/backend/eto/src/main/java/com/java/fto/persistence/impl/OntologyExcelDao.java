@@ -351,10 +351,10 @@ public class OntologyExcelDao implements com.java.fto.persistence.OntologyDao {
                 sheetElement.addProperty(this.converter.getIsPartOfWorksheet(), worksheet);
                 addCustomBasicElement(cell, worksheet, this.workbook.getWorksheets().get(i),
                         restriction.getExcelRestrictions().get(this.workbook.getWorksheets().get(i).getSheetName()));
-                addChart(chart, worksheet, this.workbook.getWorksheets().get(i));
-                addTable(table, worksheet, this.workbook.getWorksheets().get(i));
-                addText(text, worksheet, this.workbook.getWorksheets().get(i));
-                addIllustration(illustration, worksheet, this.workbook.getWorksheets().get(i));
+                //addChart(chart, worksheet, this.workbook.getWorksheets().get(i));
+                //addTable(table, worksheet, this.workbook.getWorksheets().get(i));
+                //addText(text, worksheet, this.workbook.getWorksheets().get(i));
+                //addIllustration(illustration, worksheet, this.workbook.getWorksheets().get(i));
             }
         }
     }

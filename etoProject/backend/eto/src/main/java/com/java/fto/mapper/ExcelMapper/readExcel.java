@@ -271,6 +271,7 @@ public class readExcel implements ExcelReader {
             for(Cell cell : row) {
                 com.java.fto.entity.SheetElement.BasicElement.Cell cell1 = new com.java.fto.entity.SheetElement.BasicElement.Cell(worksheet,
                         convertColumn(Integer.toString(cell.getColumnIndex())),cell.getRowIndex());
+                cell1.setRowID(Integer.toString(row.getRowNum()));
                 //log.info("creating cell with id " + cell1.getCellId());
                 switch (cell.getCellType()){
                     case STRING:
