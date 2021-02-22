@@ -25,8 +25,10 @@ export class RepopageComponent implements OnInit {
 
     this.subscribe = this.endpoint._formatSubs.subscribe(format => this.format = format);
     let resp = await this.endpoint.getAllRepositories(this.format);
-    resp.subscribe(data =>
-      this.response = data,
+    resp.subscribe(data => {
+        this.response = data;
+        this.loading = false;
+    },
       error => {
         this.message = "failure in connecting to graphDB";
         this.solution = "please start graphDB to use this functions";

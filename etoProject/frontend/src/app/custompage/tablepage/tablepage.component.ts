@@ -130,6 +130,7 @@ export class TablepageComponent implements OnInit {
         this.errorMessage.showErrorMessage();
         })
     this.initializeColumnRow = true;
+      this.loading = false;
   }
 
   changeStatus(status: string, worksheetName: string) {

@@ -12,7 +12,7 @@
           <li class="nav-item text-center" id="buttonConvert">
             <button *ngIf="!loading" (click)="convert()" class="buttons btn-lg btn-primary">Convert</button>
           </li>
-          <div *ngIf="loading" class="d-flex justify-content-center">
+          <div style="margin-top: 10px;" *ngIf="loading" class="d-flex justify-content-center">
             <div class="spinner-border" role="status">
               <span class="sr-only">Loading...</span>
             </div>
