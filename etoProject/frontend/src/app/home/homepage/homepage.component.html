@@ -36,9 +36,7 @@
       </div>
     </div>
 
-    <div class="alert alert-success" id="alertSuccess" *ngIf="hideSuccessMessage">
-      <strong>Success!</strong> File can be found in OntologyOut.
-    </div>
+    <app-error-message [solution]="solution" [message]="message"></app-error-message>
 
     <!-- The Modal -->
     <div id="FileFormatModal" class="modal">
@@ -70,10 +68,14 @@
 
                 <div class="form-group">
                   <p class="lead text-center">
-                    <a class="btn btn-primary btn-lg buttons" disabled="" *ngIf="!loader" role="button" id="buttonFileFormat"
-                       (click)="convertFile('FileFormat',s.value)">Ok</a>
+                    <button [disabled]="!this.fileProvided" class="btn btn-primary btn-lg buttons" *ngIf="!loading" role="button" id="buttonFileFormat"
+                       (click)="convertFile('FileFormat',s.value)">Ok</button>
                   </p>
-                  <app-loading *ngIf="loader"></app-loading>
+                  <div *ngIf="loading" class="d-flex justify-content-center">
+                    <div class="spinner-border" role="status">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                  </div>
                 </div>
               </form>
             </div>
@@ -115,10 +117,15 @@
 
                   <div class="form-group">
                     <p class="lead text-center">
-                      <a class="btn btn-primary btn-lg buttons" *ngIf="!loader" role="button" id="buttonTableFormat"
-                         (click)="convertFile('TableFormat',t.value)">Ok</a>
+                      <button [disabled]="!this.fileProvided" class="btn btn-primary btn-lg buttons" *ngIf="!loading" role="button" id="buttonTableFormat"
+                         (click)="convertFile('TableFormat',t.value)">Ok</button>
                     </p>
-                    <app-loading *ngIf="loader"></app-loading>
+                  </div>
+
+                  <div *ngIf="loading" class="d-flex justify-content-center">
+                    <div class="spinner-border" role="status">
+                      <span class="sr-only">Loading...</span>
+                    </div>
                   </div>
                 </form>
               </div>

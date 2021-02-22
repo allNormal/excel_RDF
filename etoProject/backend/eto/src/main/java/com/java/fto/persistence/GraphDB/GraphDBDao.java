@@ -27,6 +27,7 @@ public class GraphDBDao implements com.java.fto.persistence.GraphDBDao {
     public GraphDBDao() {
         repositoryManager = RepositoryProvider.getRepositoryManager("http://localhost:7200");
         repositoryManager.init();
+
     }
 
     @Override

@@ -10,6 +10,10 @@
 .customChild {
 }
 
+.buttons {
+  background-color: #006699;
+}
+
 #filePage {
   padding-left: 135px;
   padding-right: 135px;

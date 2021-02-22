@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {ChangeDetectorRef, Component, NgZone, OnInit} from '@angular/core';
 import {EndpointComponent} from '../controller/endpoint/endpoint.component';
 import {Subscription} from 'rxjs';
 import {Router} from '@angular/router';
+import {ErrorMessageComponent} from '../error-message/error-message.component';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-repopage',
@@ -14,14 +16,25 @@ export class RepopageComponent implements OnInit {
   format: string;
   subscribe: Subscription
   repoName: string ="";
-
-  constructor(private endpoint: EndpointComponent, private router:Router) { }
+  message: string = "";
+  solution: string = "";
+  loading = true;
+  constructor(private endpoint: EndpointComponent, private router:Router, private errorMessage: ErrorMessageComponent) { }
 
   async ngOnInit(): Promise<void> {
+
     this.subscribe = this.endpoint._formatSubs.subscribe(format => this.format = format);
     let resp = await this.endpoint.getAllRepositories(this.format);
     resp.subscribe(data =>
-      this.response = data);
+      this.response = data,
+      error => {
+        this.message = "failure in connecting to graphDB";
+        this.solution = "please start graphDB to use this functions";
+        this.loading = false;
+        this.errorMessage.showErrorMessage();
+        //this.errorMessage.changeMessage(error.message);
+        //this.errorMessage.changeSolution("please start graph db");
+      });
   }
 
   changeRepoType(repoType: string) {
@@ -46,7 +59,19 @@ export class RepopageComponent implements OnInit {
   }
 
   addGraphIntoRepo() {
-    this.endpoint.addGraphIntoRepo(this.format, this.repoName);
+    this.endpoint.addGraphIntoRepo(this.format, this.repoName)
+      .catch((err:HttpErrorResponse) => {
+        if(err instanceof Error) {
+          this.message = err.message;
+          this.errorMessage.showErrorMessage();
+          return;
+        } else {
+          this.message = err.error.message;
+          this.solution = err.error.solution;
+          this.errorMessage.showErrorMessage();
+          return;
+        }
+      });
     this.router.navigate(['/home'])
   }
 

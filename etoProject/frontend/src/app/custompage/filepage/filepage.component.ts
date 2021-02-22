@@ -5,6 +5,8 @@ import {plainToClass} from 'class-transformer';
 import {CheckboxItem} from '../../entity/checkbox-item';
 import {ChangeDetectorRef} from '@angular/core';
 import {Router} from '@angular/router';
+import {ErrorMessageComponent} from '../../error-message/error-message.component';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-filepage',
@@ -18,8 +20,11 @@ export class FilepageComponent implements OnInit {
   modalCustom: CheckboxItem[] = [];
   type: string;
   worksheetTemp: Array<Worksheet> = [];
+  message: string = "";
+  solution: string = "";
+  loading = false;
   constructor(private endpoint: EndpointComponent, private cdrf:ChangeDetectorRef,
-              private _router: Router) { }
+              private _router: Router, private errorMessage: ErrorMessageComponent) { }
 
   async ngOnInit(): Promise<void> {
     let resp = await this.endpoint.getInitializeWorkbook('file');
@@ -36,27 +41,24 @@ export class FilepageComponent implements OnInit {
           column1.value = column
           column1.isChecked = true;
           columns.push(column1)
-          //this.modalCustom.push(column1);
         }
         temp.columns = columns;
-        //this.tempColumn.set(this.response[0].worksheets[i].worksheetName, this.modalCustom);
-        //this.modalCustom = [];
         let rows: Array<CheckboxItem> = [];
         for(let row of this.response[0].worksheets[i].rows) {
           let row1 =  new CheckboxItem();
           row1.value = row
           row1.isChecked = true;
           rows.push(row1);
-          //this.modalCustom.push(row1);
         }
         temp.rows = rows;
         this.worksheetTemp.push(temp);
-        //this.tempRow.set(this.response[0].worksheets[i].worksheetName, this.modalCustom);
-        //this.modalCustom = [];
-        //this.tempRow.set(this.response[0].worksheets[i].worksheetName, this.response[0].worksheets[i].rows);
       }
-      console.log(this.worksheetTemp)
-    });
+    },
+      error => {
+      this.message = error.message;
+      this.solution = error.solution;
+      this.errorMessage.showErrorMessage();
+      });
   }
 
   checkActive(worksheetName: string) {
@@ -64,14 +66,12 @@ export class FilepageComponent implements OnInit {
   }
 
   modalCustomFunction(type: string, worksheetName: string) {
-    console.log(worksheetName)
     this.type = type;
     if (type === "columns") {
       this.modalCustom = this.worksheetTemp.find(x => x.worksheetName === worksheetName).columns;
     } else if (type === "rows") {
       this.modalCustom = this.worksheetTemp.find(x => x.worksheetName === worksheetName).rows;
     }
-    console.log(this.modalCustom);
     document.getElementById('CustomModal').style.display = 'block';
   }
 
@@ -82,31 +82,6 @@ export class FilepageComponent implements OnInit {
 
   saveForm(worksheetName: string) {
     this.closeForm();
-    /*
-    let temp: Array<CheckboxItem> = [];
-    if(this.type === 'columns') {
-      for(let i = 0 ; i<this.modalCustom.length; i++) {
-        if(this.modalCustom[i].isChecked) {
-          temp.push(this.modalCustom[i].value)
-        }
-      }
-      this.worksheetTemp.find(x => x.worksheetName = worksheetName).columns = temp;
-    } else if(this.type === 'rows') {
-      for(let i = 0 ; i<this.modalCustom.length; i++) {
-        if(this.modalCustom[i].isChecked) {
-          temp.push(this.modalCustom[i].value)
-        }
-      }
-      for(let item of this.worksheetTemp) {
-        if(item.worksheetName === worksheetName) {
-          item.rows = temp;
-        }
-      }
-    }
-    console.log(this.worksheetTemp)
-    this.modalCustom = []
-
-     */
   }
 
   changeStatus(status: string, worksheetName: string) {
@@ -119,11 +94,24 @@ export class FilepageComponent implements OnInit {
   }
 
   async convert() {
+    this.loading = true;
     for(let worksheets of this.worksheetTemp) {
       worksheets.columns = worksheets.columns.filter(x => x.isChecked);
       worksheets.rows = worksheets.rows.filter(x => x.isChecked);
     }
-    await this.endpoint.createCustom(this.worksheetTemp, 'file');
+    await this.endpoint.createCustom(this.worksheetTemp, 'file')
+      .catch((err:HttpErrorResponse) => {
+        if(err instanceof Error) {
+          this.message = err.message;
+          this.errorMessage.showErrorMessage();
+          return;
+        } else {
+          this.message = err.message;
+          this.solution = err.error.solution;
+          this.errorMessage.showErrorMessage();
+          return;
+        }
+      });
     this._router.navigate(['/repository']);
   }
 

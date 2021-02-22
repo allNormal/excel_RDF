@@ -14,8 +14,8 @@ export class WorksheetEndpoint {
 }
 
 export class Worksheet extends WorksheetEndpoint{
-  columns: Array<CheckboxItem>;
-  rows:Array<CheckboxItem>;
+  columns: Array<CheckboxItem> = [];
+  rows:Array<CheckboxItem> = [];
   worksheetName: string;
   active: boolean;
 }

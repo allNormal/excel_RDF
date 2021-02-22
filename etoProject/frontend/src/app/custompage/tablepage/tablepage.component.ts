@@ -5,6 +5,8 @@ import {Table, WorkbookEndpoint, WorksheetTable} from '../../entity/workbook-end
 import {ChangeDetectorRef} from '@angular/core';
 import {CheckboxItem} from '../../entity/checkbox-item';
 import {Router} from '@angular/router';
+import {ErrorMessageComponent} from '../../error-message/error-message.component';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-tablepage',
@@ -14,6 +16,7 @@ import {Router} from '@angular/router';
 export class TablepageComponent implements OnInit {
 
   response: any;
+  loading = false;
   worksheetTemp: Array<WorksheetTable> = [];
   worksheetsNameTemp: string =  "";
   rowHeaderTemp: string = "";
@@ -25,9 +28,11 @@ export class TablepageComponent implements OnInit {
   tableNameTemp: string = "";
   modalCustom: CheckboxItem[] = [];
   type: string = "";
+  message: string = "";
+  solution: string = "";
 
   constructor(private endpoint: EndpointComponent, private cdrf: ChangeDetectorRef,
-              private _router: Router) { }
+              private _router: Router, private errorMessage:ErrorMessageComponent) { }
 
   async ngOnInit(): Promise<void> {
 
@@ -41,7 +46,12 @@ export class TablepageComponent implements OnInit {
         temp.rowHeader = "0";
         this.worksheetTemp.push(temp);
       }
-    })
+    },
+      error => {
+        this.message = error.message;
+        this.solution = error.solution;
+        this.errorMessage.showErrorMessage();
+      })
   }
 
   openForm(worksheetName: string, modalId: string) {
@@ -52,7 +62,6 @@ export class TablepageComponent implements OnInit {
     document.getElementById(modalId).style.display = 'none';
   }
   saveForm(worksheetName: string, rowHeaderFromAnotherWs: string) {
-    console.log(rowHeaderFromAnotherWs)
     for(let item of this.worksheetTemp) {
       if(item.worksheetName === worksheetName) {
         if(rowHeaderFromAnotherWs === '') {
@@ -69,10 +78,10 @@ export class TablepageComponent implements OnInit {
         break;
       }
     }
-    console.log(this.worksheetTemp)
     this.columnHeaderTemp = "";
     this.rowHeaderTemp = "";
     this.worksheetsNameTemp = "";
+    document.getElementById('rowHeaderInput').style.display = 'block';
     document.getElementById('CustomModal').style.display = 'none';
   }
 
@@ -89,11 +98,8 @@ export class TablepageComponent implements OnInit {
   }
 
   async initializeColumnRowHeader() {
-    let err = false;
-    await this.endpoint.initializeRowAndColumnHeader(this.worksheetTemp).catch(err => err = true);
-    if(err) {
-
-    } else {
+    this.loading = true;
+    await this.endpoint.initializeRowAndColumnHeader(this.worksheetTemp);
       let resp = await this.endpoint.getInitializeWorkbook('table');
       resp.subscribe(data => {
         this.response = plainToClass(WorkbookEndpoint, data);
@@ -117,9 +123,13 @@ export class TablepageComponent implements OnInit {
           this.tempRow.set(this.response[0].worksheets[i].worksheetName, this.modalCustom);
           this.modalCustom = [];
         }
-      })
-      this.initializeColumnRow = true;
-    }
+      },
+        error => {
+        this.message = error.message;
+        this.solution = error.solution;
+        this.errorMessage.showErrorMessage();
+        })
+    this.initializeColumnRow = true;
   }
 
   changeStatus(status: string, worksheetName: string) {
@@ -137,39 +147,39 @@ export class TablepageComponent implements OnInit {
   }
 
   getTable(worksheetName: string) {
-    console.log(worksheetName)
     this.tableTemp = [];
     for(let item of this.worksheetTemp) {
       if(item.worksheetName === worksheetName) {
         this.tableTemp = item.table;
-        console.log(this.tableTemp)
       }
     }
   }
 
   saveTable(worksheetName: string) {
-    console.log(this.worksheetTemp)
     for(let item of this.worksheetTemp) {
       if(item.worksheetName === worksheetName) {
         let table =  new Table();
         table.name = this.tableNameTemp;
         let columns: CheckboxItem[] = []
-        for(let column of this.tempColumn.get(worksheetName)) {
-          let temp =  new CheckboxItem();
-          temp.value = column.value;
-          temp.isChecked = true;
-          columns.push(temp);
+        if(this.tempColumn.get(worksheetName) !== undefined) {
+          for(let column of this.tempColumn.get(worksheetName)) {
+            let temp =  new CheckboxItem();
+            temp.value = column.value;
+            temp.isChecked = true;
+            columns.push(temp);
+          }
+          table.columns = columns;
         }
-        table.columns = columns;
-
         let rows: CheckboxItem[] = []
-        for(let row of this.tempRow.get(worksheetName)) {
-          let temp =  new CheckboxItem();
-          temp.value =  row.value;
-          temp.isChecked = true;
-          rows.push(temp);
+        if(this.tempRow.get(worksheetName) !== undefined) {
+          for(let row of this.tempRow.get(worksheetName)) {
+            let temp =  new CheckboxItem();
+            temp.value =  row.value;
+            temp.isChecked = true;
+            rows.push(temp);
+          }
+          table.rows = rows;
         }
-        table.rows = rows;
         item.table.push(table);
         break;
       }
@@ -180,71 +190,28 @@ export class TablepageComponent implements OnInit {
 
 
   modalCustomFunction(tableName: string, type: string, worksheetName: string) {
-    console.log(tableName)
     if (type === "columns") {
-      console.log(worksheetName)
       let tables = this.worksheetTemp.find(x => x.worksheetName === worksheetName).table
       let table =  tables.find(x => x.name === tableName).columns
       this.modalCustom = table;
-      console.log(this.modalCustom)
     } else if (type === "rows") {
 
       let tables = this.worksheetTemp.find(x => x.worksheetName === worksheetName).table
       let table =  tables.find(x => x.name === tableName).rows
       this.modalCustom = table;
-      console.log(this.modalCustom)
     }
     this.tableNameTemp = "";
     document.getElementById('CustomModalRowColumn').style.display = 'block';
   }
 
   saveColumnRow(type: string, worksheetName: string, tableName: string) {
-    /*
-    let temp: string[] = [];
-    for(let item of this.modalCustom) {
-      if(item.isChecked){
-        temp.push(item.value);
-      }
-    }
-    if(type === 'column'){
-      for(let item of this.worksheetTemp) {
-        if(item.worksheetName === worksheetName) {
-          for(let table of item.table) {
-            if(table.name === tableName) {
-              table.columns = temp;
-              break;
-            }
-          }
-          break;
-        }
-      }
-    } else {
-      for(let item of this.worksheetTemp) {
-        if(item.worksheetName === worksheetName) {
-          for(let table of item.table) {
-            if(table.name === tableName) {
-              table.rows = temp;
-              break;
-            }
-          }
-          break;
-        }
-      }
-    }
-    this.modalCustom = [];
-
-     */
     this.closeForm('CustomModalRowColumn')
   }
 
   RemoveTable(tableName: string, worksheetName: string) {
     for(let worksheet of this.worksheetTemp) {
       if(worksheet.worksheetName === worksheetName) {
-        console.log("find")
-        console.log(worksheet.table)
         worksheet.table = worksheet.table.filter(x => x.name != tableName);
-        console.log(tableName)
-        console.log(worksheet.table)
         break;
       }
     }
@@ -252,6 +219,7 @@ export class TablepageComponent implements OnInit {
   }
 
   async Convert() {
+    this.loading = true;
     for(let worksheet of this.worksheetTemp) {
       for(let table of worksheet.table) {
         table.columns = table.columns.filter(column => column.isChecked);
@@ -259,8 +227,19 @@ export class TablepageComponent implements OnInit {
       }
     }
 
-    console.log(this.worksheetTemp)
-    await this.endpoint.createCustom(this.worksheetTemp, 'table');
+    await this.endpoint.createCustom(this.worksheetTemp, 'table')
+      .catch((err:HttpErrorResponse) => {
+        if(err instanceof Error) {
+          this.message = err.message;
+          this.errorMessage.showErrorMessage();
+          return;
+        } else {
+          this.message = err.error.message;
+          this.solution = err.error.solution;
+          this.errorMessage.showErrorMessage();
+          return;
+        }
+      });
     this._router.navigate(['/repository']);
   }
 

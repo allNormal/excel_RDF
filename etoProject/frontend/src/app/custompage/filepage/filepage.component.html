@@ -10,8 +10,13 @@
             </a>
           </li>
           <li class="nav-item text-center" id="buttonConvert">
-            <button (click)="convert()" class="btn-lg btn-primary">Convert</button>
+            <button *ngIf="!loading" (click)="convert()" class="buttons btn-lg btn-primary">Convert</button>
           </li>
+          <div *ngIf="loading" class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
         </ul>
 
       </div>
@@ -26,7 +31,7 @@
               <span class="h1 textEditor">{{worksheet.worksheetName}}</span>
               <div class="btn-toolbar">
                 <div class="btn-group mr-2" *ngIf="checkActive(worksheet.worksheetName) else elseBlock">
-                  <button (click)="changeStatus('active', changeCustom)" class="btn-primary btn-sm">Active</button>
+                  <button (click)="changeStatus('active', changeCustom)" class="buttons btn-primary btn-sm">Active</button>
                 </div>
                 <ng-template #elseBlock>
                   <button (click)="changeStatus('disabled', changeCustom)" class="btn-secondary btn-sm">Disabled</button>
@@ -58,6 +63,7 @@
   </div>
 </div>
 
+<app-error-message [message]="message" [solution]="solution"></app-error-message>
 <div id="CustomModal" class="modal">
 
   <!-- Modal content -->
@@ -72,7 +78,7 @@
           <input type="checkbox" class="form-check-input"  [(ngModel)]="item.isChecked" value="{{item.value}}" id="{{item.value}}">
           <label class="form-check-label" for="{{item.value}}">{{item.value}}</label>
         </div>
-        <button (click)="saveForm(changeCustom)" type="submit" class="btn btn-primary">Submit</button>
+        <button (click)="saveForm(changeCustom)" type="submit" class="buttons btn btn-primary">Submit</button>
 
       </fieldset>
   </div>

@@ -34,6 +34,10 @@
   margin-right: 10px;
 }
 
+.buttons {
+  background-color: #006699;
+}
+
 #buttonRC {
   display: block;
   width: 100px;

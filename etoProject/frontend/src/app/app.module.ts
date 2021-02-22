@@ -16,6 +16,7 @@ import { CustompageComponent } from './custompage/custompage.component';
 import { FilepageComponent } from './custompage/filepage/filepage.component';
 import { TablepageComponent } from './custompage/tablepage/tablepage.component';
 import { RepopageComponent } from './repopage/repopage.component';
+import { ErrorMessageComponent } from './error-message/error-message.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { RepopageComponent } from './repopage/repopage.component';
     CustompageComponent,
     FilepageComponent,
     TablepageComponent,
-    RepopageComponent
+    RepopageComponent,
+    ErrorMessageComponent
   ],
     imports: [
         BrowserModule,
