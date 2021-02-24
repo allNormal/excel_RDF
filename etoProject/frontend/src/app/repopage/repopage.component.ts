@@ -64,11 +64,11 @@ export class RepopageComponent implements OnInit {
     this.endpoint.addGraphIntoRepo(this.format, this.repoName)
       .catch((err:HttpErrorResponse) => {
         if(err instanceof Error) {
-          this.message = err.message;
+          this.message = "error in adding graph" + err.error;
           this.errorMessage.showErrorMessage();
           return;
         } else {
-          this.message = err.error.message;
+          this.message = "error in adding graph " + err.error;
           this.solution = err.error.solution;
           this.errorMessage.showErrorMessage();
           return;

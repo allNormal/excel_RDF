@@ -161,6 +161,8 @@ public class EtoController implements EtoRestController {
         log.info("POST request to add graph into a repository received");
         log.info("sending request to the service");
         repoName = repoName.replaceAll("\"","");
+        System.out.println(formatType);
+        System.out.println(repoName);
         if(formatType.toLowerCase().contains("table")) {
             this.ontologyServiceTableBased.addGraphIntoRepo(repoName);
         } else if(formatType.toLowerCase().contains("file")) {

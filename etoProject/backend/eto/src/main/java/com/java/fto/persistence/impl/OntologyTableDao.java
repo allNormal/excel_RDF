@@ -285,6 +285,7 @@ public class OntologyTableDao implements OntologyDao {
                                 cell1.addLiteral(this.converter.getActualValue(), "ERROR");
                                 break;
                         }
+                        cell1.addLiteral(this.converter.getFormulaFunction(), cell.getFormulaValue().getFormulaFunction());
                         break;
                 }
                 Individual col = this.converter.getColumnHeader().createIndividual(this.converter.getWorkbook().getURI() + "_" +
@@ -461,6 +462,7 @@ public class OntologyTableDao implements OntologyDao {
                             cell1.addLiteral(this.converter.getActualValue(), "ERROR");
                             break;
                     }
+                    cell1.addLiteral(this.converter.getFormulaFunction(), cell.getFormulaValue().getFormulaFunction());
                     break;
             }
             Individual col = this.converter.getColumnHeader().createIndividual(this.converter.getWorkbook().getURI() + "_" +
@@ -471,8 +473,6 @@ public class OntologyTableDao implements OntologyDao {
 
         for(int i = 0; i<table.getRows().size();i++) {
             Row row = table.getRows().get(i);
-            System.out.println(ws.getSheetName());
-            System.out.println(row.getRowTitle() + " " + row.getRowId());
             Individual rowHeader = this.converter.getRowHeader().createIndividual(this.converter.getWorkbook().getURI() + "_" +
                     ws.getSheetName() + "_"+
                     row.getRowTitle().replaceAll(" ", "_"));

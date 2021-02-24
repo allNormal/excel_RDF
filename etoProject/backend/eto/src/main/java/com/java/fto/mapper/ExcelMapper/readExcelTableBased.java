@@ -35,6 +35,9 @@ import java.util.Map;
 
 public class readExcelTableBased implements ExcelReader {
 
+    //TODO: a. check if all formula value when converting to rdf consistent or not
+    //      b. if not (throw an error message to user)
+
     private XSSFWorkbook myWorkBook;
     private Workbook workbook;
     private File file;
@@ -331,7 +334,8 @@ public class readExcelTableBased implements ExcelReader {
                     if (column.getValue() == null) {
                         column.setValue(cell1.getValue());
                         if(cell1.getValue() == Value.FORMULA) {
-                            column.setFormulaValue(cell1.getFormulaValue());
+                            FormulaConverter formulaConverter = new FormulaConverter(cell.getCellFormula());
+                            column.setFormulaValue(formulaConverter.getFormula());
                         }
                     } else if(column.getValue() != cell1.getValue()) {
                         cell1.setSameValueAsColumnHeader(false);
@@ -526,7 +530,8 @@ public class readExcelTableBased implements ExcelReader {
                     if (column.getValue() == null) {
                         column.setValue(cell1.getValue());
                         if(cell1.getValue() == Value.FORMULA) {
-                            column.setFormulaValue(cell1.getFormulaValue());
+                            FormulaConverter formulaConverter = new FormulaConverter(cell.getCellFormula());
+                            column.setFormulaValue(formulaConverter.getFormula());
                         }
                     } else if(column.getValue() != cell1.getValue()) {
                         cell1.setSameValueAsColumnHeader(false);
@@ -818,6 +823,8 @@ public class readExcelTableBased implements ExcelReader {
                 }
                 else{
                     Formula basicFormula1 = column.getFormulaValue();
+                    column.getFormulaValue().setFormulaFunction(column.getFormulaValue().getFormulaFunction()
+                    .replaceFirst(temp[i], cell1.getColumnTitle() + "_Value_For_" + cell1.getRowID()));
                     basicFormula1.addDependencies(cell1);
                 }
             }
@@ -843,6 +850,8 @@ public class readExcelTableBased implements ExcelReader {
                                     .orElse(null);
                             if (cell1 != null) {
                                 column.getFormulaValue().addDependencies(cell1);
+                                column.getFormulaValue().setFormulaFunction(column.getFormulaValue().getFormulaFunction()
+                                        .replaceFirst(worksheetCellSplit[1], cell1.getColumnTitle() + "_Value_For_" + cell1.getRowID()));
                             } else {
                                 log.info("matches cell from another sheet pattern but cannot find cell with cell id "+ worksheetCellSplit[1] + " for formula " + formula);
                             }
@@ -866,6 +875,13 @@ public class readExcelTableBased implements ExcelReader {
                     }
                     else{
                         Formula basicFormula1 = column.getFormulaValue();
+                        if(l == 0) {
+                            column.getFormulaValue().setFormulaFunction(column.getFormulaValue().getFormulaFunction()
+                                    .replaceFirst(temp[i], cell2.getColumnTitle() + "_Value_For_" + cell2.getRowID() + ":"));
+                        } else if(l == cellToCells.size()-1) {
+                            column.getFormulaValue().setFormulaFunction(column.getFormulaValue().getFormulaFunction()
+                                    .replaceFirst(temp[i], cell2.getColumnTitle() + "_Value_For_" + cell2.getRowID()));
+                        }
                         basicFormula1.addDependencies(cell2);
                     }
                 }
@@ -890,6 +906,13 @@ public class readExcelTableBased implements ExcelReader {
                                     .findAny()
                                     .orElse(null);
                             if (cell1 != null) {
+                                if(l == 0) {
+                                    column.getFormulaValue().setFormulaFunction(column.getFormulaValue().getFormulaFunction()
+                                            .replaceFirst(temp[i], cell1.getColumnTitle() + "_Value_For_" + cell1.getRowID() + ":"));
+                                } else if(l == cell2.size()-1) {
+                                    column.getFormulaValue().setFormulaFunction(column.getFormulaValue().getFormulaFunction()
+                                            .replaceFirst(temp[i], cell1.getColumnTitle() + "_Value_For_" + cell1.getRowID()));
+                                }
                                 column.getFormulaValue().addDependencies(cell1);
                             } else {
                                 log.info("matches cell to cell from another sheet " +
@@ -920,6 +943,13 @@ public class readExcelTableBased implements ExcelReader {
                                     .findAny()
                                     .orElse(null);
                             if (cell1 != null) {
+                                if(l == 0) {
+                                    column.getFormulaValue().setFormulaFunction(column.getFormulaValue().getFormulaFunction()
+                                            .replaceFirst(temp[i], cell1.getColumnTitle() + "_Value_For_" + cell1.getRowID() + ":"));
+                                } else if(l == cell2.size()-1) {
+                                    column.getFormulaValue().setFormulaFunction(column.getFormulaValue().getFormulaFunction()
+                                            .replaceFirst(temp[i], cell1.getColumnTitle() + "_Value_For_" + cell1.getRowID()));
+                                }
                                 column.getFormulaValue().addDependencies(cell1);
                             } else {
                                 log.info("matches cell to cell from another sheet second" +
@@ -953,6 +983,8 @@ public class readExcelTableBased implements ExcelReader {
                 return;
             }
             else{
+                column.getFormulaValue().setFormulaFunction(column.getFormulaValue().getFormulaFunction()
+                .replaceAll(check, column1.getColumnTitle()));
                 Formula basicFormula1 = column.getFormulaValue();
                 basicFormula1.addColumnDependencies(column1);
             }
@@ -977,6 +1009,8 @@ public class readExcelTableBased implements ExcelReader {
                                     .orElse(null);
                             if (column1 != null) {
                                 column.getFormulaValue().addColumnDependencies(column1);
+                                column.getFormulaValue().setFormulaFunction(column.getFormulaValue()
+                                .getFormulaFunction().replaceAll(worksheetCellSplit[1].replaceAll("\\d", ""), column1.getColumnTitle()));
                                 break;
                             } else {
                                 log.info("matches column from another sheet pattern but cannot find column with column id " + worksheetCellSplit[1] + " for formula " + formula);
@@ -1001,6 +1035,13 @@ public class readExcelTableBased implements ExcelReader {
                 }
                 else{
                     Formula basicFormula1 = column.getFormulaValue();
+                    if(l == 0) {
+                        column.getFormulaValue().setFormulaFunction(column.getFormulaValue()
+                        .getFormulaFunction().replaceAll(check1, column2.getColumnTitle()));
+                    } else if(l == columnToColumns.size()-1) {
+                        column.getFormulaValue().setFormulaFunction(column.getFormulaValue()
+                                .getFormulaFunction().replaceAll(check1, column2.getColumnTitle()));
+                    }
                     basicFormula1.addColumnDependencies(column2);
                 }
             }
@@ -1029,7 +1070,15 @@ public class readExcelTableBased implements ExcelReader {
                                     .findAny()
                                     .orElse(null);
                             if (column1 != null) {
-                                column.getFormulaValue().addColumnDependencies(column);
+
+                                if(l == 0) {
+                                    column.getFormulaValue().setFormulaFunction(column.getFormulaValue()
+                                            .getFormulaFunction().replaceAll(workSheetTemp, column1.getColumnTitle()));
+                                } else if(l == column2.size()-1) {
+                                    column.getFormulaValue().setFormulaFunction(column.getFormulaValue()
+                                            .getFormulaFunction().replaceAll(workSheetTemp, column1.getColumnTitle()));
+                                }
+                                column.getFormulaValue().addColumnDependencies(column1);
                                 break;
                             } else {
                                 log.info("matches column to column from another sheet pattern but " +
@@ -1064,6 +1113,13 @@ public class readExcelTableBased implements ExcelReader {
                                     .findAny()
                                     .orElse(null);
                             if (column1 != null) {
+                                if(l == 0) {
+                                    column.getFormulaValue().setFormulaFunction(column.getFormulaValue()
+                                            .getFormulaFunction().replaceAll(workSheetTemp, column1.getColumnTitle()));
+                                } else if(l == column2.size()-1) {
+                                    column.getFormulaValue().setFormulaFunction(column.getFormulaValue()
+                                            .getFormulaFunction().replaceAll(workSheetTemp, column1.getColumnTitle()));
+                                }
                                 column.getFormulaValue().addColumnDependencies(column1);
                             } else {
                                 log.info("matches column to column from another sheet second pattern but " +
