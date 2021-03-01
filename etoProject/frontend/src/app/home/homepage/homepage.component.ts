@@ -92,9 +92,9 @@ export class HomepageComponent implements OnInit {
             return;
           }
         });
+      this.Endpoint.changeFormat(format);
       this.loading = false;
       this.closeForm(format);
-
       this.rowHeader = null;
       this.columnHeader = null;
       this._router.navigate(['/repository']);
